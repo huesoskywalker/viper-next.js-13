@@ -2,11 +2,9 @@
 
 import Link from "next/link"
 import { useSession, signIn, signOut } from "next-auth/react"
-import navStyles from "../styles/Nav.module.css"
 
 export default function NavBar() {
     const { data: session, status } = useSession()
-    // console.log(session, status)
     if (status === "loading") {
         return (
             <div>
@@ -33,7 +31,7 @@ export default function NavBar() {
     }
 
     return (
-        <nav className={navStyles.nav}>
+        <nav className="bg-slate-900">
             <ul>
                 <li>
                     <Link href="/">Home</Link>
@@ -47,7 +45,7 @@ export default function NavBar() {
                 <li>
                     <Link href="/blog">Blog</Link>
                 </li>
-                <li>
+                <li className="bg-slate-900">
                     <Link href="/dashboard">Dashboard</Link>
                 </li>
                 <li>

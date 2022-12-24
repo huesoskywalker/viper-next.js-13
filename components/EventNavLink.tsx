@@ -19,6 +19,7 @@ export default function EventNavLink({
     return (
         <Link
             href={`/events/${slug}`}
+            className="group block bg-yellow-400"
             // Change style depending on whether the link is active
             style={{ fontWeight: isActive ? "bold" : "normal" }}
         >

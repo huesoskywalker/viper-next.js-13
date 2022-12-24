@@ -26,7 +26,7 @@
         "**/*.tsx",
         ".next/types/**/*.ts",
         "pages/api/auth/[...nextauth].ts",
-        "app/events/[id]"
+        "app/events/[category]"
     ],
     "exclude": ["node_modules"]
 }

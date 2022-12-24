@@ -1,18 +1,26 @@
 import type { ReactNode } from "react"
-import "../styles/globals.css"
+import "./globals.css"
 import Providers from "../components/Providers"
-import NavBar from "../components/NavBar"
+import GlobalNav from "../components/GlobalNav"
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html>
-            <body>
-                <main>
-                    <Providers>
-                        <NavBar />
-                        {children}
-                    </Providers>
-                </main>
+            <body className="overflow-y-scroll bg-gray-900">
+                <GlobalNav />
+                <div className="lg:pl-48">
+                    <div className="mx-auto max-w-4xl space-y-8 px-2 pt-20 lg:py-8 lg:px-8">
+                        {/* <main className="bg-slate-900"> */}
+                        <Providers>
+                            <div className="rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20">
+                                <div className="rounded-lg bg-black p-3.5 lg:p-6">
+                                    {children}
+                                </div>
+                            </div>
+                        </Providers>
+                    </div>
+                </div>
+                {/* </main> */}
             </body>
         </html>
     )

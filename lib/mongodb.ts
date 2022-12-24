@@ -5,6 +5,7 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI
+// const uri = "mongodb+srv://hueso:blackandyellow34@viper.10eeitw.mongodb.net/?retryWrites=true&w=majority"
 const options = {}
 
 let client

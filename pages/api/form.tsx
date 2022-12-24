@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import clientPromise from "../../lib/mongodb"
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
     if (req.method === "POST") {
         const body = req.body
         try {
@@ -15,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     content: body.content,
                     location: body.location,
                     date: body.date,
-                    category: body.category,
+                    category: body.category.toLowerCase(),
                 })
 
             return res.end()

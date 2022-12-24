@@ -1,6 +1,6 @@
 import { getVipers } from "../../lib/vipers"
 import Link from "next/link"
-import styles from "../../styles/Events.module.css"
+// import styles from "../../styles/Events.module.css"
 import { Suspense } from "react"
 import Loading from "./loading"
 
@@ -11,7 +11,7 @@ export default async function VipersPage() {
         <div>
             <h1>vipers around the hood</h1>
             <Suspense fallback={<Loading />}>
-                <div className={styles.grid}>
+                <div className="">
                     {vipers?.map((event: any) => {
                         return <Viper key={event._id} event={event} />
                     })}
