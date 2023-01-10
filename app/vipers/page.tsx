@@ -1,6 +1,5 @@
 import { getVipers } from "../../lib/vipers"
-import Link from "next/link"
-// import styles from "../../styles/Events.module.css"
+import ViperInfo from "./ViperInfo"
 import { Suspense } from "react"
 import Loading from "./loading"
 
@@ -8,30 +7,17 @@ export default async function VipersPage() {
     const vipers = await getVipers()
 
     return (
-        <div>
-            <h1>vipers around the hood</h1>
-            <Suspense fallback={<Loading />}>
-                <div className="">
-                    {vipers?.map((event: any) => {
-                        return <Viper key={event._id} event={event} />
-                    })}
-                </div>
-            </Suspense>
-        </div>
-    )
-}
-
-function Viper({ event }: any) {
-    const { _id, name, email, image } = event || {}
-    const id: string = _id
-
-    return (
-        <Link href={`vipers/${id}`}>
-            <div>
-                <h3>{name}</h3>
-                <p>{image}</p>
-                <h5>{email}</h5>
+        <div className="space-y-4">
+            <div className="flex justify-between">
+                <Suspense fallback={<Loading />}>
+                    <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+                        {vipers?.map((viper: any) => {
+                            /* @ts-expect-error Async Server Component */
+                            return <ViperInfo key={viper._id} id={viper._id} />
+                        })}
+                    </div>
+                </Suspense>
             </div>
-        </Link>
+        </div>
     )
 }

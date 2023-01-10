@@ -1,13 +1,6 @@
 import { ObjectId } from "mongodb"
 import clientPromise from "./mongodb"
-
-interface Session {
-    id: string
-    name: string
-    email: string
-    image: string
-    userRole: string
-}
+import { Session } from "./session"
 
 export interface EventInterface {
     readonly _id: ObjectId
@@ -15,18 +8,58 @@ export interface EventInterface {
     title: string
     content: string
     location: string
-    date: string
+    address: string
+    date: Date
     category: string
+    creationDate: Date
+    image: string
+    price: number
+    participants: string[]
+    editionDate: Date
+    likes: string[]
+    comments: Comments[]
+}
+export interface Comments {
+    viperId: string
+    text: string
 }
 
-export async function getEvents() {
+export interface EditEvent {
+    title: string
+    content: string
+    location: string
+    date: string
+    category: string
+    price: string
+    image: string
+}
+
+export async function getAllEvents() {
     const client = await clientPromise
     // try {
     const db = await client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
 
-    const events = await db.find<EventInterface[]>({}).toArray()
+    const events = await db
+        .aggregate<EventInterface>([
+            {
+                $sort: { date: 1 },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    // organizer: 1,
+                    title: 1,
+                    content: 1,
+                    location: 1,
+                    date: 1,
+                    category: 1,
+                    image: 1,
+                },
+            },
+        ])
+        .toArray()
 
     return events
     // }
@@ -38,20 +71,38 @@ export async function getEvents() {
 //leave me here
 // export const revalidate = 3600
 
-export async function getEvent(noteId: string) {
+export async function getEventById(id: string) {
     const client = await clientPromise
     // try {
     const db = await client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
 
-    const event = await db.findOne<EventInterface>({
-        _id: new ObjectId(noteId),
+    const event = await db.findOne({
+        _id: new ObjectId(id),
     })
-    // .aggregate([
+    // const event = await db.aggregate<EventInterface>([
     //     {
+    //         $match: {
+    //             _id: new ObjectId(id),
+    //         },
+    //     },
+    //     {
+    //         $project: {
+    //             _id: 1,
+    //             organizer: 1,
+    //             title: 1,
+    //             content: 1,
+    //             location: 1,
+    //             address: 1,
+    //             date: 1,
+    //             category: 1,
+    //             image: 1,
+    //             price: 1,
+    //         },
     //     },
     // ])
+
     return event
     // } finally {
     //     await client.close()
@@ -73,12 +124,13 @@ export async function getEventsByCategory(category: string) {
             {
                 $project: {
                     _id: 1,
-                    organizer: 1,
                     title: 1,
                     content: 1,
                     location: 1,
                     date: 1,
                     category: 1,
+                    image: 1,
+                    likes: 1,
                 },
             },
         ])
@@ -86,3 +138,103 @@ export async function getEventsByCategory(category: string) {
 
     return event
 }
+
+export async function sortEventByCategoryAndSlug(
+    category: string,
+    property: string
+) {
+    const event = await getEventsByCategory(category)
+    await event.sort(sortBy(property))
+    return event
+}
+
+function sortBy(field: string) {
+    return function (a: any, b: any) {
+        if (field === "likes") {
+            if (a[field] < b[field].length) {
+                return 1
+            } else if (a[field].length > b[field].length) {
+                return -1
+            }
+            return 0
+        } else if (a[field] > b[field]) {
+            return 1
+        } else if (a[field] < b[field]) {
+            return -1
+        }
+        return 0
+    }
+}
+
+// function sortBy(field: string) {
+//     return function (a: any, b: any) {
+//         if (a[field] > b[field]) {
+//             return 1
+//         } else if (a[field] < b[field]) {
+//             return -1
+//         }
+//         return 0
+//     }
+// }
+
+export async function getViperCreatedEvents(id: string) {
+    const client = await clientPromise
+
+    const db = await client
+        .db("viperDb")
+        .collection<EventInterface>("organized_events")
+
+    const events = await db
+        .aggregate<EventInterface>([
+            {
+                $match: { "organizer.id": id },
+            },
+            {
+                $sort: { creationDate: -1 },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    organizer: 1,
+                    title: 1,
+                    content: 1,
+                    location: 1,
+                    address: 1,
+                    date: 1,
+                    category: 1,
+                    creationDate: 1,
+                    image: 1,
+                },
+            },
+        ])
+        .toArray()
+    return events
+}
+
+// export async function getViperParticipatedEvents(id: string) {
+//     const client = await clientPromise
+//     const db = await client.db("viperDb").collection<EventInterface>("users")
+//     const events = await db
+//         .aggregate<EventInterface>([
+//             {
+//                 $match: { _id: new ObjectId(id) },
+//             },
+//             {
+//                 $unwind: "$participated",
+//             },
+//             {
+//                 $project: {
+//                     _id: 0,
+//                     participated: 1,
+//                 },
+//             },
+//         ])
+//         .toArray()
+//     // { _id: new Object(id) }
+//     // {
+//     //     $sort: { creationDate: -1 },
+//     // },
+
+//     // },
+//     return events
+// }

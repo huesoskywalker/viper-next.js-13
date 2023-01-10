@@ -8,9 +8,10 @@ export const SkeletonCard = ({ isLoading }: { isLoading?: boolean }) => (
         })}
     >
         <div className="space-y-3">
-            <div className="h-14 rounded-lg bg-gray-700" />
-            <div className="h-3 w-11/12 rounded-lg bg-gray-700" />
-            <div className="h-3 w-8/12 rounded-lg bg-gray-700" />
+            <div className="h-40 rounded-lg bg-gray-700" />
+            <div className="h-4 w-10/12 rounded-lg bg-gray-700" />
+            <div className="h-10 w-12/12 rounded-lg bg-gray-700" />
+            <div className="h-4 w-8/12 rounded-lg bg-gray-700" />
         </div>
     </div>
 )

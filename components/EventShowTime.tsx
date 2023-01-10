@@ -1,39 +1,21 @@
-import {
-    add,
-    formatDuration,
-    isTomorrow,
-    intervalToDuration,
-    parseISO,
-} from "date-fns"
+import { formatDuration, isTomorrow, intervalToDuration } from "date-fns"
 
-export const EventShowTime = ({
-    dateTime,
-}: // hasDeliveryTime = false,
-{
-    dateTime: string
-    // hasDeliveryTime?: boolean
-}) => {
+export const EventShowTime = ({ dateTime }: { dateTime: Date }) => {
     const date: Duration = intervalToDuration({
         start: new Date(),
-        end: new Date(parseISO(dateTime)),
+        end: dateTime,
     })
-    // const date = add(new Date(), {
-    //     days: dateTime,
-    // })
-
     return (
         <div className="text-sm text-gray-300">
-            Comming soon{" "}
             <strong className="font-bold text-gray-100">
-                {isTomorrow(parseISO(dateTime)) ? "tomorrow, " : null}
+                {isTomorrow(dateTime) ? "Tomorrow, " : null}
+                In{" "}
                 {formatDuration(date, {
-                    format: ["months", "weeks", "days", "hours"],
+                    format: ["months", "days", "hours"],
                     zero: true,
                     delimiter: ", ",
                 })}
-                {/* {date.months} months, {date.days} days, {date.hours} hours */}
             </strong>
-            {/* {hasDeliveryTime ? <> by 5pm</> : null} */}
         </div>
     )
 }

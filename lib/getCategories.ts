@@ -7,7 +7,7 @@ export type PageProps = {
 export type Category = {
     name: string
     slug: string
-    count?: number
+    // count?: number
     items: Omit<Category, "items">[]
 }
 
@@ -16,27 +16,37 @@ export const getCategories = cache((): Category[] => [
         name: "Drinks",
         slug: "drinks",
         items: [
-            { name: "Phones", slug: "phones", count: 4 },
-            { name: "Tablets", slug: "tablets", count: 5 },
-            { name: "Laptops", slug: "laptops", count: 2 },
+            { name: "Most Liked", slug: "likes" },
+            { name: "Closer to Date", slug: "date" },
+            // { name: "Laptops", slug: "laptops", count: 2 },
         ],
     },
     {
         name: "Food",
         slug: "food",
         items: [
-            { name: "Tops", slug: "tops", count: 3 },
-            { name: "Shorts", slug: "shorts", count: 4 },
-            { name: "Shoes", slug: "shoes", count: 5 },
+            { name: "Most Liked", slug: "likes" },
+            { name: "Closer to Date", slug: "date" },
+            // { name: "Shorts", slug: "shorts", count: 4 },
+            // { name: "Shoes", slug: "shoes", count: 5 },
         ],
     },
     {
         name: "Music",
         slug: "music",
         items: [
-            { name: "Fiction", slug: "fiction", count: 5 },
-            { name: "Biography", slug: "biography", count: 2 },
-            { name: "Education", slug: "education", count: 3 },
+            { name: "Most Liked", slug: "likes" },
+            { name: "Closer to Date", slug: "date" },
+            // { name: "Education", slug: "education", count: 3 },
+        ],
+    },
+    {
+        name: "Sports",
+        slug: "sports",
+        items: [
+            { name: "Football", slug: "football" },
+            { name: "Basketball", slug: "basketball" },
+            // { name: "Education", slug: "education", count: 3 },
         ],
     },
 ])

@@ -7,15 +7,29 @@ declare module "next-auth" {
      */
     interface Session {
         user: {
-            id?: string
-            userRole?: string
-        } & DefaultSession["user"]
+            id: string
+            name: string
+            email: string
+            image: string
+            // backgroundImage: string
+            emailVerified: null
+            // participated: string[]
+            // location: string
+            // followers: string[]
+            // follows: string[]
+            // userRole?: string
+        }
     }
 
     interface User {
-        userRole?: string
-        address?: string
+        name: string
+        email: string
+        image: string
+        backgroundImage: string
+        emailVerified: null
+        participated: string[]
+        location: string
+        followers: string[]
+        follows: string[]
     }
 }
-
-// I WANT TO MAKE THIS WORKS
