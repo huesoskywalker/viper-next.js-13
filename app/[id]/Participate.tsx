@@ -56,7 +56,7 @@ export function Participate({
                 </h1>
                 <div>
                     <h1 className="text-l font-medium text-gray-400/80 pb-2 flex justify-start">
-                        {participants.length}
+                        {participants?.length}
                     </h1>
                 </div>
             </div>

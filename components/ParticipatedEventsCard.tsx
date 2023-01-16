@@ -11,7 +11,6 @@ export const ParticipatedEventsCard = async ({
     href: string
 }) => {
     const event = await getEventById(id)
-    console.log(event)
 
     return (
         <Link href={href} className="group block">
@@ -21,8 +20,8 @@ export const ParticipatedEventsCard = async ({
                         src={`/upload/${event?.image}`}
                         width={400}
                         height={400}
-                        className="rounded-xl grayscale group-hover:opacity-80"
-                        alt={event!.title}
+                        className="rounded-xl  group-hover:opacity-80"
+                        alt={event?.title ?? "none"}
                         placeholder="blur"
                         blurDataURL={"product.imageBlur"}
                     />

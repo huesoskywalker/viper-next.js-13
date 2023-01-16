@@ -1,6 +1,6 @@
 import { getViperById } from "../../../lib/vipers"
 import { PageProps } from "../../../lib/utils"
-import { Profile } from "../../dashboard/Profile"
+import { Profile } from "../../profile/Profile"
 
 export default async function ViperPage({ params }: PageProps) {
     const id: string = params.id

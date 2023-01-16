@@ -57,7 +57,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "",
         "chunks": [
-          "app/[id]/page:app/[id]/page"
+          "app/vipers/[id]/page:app/vipers/[id]/page"
         ],
         "async": false
       },
@@ -65,7 +65,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "*",
         "chunks": [
-          "app/[id]/page:app/[id]/page"
+          "app/vipers/[id]/page:app/vipers/[id]/page"
         ],
         "async": false
       },
@@ -73,7 +73,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "default",
         "chunks": [
-          "app/[id]/page:app/[id]/page"
+          "app/vipers/[id]/page:app/vipers/[id]/page"
         ],
         "async": false
       }
@@ -182,136 +182,6 @@ self.__RSC_MANIFEST={
         "async": false
       }
     },
-    "(app-client)/./node_modules/next/dist/client/image.js": {
-      "": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
-        "name": "",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
-        "name": "*",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      },
-      "default": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
-        "name": "default",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./components/Tab.tsx": {
-      "": {
-        "id": "(sc_client)/./components/Tab.tsx",
-        "name": "",
-        "chunks": [
-          "app/dashboard/layout:app/dashboard/layout"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./components/Tab.tsx",
-        "name": "*",
-        "chunks": [
-          "app/dashboard/layout:app/dashboard/layout"
-        ],
-        "async": false
-      },
-      "Tab": {
-        "id": "(sc_client)/./components/Tab.tsx",
-        "name": "Tab",
-        "chunks": [
-          "app/dashboard/layout:app/dashboard/layout"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./app/dashboard/ShowFollows.tsx": {
-      "": {
-        "id": "(sc_client)/./app/dashboard/ShowFollows.tsx",
-        "name": "",
-        "chunks": [
-          "app/dashboard/page:app/dashboard/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./app/dashboard/ShowFollows.tsx",
-        "name": "*",
-        "chunks": [
-          "app/dashboard/page:app/dashboard/page"
-        ],
-        "async": false
-      },
-      "default": {
-        "id": "(sc_client)/./app/dashboard/ShowFollows.tsx",
-        "name": "default",
-        "chunks": [
-          "app/dashboard/page:app/dashboard/page"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./components/Follow.tsx": {
-      "": {
-        "id": "(sc_client)/./components/Follow.tsx",
-        "name": "",
-        "chunks": [
-          "app/dashboard/page:app/dashboard/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./components/Follow.tsx",
-        "name": "*",
-        "chunks": [
-          "app/dashboard/page:app/dashboard/page"
-        ],
-        "async": false
-      },
-      "Follow": {
-        "id": "(sc_client)/./components/Follow.tsx",
-        "name": "Follow",
-        "chunks": [
-          "app/dashboard/page:app/dashboard/page"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./components/BlogBar.tsx": {
-      "": {
-        "id": "(sc_client)/./components/BlogBar.tsx",
-        "name": "",
-        "chunks": [
-          "app/dashboard/layout:app/dashboard/layout"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./components/BlogBar.tsx",
-        "name": "*",
-        "chunks": [
-          "app/dashboard/layout:app/dashboard/layout"
-        ],
-        "async": false
-      },
-      "default": {
-        "id": "(sc_client)/./components/BlogBar.tsx",
-        "name": "default",
-        "chunks": [
-          "app/dashboard/layout:app/dashboard/layout"
-        ],
-        "async": false
-      }
-    },
     "(app-client)/./app/[id]/AddComment.tsx": {
       "": {
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
@@ -389,6 +259,84 @@ self.__RSC_MANIFEST={
         ],
         "async": false
       }
+    },
+    "(app-client)/./node_modules/next/dist/client/image.js": {
+      "": {
+        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
+        "name": "",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
+        "name": "*",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
+        "name": "default",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/profile/ShowFollows.tsx": {
+      "": {
+        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "name": "",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "name": "*",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "name": "default",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./components/Follow.tsx": {
+      "": {
+        "id": "(sc_client)/./components/Follow.tsx",
+        "name": "",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./components/Follow.tsx",
+        "name": "*",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      },
+      "Follow": {
+        "id": "(sc_client)/./components/Follow.tsx",
+        "name": "Follow",
+        "chunks": [
+          "app/vipers/[id]/page:app/vipers/[id]/page"
+        ],
+        "async": false
+      }
     }
   },
   "__edge_ssr_module_mapping__": {},
@@ -454,7 +402,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     },
@@ -462,7 +410,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     },
@@ -470,7 +418,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "default",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     }
@@ -480,7 +428,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     },
@@ -488,7 +436,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     },
@@ -496,7 +444,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "default",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     }
@@ -709,162 +657,6 @@ self.__RSC_MANIFEST={
       "async": false
     }
   },
-  "/home/hueso/code/viper2.2/node_modules/next/dist/client/image.js": {
-    "": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "*",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "default": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "default",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/node_modules/next/dist/esm/client/image.js": {
-    "": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "*",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "default": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "default",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/components/Tab.tsx": {
-    "": {
-      "id": "(app-client)/./components/Tab.tsx",
-      "name": "",
-      "chunks": [
-        "app/dashboard/layout:app/dashboard/layout"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./components/Tab.tsx",
-      "name": "*",
-      "chunks": [
-        "app/dashboard/layout:app/dashboard/layout"
-      ],
-      "async": false
-    },
-    "Tab": {
-      "id": "(app-client)/./components/Tab.tsx",
-      "name": "Tab",
-      "chunks": [
-        "app/dashboard/layout:app/dashboard/layout"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/app/dashboard/ShowFollows.tsx": {
-    "": {
-      "id": "(app-client)/./app/dashboard/ShowFollows.tsx",
-      "name": "",
-      "chunks": [
-        "app/dashboard/page:app/dashboard/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./app/dashboard/ShowFollows.tsx",
-      "name": "*",
-      "chunks": [
-        "app/dashboard/page:app/dashboard/page"
-      ],
-      "async": false
-    },
-    "default": {
-      "id": "(app-client)/./app/dashboard/ShowFollows.tsx",
-      "name": "default",
-      "chunks": [
-        "app/dashboard/page:app/dashboard/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/components/Follow.tsx": {
-    "": {
-      "id": "(app-client)/./components/Follow.tsx",
-      "name": "",
-      "chunks": [
-        "app/dashboard/page:app/dashboard/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./components/Follow.tsx",
-      "name": "*",
-      "chunks": [
-        "app/dashboard/page:app/dashboard/page"
-      ],
-      "async": false
-    },
-    "Follow": {
-      "id": "(app-client)/./components/Follow.tsx",
-      "name": "Follow",
-      "chunks": [
-        "app/dashboard/page:app/dashboard/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/components/BlogBar.tsx": {
-    "": {
-      "id": "(app-client)/./components/BlogBar.tsx",
-      "name": "",
-      "chunks": [
-        "app/dashboard/layout:app/dashboard/layout"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./components/BlogBar.tsx",
-      "name": "*",
-      "chunks": [
-        "app/dashboard/layout:app/dashboard/layout"
-      ],
-      "async": false
-    },
-    "default": {
-      "id": "(app-client)/./components/BlogBar.tsx",
-      "name": "default",
-      "chunks": [
-        "app/dashboard/layout:app/dashboard/layout"
-      ],
-      "async": false
-    }
-  },
   "/home/hueso/code/viper2.2/app/[id]/AddComment.tsx": {
     "": {
       "id": "(app-client)/./app/[id]/AddComment.tsx",
@@ -939,6 +731,110 @@ self.__RSC_MANIFEST={
       "name": "Participate",
       "chunks": [
         "app/[id]/page:app/[id]/page"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/node_modules/next/dist/client/image.js": {
+    "": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "*",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "default",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/node_modules/next/dist/esm/client/image.js": {
+    "": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "*",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "default",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/app/profile/ShowFollows.tsx": {
+    "": {
+      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "name": "",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "name": "*",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "name": "default",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/components/Follow.tsx": {
+    "": {
+      "id": "(app-client)/./components/Follow.tsx",
+      "name": "",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./components/Follow.tsx",
+      "name": "*",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
+      ],
+      "async": false
+    },
+    "Follow": {
+      "id": "(app-client)/./components/Follow.tsx",
+      "name": "Follow",
+      "chunks": [
+        "app/vipers/[id]/page:app/vipers/[id]/page"
       ],
       "async": false
     }

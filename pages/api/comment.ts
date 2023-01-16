@@ -12,7 +12,7 @@ export default async function handler(
     const body = req.body
 
     const client = await clientPromise
-    const db = await client
+    const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
     if (body.comment !== "") {
@@ -23,7 +23,13 @@ export default async function handler(
 
             {
                 $push: {
-                    comments: { viperId: body.viperId, text: body.comment },
+                    comments: {
+                        _id: new ObjectId(),
+                        viperId: body.viperId,
+                        text: body.comment,
+                        likes: [],
+                        replies: [],
+                    },
                 },
             }
         )

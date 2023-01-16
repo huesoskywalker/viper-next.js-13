@@ -1,5 +1,6 @@
-import { fetchDashboardBySlug, PageProps } from "../../../lib/getDashboard"
+import { fetchDashboardBySlug } from "../../../lib/getDashboard"
 import { TabGroup } from "../../../components/TabGroup"
+import { PageProps } from "../../../lib/utils"
 
 export default async function Layout({ children, params }: PageProps) {
     const category = await fetchDashboardBySlug(params.dashboardSlug)
@@ -13,7 +14,7 @@ export default async function Layout({ children, params }: PageProps) {
                     path={`/dashboard/${category.slug}`}
                     items={[
                         {
-                            text: "All",
+                            text: "My Events",
                         },
                         ...category.items.map((x) => ({
                             text: x.name,

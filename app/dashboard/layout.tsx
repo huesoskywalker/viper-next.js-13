@@ -1,7 +1,6 @@
 import { ReactNode } from "react"
 import { fetchDashboard } from "../../lib/getDashboard"
 import { DashGroup } from "../../components/DashGroup"
-import BlogBar from "../../components/BlogBar"
 
 export default async function Layout({ children }: { children: ReactNode }) {
     const categories = await fetchDashboard()
@@ -12,7 +11,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
                     path={`/dashboard`}
                     items={[
                         {
-                            text: "Profile",
+                            text: "Board",
                         },
                         ...categories.map((x) => ({
                             text: x.name,
@@ -28,9 +27,6 @@ export default async function Layout({ children }: { children: ReactNode }) {
                 {/* <div className="static rounded-lg bg-gray-700-700 p-3.5 lg:p-6"> */}
                 {children}
                 {/* </div> */}
-            </div>
-            <div className="col-start-2 col-span-3 mx-3 ">
-                <BlogBar />
             </div>
         </div>
         // </div>

@@ -1,7 +1,7 @@
 export default async function AnalyticsPage() {
     return (
         <div>
-            <h1 className="text-red-700">Analytics page </h1>
+            <h1 className="text-gray-300">Analytics page, Comming soon</h1>
         </div>
     )
 }

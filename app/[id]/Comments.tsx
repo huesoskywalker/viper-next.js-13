@@ -1,6 +1,6 @@
 import { EventCommentsCard } from "../../components/EventCommentsCard"
 import { Comments } from "../../lib/events"
-import { delay } from "./delay"
+import { delay } from "../../lib/delay"
 
 const shimmer = `relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent`
 
@@ -28,9 +28,15 @@ export default function CommentsSkeleton() {
     )
 }
 
-export async function Comments({ comments }: { comments: Comments[] }) {
+export async function Comments({
+    comments,
+    id,
+}: {
+    comments: Comments[]
+    id: string
+}) {
     // Normally you would fetch data here
-    await delay(2500)
+    await delay(1500)
 
     return (
         <div className="space-y-6">
@@ -39,12 +45,13 @@ export async function Comments({ comments }: { comments: Comments[] }) {
             </div>
 
             <div className="space-y-8">
-                {comments.map((comment) => {
+                {comments?.map((comment) => {
                     return (
                         /* @ts-expect-error Async Server Component */
                         <EventCommentsCard
                             key={comment.viperId}
                             comment={comment}
+                            id={id}
                         />
                     )
                 })}

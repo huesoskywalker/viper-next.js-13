@@ -1,9 +1,5 @@
 import { cache } from "react"
 
-export type PageProps = {
-    params?: any
-    children?: React.ReactNode
-}
 export type Dashboard = {
     name: string
     slug: string
@@ -18,14 +14,14 @@ export const getDashboard = cache((): Dashboard[] => [
         items: [
             { name: "Create Event", slug: "create" },
             { name: "Participations", slug: "participations" },
-            // { name: "Laptops", slug: "laptops" },
+            { name: "Liked", slug: "liked" },
         ],
     },
     {
         name: "Messages",
         slug: "messages",
         items: [
-            { name: "Tops", slug: "tops" },
+            // { name: "Tops", slug: "tops" },
             // { name: "Shorts", slug: "shorts" },
             // { name: "Shoes", slug: "shoes" },
         ],
@@ -34,7 +30,7 @@ export const getDashboard = cache((): Dashboard[] => [
         name: "Analytics",
         slug: "analytics",
         items: [
-            { name: "Fiction", slug: "fiction" },
+            { name: "Best Ones", slug: "best" },
             // { name: "Biography", slug: "biography" },
             // { name: "Education", slug: "education" },
         ],

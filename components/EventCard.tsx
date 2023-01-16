@@ -14,12 +14,6 @@ export const EventCard = ({
         <Link href={href} className="group block">
             <div className="space-y-4">
                 <div className="space-y-2">
-                    {/* <div className="relative">
-          {product.isBestSeller ? (
-            <div className="absolute top-2 left-2 z-10 flex">
-              <ProductBestSeller />
-            </div>
-          ) : null} */}
                     <Image
                         src={`/upload/${event.image}`}
                         width={400}
@@ -29,7 +23,6 @@ export const EventCard = ({
                         placeholder="blur"
                         blurDataURL={"event.imageBlur"}
                     />
-                    {/* </div> */}
                     <h2 className="font-bold text-gray-100">{event.title}</h2>
                     <div className="text-sm font-bold leading-snug text-white">
                         {event.content}

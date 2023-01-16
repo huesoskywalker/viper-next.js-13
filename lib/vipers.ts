@@ -13,6 +13,7 @@ export interface Viper {
     location: string
     followers: string[]
     follows: string[]
+    likes: string[]
 }
 
 export interface Chats {
@@ -59,14 +60,33 @@ export async function getViperParticipatedEvents(id: string) {
             },
         ])
         .toArray()
-    // { _id: new Object(id) }
-    // {
-    //     $sort: { creationDate: -1 },
-    // },
 
-    // },
     return events
 }
+
+export async function getViperLikedEvents(id: string) {
+    const client = await clientPromise
+    const db = await client.db("viperDb").collection<Viper>("users")
+    const events = await db
+        .aggregate<Viper>([
+            {
+                $match: { _id: new ObjectId(id) },
+            },
+            {
+                $unwind: "$likes",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    likes: 1,
+                },
+            },
+        ])
+        .toArray()
+
+    return events
+}
+
 export async function getViperFollows(id: string) {
     const client = await clientPromise
     const db = await client.db("viperDb").collection<Viper>("users")

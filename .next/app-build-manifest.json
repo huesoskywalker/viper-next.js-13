@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/[id]/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/[id]/layout.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -20,40 +20,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/head.js"
     ],
-    "/events/(main)/page": [
+    "/[id]/[viperId]/[commentId]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/events/(main)/page.js"
+      "static/chunks/app/[id]/[viperId]/[commentId]/page.js"
     ],
-    "/events/(main)/layout": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/events/(main)/layout.js"
-    ],
-    "/events/(main)/loading": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/events/(main)/loading.js"
-    ],
-    "/dashboard/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/dashboard/page.js"
-    ],
-    "/dashboard/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/dashboard/layout.js"
-    ],
-    "/[id]/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[id]/layout.js"
+      "static/chunks/app/page.js"
     ],
     "/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/[id]/page.js"
+    ],
+    "/vipers/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/vipers/[id]/page.js"
+    ],
+    "/vipers/loading": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/vipers/loading.js"
     ]
   }
 }

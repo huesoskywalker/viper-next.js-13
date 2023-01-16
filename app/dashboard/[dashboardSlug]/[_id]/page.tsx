@@ -1,6 +1,6 @@
 import { getEventById } from "../../../../lib/events"
 import { PageProps } from "../../../../lib/getCategories"
-import { EditForm } from "../../../../components/EditForm"
+import { EditForm } from "./EditForm"
 
 export default async function EventEditPage({ params }: PageProps) {
     const id: string = params._id

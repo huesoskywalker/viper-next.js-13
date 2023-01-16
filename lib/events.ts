@@ -20,8 +20,16 @@ export interface EventInterface {
     comments: Comments[]
 }
 export interface Comments {
+    readonly _id: ObjectId
     viperId: string
     text: string
+    likes: string[]
+    replies: Reply[]
+}
+
+export interface Reply {
+    viperId: string
+    reply: string
 }
 
 export interface EditEvent {
@@ -37,7 +45,7 @@ export interface EditEvent {
 export async function getAllEvents() {
     const client = await clientPromise
     // try {
-    const db = await client
+    const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
 
@@ -49,7 +57,6 @@ export async function getAllEvents() {
             {
                 $project: {
                     _id: 1,
-                    // organizer: 1,
                     title: 1,
                     content: 1,
                     location: 1,
@@ -74,7 +81,7 @@ export async function getAllEvents() {
 export async function getEventById(id: string) {
     const client = await clientPromise
     // try {
-    const db = await client
+    const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
 
@@ -112,7 +119,7 @@ export async function getEventById(id: string) {
 export async function getEventsByCategory(category: string) {
     const client = await clientPromise
 
-    const db = await client
+    const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
 
@@ -180,7 +187,7 @@ function sortBy(field: string) {
 export async function getViperCreatedEvents(id: string) {
     const client = await clientPromise
 
-    const db = await client
+    const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
 
@@ -238,3 +245,79 @@ export async function getViperCreatedEvents(id: string) {
 //     // },
 //     return events
 // }
+
+export async function getEventComment(eventId: string, commentId: string) {
+    const client = await clientPromise
+    const db = client
+        .db("viperDb")
+        .collection<EventInterface>("organized_events")
+
+    const eventComment = await db
+        .aggregate([
+            {
+                $match: {
+                    _id: new ObjectId(eventId),
+                },
+            },
+            {
+                $unwind: "$comments",
+            },
+            {
+                $match: {
+                    "comments._id": new ObjectId(commentId),
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    // comments: 1,
+                    // comments: { $arrayToObject: "$comments" },
+                    viperId: "$comments.viperId",
+                    text: "$comments.text",
+                },
+            },
+        ])
+        .toArray()
+    return eventComment
+}
+
+export async function getEventReplies(
+    eventId: string,
+    commentId: string,
+    viperId: string
+) {
+    const client = await clientPromise
+    const db = client
+        .db("viperDb")
+        .collection<EventInterface>("organized_events")
+
+    const eventReplies = await db
+        .aggregate([
+            {
+                $match: {
+                    _id: new ObjectId(eventId),
+                },
+            },
+            {
+                $unwind: "$comments",
+            },
+            {
+                $match: {
+                    "comments._id": new ObjectId(commentId),
+                    "comments.viperId": viperId,
+                },
+            },
+            {
+                $unwind: "$comments.replies",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    replies: "$comments.replies",
+                },
+            },
+        ])
+        .toArray()
+
+    return eventReplies
+}
