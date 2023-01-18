@@ -1,3 +1,9 @@
 {
-  "/profile/page": "app/profile/page.js"
+  "/profile/page": "app/profile/page.js",
+  "/page": "app/page.js",
+  "/events/(main)/page": "app/events/(main)/page.js",
+  "/vipers/page": "app/vipers/page.js",
+  "/[id]/page": "app/[id]/page.js",
+  "/vipers/[id]/page": "app/vipers/[id]/page.js",
+  "/[id]/[viperId]/[commentId]/page": "app/[id]/[viperId]/[commentId]/page.js"
 }
