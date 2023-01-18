@@ -6,18 +6,20 @@ import { useTransition, useState, useEffect } from "react"
 
 export function AddLike({
     eventId,
-    likes,
-    likedCookie,
     commentId,
-    comment,
+    replyId,
+    likes,
     event,
+    reply,
+    likedCookie,
 }: {
     eventId: string
-    likes: number
-    likedCookie: string
     commentId: string
-    comment: string
+    replyId: string
+    likes: number
     event: boolean
+    reply: boolean
+    likedCookie: string
 }) {
     const [isPending, startTransition] = useTransition()
 
@@ -37,9 +39,8 @@ export function AddLike({
     const router = useRouter()
 
     const likeEvent = async (e: any) => {
-        console.log(likedCookie)
         e.preventDefault()
-        if (event) {
+        if (event && !reply) {
             const response = await fetch(`/api/like-event`, {
                 method: "POST",
                 headers: {
@@ -52,7 +53,7 @@ export function AddLike({
             })
 
             await response.json()
-        } else {
+        } else if (!event && !reply) {
             const response = await fetch(`/api/like-comment`, {
                 method: "POST",
                 headers: {
@@ -61,12 +62,26 @@ export function AddLike({
                 body: JSON.stringify({
                     id: eventId,
                     commentId: commentId,
-                    comment: comment,
+                    // comment: comment,
                     viperId: viperId,
                 }),
             })
 
             await response.json()
+        } else if (!event && reply) {
+            const response = await fetch(`/api/like-reply`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    eventId: eventId,
+                    commentId: commentId,
+                    replyId: replyId,
+                    // comment: comment,
+                    viperId: viperId,
+                }),
+            })
         }
 
         toggleLike()
@@ -75,17 +90,17 @@ export function AddLike({
         })
     }
 
-    // const showLikes = () => {
-    //     setOpenLikes(!openLikes)
-    // }
-
     useEffect(() => {
-        if (event) {
+        if (event && !reply) {
             document.cookie = `_is_liked=${isLiked}; path=/${eventId}; max-age=${
                 60 * 60 * 24 * 30
             }}`
-        } else {
+        } else if (!event && !reply) {
             document.cookie = `_${commentId}_is_liked=${isLiked}; path=/${eventId}; max-age=${
+                60 * 60 * 24 * 30
+            }}`
+        } else if (!event && reply) {
+            document.cookie = `_${replyId}_is_liked=${isLiked}; path=/${eventId}; max-age=${
                 60 * 60 * 24 * 30
             }}`
         }
@@ -124,7 +139,7 @@ export function AddLike({
                         viewBox="0 0 24 24"
                         strokeWidth={1.8}
                         stroke="currentColor"
-                        className={`w-6 h-6 mt-1 hover:text-yellow-900 ${
+                        className={`w-6 h-6 mt-1 text-gray-400 hover:text-yellow-900 ${
                             isPending
                                 ? "text-yellow-600"
                                 : `text-${isLiked}-700`

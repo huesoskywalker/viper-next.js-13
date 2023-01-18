@@ -57,7 +57,7 @@
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       },
@@ -65,7 +65,7 @@
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "*",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       },
@@ -73,7 +73,7 @@
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "default",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       }
@@ -187,7 +187,7 @@
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
         "name": "",
         "chunks": [
-          "app/[id]/page:app/[id]/page"
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       },
@@ -195,7 +195,7 @@
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
         "name": "*",
         "chunks": [
-          "app/[id]/page:app/[id]/page"
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       },
@@ -203,85 +203,7 @@
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
         "name": "default",
         "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./app/[id]/AddLike.tsx": {
-      "": {
-        "id": "(sc_client)/./app/[id]/AddLike.tsx",
-        "name": "",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./app/[id]/AddLike.tsx",
-        "name": "*",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      },
-      "AddLike": {
-        "id": "(sc_client)/./app/[id]/AddLike.tsx",
-        "name": "AddLike",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./app/[id]/Participate.tsx": {
-      "": {
-        "id": "(sc_client)/./app/[id]/Participate.tsx",
-        "name": "",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./app/[id]/Participate.tsx",
-        "name": "*",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      },
-      "Participate": {
-        "id": "(sc_client)/./app/[id]/Participate.tsx",
-        "name": "Participate",
-        "chunks": [
-          "app/[id]/page:app/[id]/page"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./node_modules/next/dist/client/image.js": {
-      "": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
-        "name": "",
-        "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
-        "name": "*",
-        "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
-        ],
-        "async": false
-      },
-      "default": {
-        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
-        "name": "default",
-        "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       }
@@ -291,7 +213,7 @@
         "id": "(sc_client)/./app/profile/ShowFollows.tsx",
         "name": "",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/layout:app/profile/layout"
         ],
         "async": false
       },
@@ -299,7 +221,7 @@
         "id": "(sc_client)/./app/profile/ShowFollows.tsx",
         "name": "*",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/layout:app/profile/layout"
         ],
         "async": false
       },
@@ -307,7 +229,7 @@
         "id": "(sc_client)/./app/profile/ShowFollows.tsx",
         "name": "default",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/layout:app/profile/layout"
         ],
         "async": false
       }
@@ -317,7 +239,7 @@
         "id": "(sc_client)/./components/Follow.tsx",
         "name": "",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/layout:app/profile/layout"
         ],
         "async": false
       },
@@ -325,7 +247,7 @@
         "id": "(sc_client)/./components/Follow.tsx",
         "name": "*",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/layout:app/profile/layout"
         ],
         "async": false
       },
@@ -333,7 +255,85 @@
         "id": "(sc_client)/./components/Follow.tsx",
         "name": "Follow",
         "chunks": [
-          "app/vipers/[id]/page:app/vipers/[id]/page"
+          "app/profile/layout:app/profile/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./components/Tab.tsx": {
+      "": {
+        "id": "(sc_client)/./components/Tab.tsx",
+        "name": "",
+        "chunks": [
+          "app/profile/layout:app/profile/layout"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./components/Tab.tsx",
+        "name": "*",
+        "chunks": [
+          "app/profile/layout:app/profile/layout"
+        ],
+        "async": false
+      },
+      "Tab": {
+        "id": "(sc_client)/./components/Tab.tsx",
+        "name": "Tab",
+        "chunks": [
+          "app/profile/layout:app/profile/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./node_modules/next/dist/client/image.js": {
+      "": {
+        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
+        "name": "",
+        "chunks": [
+          "app/profile/page:app/profile/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
+        "name": "*",
+        "chunks": [
+          "app/profile/page:app/profile/page"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./node_modules/next/dist/client/image.js",
+        "name": "default",
+        "chunks": [
+          "app/profile/page:app/profile/page"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/[id]/AddLike.tsx": {
+      "": {
+        "id": "(sc_client)/./app/[id]/AddLike.tsx",
+        "name": "",
+        "chunks": [
+          "app/profile/page:app/profile/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./app/[id]/AddLike.tsx",
+        "name": "*",
+        "chunks": [
+          "app/profile/page:app/profile/page"
+        ],
+        "async": false
+      },
+      "AddLike": {
+        "id": "(sc_client)/./app/[id]/AddLike.tsx",
+        "name": "AddLike",
+        "chunks": [
+          "app/profile/page:app/profile/page"
         ],
         "async": false
       }
@@ -402,7 +402,7 @@
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     },
@@ -410,7 +410,7 @@
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     },
@@ -418,7 +418,7 @@
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "default",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     }
@@ -428,7 +428,7 @@
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     },
@@ -436,7 +436,7 @@
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     },
@@ -444,7 +444,7 @@
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "default",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     }
@@ -662,7 +662,7 @@
       "id": "(app-client)/./app/[id]/AddComment.tsx",
       "name": "",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     },
@@ -670,7 +670,7 @@
       "id": "(app-client)/./app/[id]/AddComment.tsx",
       "name": "*",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     },
@@ -678,111 +678,7 @@
       "id": "(app-client)/./app/[id]/AddComment.tsx",
       "name": "default",
       "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/app/[id]/AddLike.tsx": {
-    "": {
-      "id": "(app-client)/./app/[id]/AddLike.tsx",
-      "name": "",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./app/[id]/AddLike.tsx",
-      "name": "*",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "AddLike": {
-      "id": "(app-client)/./app/[id]/AddLike.tsx",
-      "name": "AddLike",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/app/[id]/Participate.tsx": {
-    "": {
-      "id": "(app-client)/./app/[id]/Participate.tsx",
-      "name": "",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./app/[id]/Participate.tsx",
-      "name": "*",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    },
-    "Participate": {
-      "id": "(app-client)/./app/[id]/Participate.tsx",
-      "name": "Participate",
-      "chunks": [
-        "app/[id]/page:app/[id]/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/node_modules/next/dist/client/image.js": {
-    "": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "",
-      "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "*",
-      "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
-      ],
-      "async": false
-    },
-    "default": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "default",
-      "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/node_modules/next/dist/esm/client/image.js": {
-    "": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "",
-      "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "*",
-      "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
-      ],
-      "async": false
-    },
-    "default": {
-      "id": "(app-client)/./node_modules/next/dist/client/image.js",
-      "name": "default",
-      "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     }
@@ -792,7 +688,7 @@
       "id": "(app-client)/./app/profile/ShowFollows.tsx",
       "name": "",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/layout:app/profile/layout"
       ],
       "async": false
     },
@@ -800,7 +696,7 @@
       "id": "(app-client)/./app/profile/ShowFollows.tsx",
       "name": "*",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/layout:app/profile/layout"
       ],
       "async": false
     },
@@ -808,7 +704,7 @@
       "id": "(app-client)/./app/profile/ShowFollows.tsx",
       "name": "default",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/layout:app/profile/layout"
       ],
       "async": false
     }
@@ -818,7 +714,7 @@
       "id": "(app-client)/./components/Follow.tsx",
       "name": "",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/layout:app/profile/layout"
       ],
       "async": false
     },
@@ -826,7 +722,7 @@
       "id": "(app-client)/./components/Follow.tsx",
       "name": "*",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/layout:app/profile/layout"
       ],
       "async": false
     },
@@ -834,7 +730,111 @@
       "id": "(app-client)/./components/Follow.tsx",
       "name": "Follow",
       "chunks": [
-        "app/vipers/[id]/page:app/vipers/[id]/page"
+        "app/profile/layout:app/profile/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/components/Tab.tsx": {
+    "": {
+      "id": "(app-client)/./components/Tab.tsx",
+      "name": "",
+      "chunks": [
+        "app/profile/layout:app/profile/layout"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./components/Tab.tsx",
+      "name": "*",
+      "chunks": [
+        "app/profile/layout:app/profile/layout"
+      ],
+      "async": false
+    },
+    "Tab": {
+      "id": "(app-client)/./components/Tab.tsx",
+      "name": "Tab",
+      "chunks": [
+        "app/profile/layout:app/profile/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/node_modules/next/dist/client/image.js": {
+    "": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "*",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "default",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/node_modules/next/dist/esm/client/image.js": {
+    "": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "*",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./node_modules/next/dist/client/image.js",
+      "name": "default",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/app/[id]/AddLike.tsx": {
+    "": {
+      "id": "(app-client)/./app/[id]/AddLike.tsx",
+      "name": "",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./app/[id]/AddLike.tsx",
+      "name": "*",
+      "chunks": [
+        "app/profile/page:app/profile/page"
+      ],
+      "async": false
+    },
+    "AddLike": {
+      "id": "(app-client)/./app/[id]/AddLike.tsx",
+      "name": "AddLike",
+      "chunks": [
+        "app/profile/page:app/profile/page"
       ],
       "async": false
     }

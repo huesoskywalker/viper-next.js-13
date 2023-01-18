@@ -102,22 +102,20 @@ export async function Event({
             <div className="text-gray-300 col-start-4">
                 <AddLike
                     eventId={id}
-                    likes={selectedEvent?.likes.length}
-                    likedCookie={likedCookie}
                     commentId={""}
-                    comment={""}
+                    replyId={""}
+                    likes={selectedEvent?.likes.length}
                     event={true}
+                    reply={false}
+                    likedCookie={likedCookie}
                 />
-                {/* {selectedEvent.likes?.map((viperId) => {
-                        return <ViperInfo key={viperId} id={viperId} />
-                    })} */}
-                {/* </AddLike> */}
+
                 <AddComment
                     id={id}
-                    comments={selectedEvent?.comments.length}
-                    viperComment={""}
-                    viperIdComment={""}
+                    commentReplies={selectedEvent?.comments.length}
+                    commentId={""}
                     event={true}
+                    reply={false}
                 />
             </div>
         </div>

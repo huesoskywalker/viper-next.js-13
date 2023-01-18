@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/[id]/layout": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[id]/layout.js"
+      "static/chunks/app/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -20,30 +20,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/head.js"
     ],
-    "/[id]/[viperId]/[commentId]/page": [
+    "/profile/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[id]/[viperId]/[commentId]/page.js"
+      "static/chunks/app/profile/layout.js"
     ],
-    "/page": [
+    "/profile/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
-    "/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[id]/page.js"
-    ],
-    "/vipers/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/vipers/[id]/page.js"
-    ],
-    "/vipers/loading": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/vipers/loading.js"
+      "static/chunks/app/profile/page.js"
     ]
   }
 }

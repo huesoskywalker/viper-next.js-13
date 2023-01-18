@@ -14,6 +14,12 @@ export interface Viper {
     followers: string[]
     follows: string[]
     likes: string[]
+    blog: Blog[]
+}
+
+export interface Blog {
+    readonly _id: ObjectId
+    content: string
 }
 
 export interface Chats {

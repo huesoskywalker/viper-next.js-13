@@ -15,8 +15,9 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
     const [image, setImage] = useState<string>(toEditEvent.image)
     const [createObjectURL, setCreateObjectURL] = useState<string>()
     const [price, setPrice] = useState<string>(toEditEvent.price.toString())
-
     const [newEventPreview, setNewEventPreview] = useState<boolean>(false)
+    const [pendingEdit, setPendingEdit] = useState<boolean>(false)
+    const [pendingDelete, setPendingDelete] = useState<boolean>(false)
 
     const [isPending, startTransition] = useTransition()
 
@@ -24,6 +25,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
+        setPendingEdit(!pendingEdit)
         try {
             // const file = new FormData()
             // console.log("file", image)
@@ -83,6 +85,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
 
     const deleteEvent = async (e: any) => {
         e.preventDefault()
+        setPendingDelete(!pendingDelete)
         try {
             const response = await fetch(`/api/form`, {
                 method: "DELETE",
@@ -95,9 +98,8 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                 }),
             })
             await response.json()
-            startTransition(() => {
-                router.push("/dashboard/myevents")
-            })
+            startTransition(() => {})
+            router.push("/dashboard/myevents")
         } catch (error) {
             console.error(error)
         }
@@ -238,7 +240,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 onClick={(e) => handleSubmit(e)}
                             >
                                 Submit Edition
-                                {isPending ? (
+                                {isPending && pendingEdit ? (
                                     <div
                                         className="absolute right-2 top-1.5"
                                         role="status"
@@ -257,7 +259,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                     onClick={(e) => deleteEvent(e)}
                                 >
                                     Delete
-                                    {isPending ? (
+                                    {isPending && pendingDelete ? (
                                         <div
                                             className="absolute right-10 top-1.5"
                                             role="status"

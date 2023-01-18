@@ -4,7 +4,7 @@ import { getViperById } from "../../lib/vipers"
 import { Profile } from "./Profile"
 import { fetchProfile } from "../../lib/getProfile"
 import { TabGroup } from "../../components/TabGroup"
-import CreateBlog from "./CreateBlog"
+import AddComment from "../[id]/AddComment"
 
 export default async function Layout({ children }: PageProps) {
     const category = await fetchProfile()
@@ -16,7 +16,14 @@ export default async function Layout({ children }: PageProps) {
                 {/* @ts-expect-error Async Server Component */}
                 <Profile fullViper={fullViper} />
                 <div className="flex justify-center lg:border-b lg:border-gray-800 pb-3 mr-10">
-                    <CreateBlog />
+                    <AddComment
+                        id={""}
+                        commentId={""}
+                        commentReplies={null}
+                        event={false}
+                        reply={false}
+                    />
+
                     <TabGroup
                         path={`/profile`}
                         items={[

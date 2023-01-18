@@ -28,8 +28,10 @@ export interface Comments {
 }
 
 export interface Reply {
+    readonly _id: Object
     viperId: string
     reply: string
+    likes: string[]
 }
 
 export interface EditEvent {
@@ -262,6 +264,7 @@ export async function getEventComment(eventId: string, commentId: string) {
             {
                 $unwind: "$comments",
             },
+
             {
                 $match: {
                     "comments._id": new ObjectId(commentId),
@@ -270,12 +273,14 @@ export async function getEventComment(eventId: string, commentId: string) {
             {
                 $project: {
                     _id: 0,
-                    // comments: 1,
-                    // comments: { $arrayToObject: "$comments" },
-                    viperId: "$comments.viperId",
-                    text: "$comments.text",
+                    comments: 1,
+                    // viperId: "$comments.viperId",
+                    // text: "$comments.text",
                 },
             },
+            // {
+            //     $unwind: "$comments",
+            // },
         ])
         .toArray()
     return eventComment
@@ -315,6 +320,9 @@ export async function getEventReplies(
                     _id: 0,
                     replies: "$comments.replies",
                 },
+            },
+            {
+                $unwind: "$replies",
             },
         ])
         .toArray()

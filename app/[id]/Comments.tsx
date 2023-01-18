@@ -50,8 +50,13 @@ export async function Comments({
                         /* @ts-expect-error Async Server Component */
                         <EventCommentsCard
                             key={comment.viperId}
-                            comment={comment}
-                            id={id}
+                            eventId={id}
+                            viperId={comment.viperId}
+                            commentId={comment._id}
+                            text={comment.text}
+                            commentLikes={comment.likes.length}
+                            commentReplies={comment.replies.length}
+                            // comment={comment}
                         />
                     )
                 })}

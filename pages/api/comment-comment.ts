@@ -17,20 +17,16 @@ export default async function handler(
             const commentTheComment = await db.findOneAndUpdate(
                 {
                     _id: new ObjectId(body.id),
-                    "comments.viperId": body.viperIdComment,
-                    "comments.text": body.viperComment,
-                    // comments: {
-                    //     $elemMatch: {
-                    //         viperId: body.viperIdComment,
-                    //         text: body.viperComment,
-                    //     },
-                    // },
+                    "comments._id": new ObjectId(body.commentId),
+                    // "comments.text": body.viperComment,
                 },
                 {
                     $push: {
                         "comments.$.replies": {
+                            _id: new ObjectId(),
                             viperId: body.viperId,
                             reply: body.comment,
+                            likes: [],
                         },
                     },
                 }

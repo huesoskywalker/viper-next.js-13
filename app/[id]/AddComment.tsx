@@ -7,20 +7,19 @@ import Image from "next/image"
 
 export default function AddComment({
     id,
-    comments,
-    viperComment,
-    viperIdComment,
+    commentId,
+    commentReplies,
     event,
+    reply,
 }: {
     id: string
-    comments: number
-    viperComment: string
-    viperIdComment: string
+    commentId: string
+    commentReplies: number | null
     event: boolean
+    reply: boolean
 }) {
     const [comment, setComment] = useState<string>("")
     const [openCommentInput, setOpenCommentInput] = useState<boolean>(false)
-    const [openReplies, setOpenReplies] = useState<boolean>(false)
 
     const [isPending, startTransition] = useTransition()
 
@@ -32,7 +31,7 @@ export default function AddComment({
 
     const submitComment = async (e: any) => {
         e.preventDefault()
-        if (event) {
+        if (event && !reply) {
             const response = await fetch(`/api/comment`, {
                 method: "POST",
                 headers: {
@@ -40,13 +39,13 @@ export default function AddComment({
                 },
                 body: JSON.stringify({
                     id: id,
-                    viperId,
+                    viperId: viperId,
                     comment: comment,
                 }),
             })
 
             await response.json()
-        } else {
+        } else if (!event && reply) {
             const response = await fetch(`/api/comment-comment`, {
                 method: "POST",
                 headers: {
@@ -55,12 +54,23 @@ export default function AddComment({
                 body: JSON.stringify({
                     id: id,
                     viperId: viperId,
-                    viperIdComment: viperIdComment,
-                    viperComment: viperComment,
+                    commentId: commentId,
                     comment: comment,
                 }),
             })
 
+            await response.json()
+        } else if (!event && !reply) {
+            const response = await fetch(`/api/create-blog`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    viperId: viperId,
+                    comment: comment,
+                }),
+            })
             await response.json()
         }
 
@@ -78,28 +88,37 @@ export default function AddComment({
     return (
         <div>
             <div className="flex justify-start">
-                <button
-                    onClick={writeComment}
-                    className="grid grid-cols-2 ml-1 hover:text-green-700"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6 "
+                {!event && !reply ? (
+                    <button
+                        onClick={writeComment}
+                        className="relative right-16 text-gray-300 bg-blue-400/75 rounded-xl py-1 px-3 hover:bg-blue-400/50"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
-                        />
-                    </svg>
-                    <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
-                        {comments ?? "0"}
-                    </span>
-                </button>
+                        Bloggie
+                    </button>
+                ) : (
+                    <button
+                        onClick={writeComment}
+                        className="grid grid-cols-2 ml-1 text-gray-400 hover:text-green-700"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-6 h-6 "
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+                            />
+                        </svg>
+                        <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                            {commentReplies ?? "0"}
+                        </span>
+                    </button>
+                )}
             </div>
             <div>
                 {openCommentInput ? (
@@ -108,7 +127,7 @@ export default function AddComment({
                             <div className="relative w-full max-w-lg p-4 mx-auto bg-gray-800 rounded-xl shadow-lg">
                                 <div className="m-1 ">
                                     <button
-                                        className="flex justify-start self-start mb-3"
+                                        className="flex justify-start self-start mb-3 text-gray-300 hover:text-red-800"
                                         onClick={() =>
                                             setOpenCommentInput(false)
                                         }
@@ -119,7 +138,7 @@ export default function AddComment({
                                             viewBox="0 0 24 24"
                                             strokeWidth={1.5}
                                             stroke="currentColor"
-                                            className="w-6 h-6"
+                                            className="w-6 h-6 "
                                         >
                                             <path
                                                 strokeLinecap="round"
@@ -145,7 +164,9 @@ export default function AddComment({
                                                 }
                                                 rows={2}
                                                 placeholder={
-                                                    "Share your thoughts"
+                                                    !event && !reply
+                                                        ? "What's happening?"
+                                                        : "Share your thoughts"
                                                 }
                                                 required
                                             ></textarea>
