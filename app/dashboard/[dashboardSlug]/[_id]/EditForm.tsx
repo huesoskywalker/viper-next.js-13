@@ -17,7 +17,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
     const [price, setPrice] = useState<string>(toEditEvent.price.toString())
     const [newEventPreview, setNewEventPreview] = useState<boolean>(false)
     const [pendingEdit, setPendingEdit] = useState<boolean>(false)
-    const [pendingDelete, setPendingDelete] = useState<boolean>(false)
+    // const [pendingDelete, setPendingDelete] = useState<boolean>(false)
 
     const [isPending, startTransition] = useTransition()
 
@@ -76,6 +76,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                 setImage("")
                 setCreateObjectURL("")
                 setPrice("")
+                router.refresh()
             })
             router.push(`/${toEditEvent._id}`)
         } catch (error) {
@@ -85,7 +86,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
 
     const deleteEvent = async (e: any) => {
         e.preventDefault()
-        setPendingDelete(!pendingDelete)
+        // setPendingDelete(!pendingDelete)
         try {
             const response = await fetch(`/api/form`, {
                 method: "DELETE",
@@ -98,7 +99,9 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                 }),
             })
             await response.json()
-            startTransition(() => {})
+            startTransition(() => {
+                router.refresh()
+            })
             router.push("/dashboard/myevents")
         } catch (error) {
             console.error(error)
@@ -259,7 +262,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                     onClick={(e) => deleteEvent(e)}
                                 >
                                     Delete
-                                    {isPending && pendingDelete ? (
+                                    {isPending && !pendingEdit ? (
                                         <div
                                             className="absolute right-10 top-1.5"
                                             role="status"

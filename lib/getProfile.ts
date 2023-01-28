@@ -3,28 +3,28 @@ import { cache } from "react"
 export type Profile = {
     name: string
     slug: string
-    items: Omit<Profile, "items">[]
+    // items: Omit<Profile, "items">[]
 }
 
 export const getProfile = cache((): Profile[] => [
     {
-        name: "Blog & replies",
-        slug: "myevents",
-        items: [
-            { name: "Create Event", slug: "create" },
-            { name: "Participations", slug: "participations" },
-            { name: "Liked", slug: "liked" },
-        ],
+        name: "Likes & replies",
+        slug: "replies",
+        // items: [
+        //     { name: "Create Event", slug: "create" },
+        //     { name: "Participations", slug: "participations" },
+        //     { name: "Liked", slug: "liked" },
+        // ],
     },
-    {
-        name: "Likes",
-        slug: "likes",
-        items: [
-            // { name: "Tops", slug: "tops" },
-            // { name: "Shorts", slug: "shorts" },
-            // { name: "Shoes", slug: "shoes" },
-        ],
-    },
+    // {
+    // name: "Likes",
+    // slug: "likes",
+    // items: [
+    //     // { name: "Tops", slug: "tops" },
+    //     // { name: "Shorts", slug: "shorts" },
+    //     // { name: "Shoes", slug: "shoes" },
+    // ],
+    // },
     // {
     //     name: "Analytics",
     //     slug: "analytics",
@@ -45,17 +45,17 @@ export async function fetchProfile(): Promise<Profile[]> {
     return getProfile()
 }
 
-async function findSubProfile(
-    profile: Profile | undefined,
-    subProfileSlug: string | undefined
-) {
-    return profile?.items.find((profile) => profile.slug === subProfileSlug)
-}
+// async function findSubProfile(
+//     profile: Profile | undefined,
+//     subProfileSlug: string | undefined
+// ) {
+//     return profile?.items.find((profile) => profile.slug === subProfileSlug)
+// }
 
-export async function fetchSubProfile(
-    profileSlug: string | undefined,
-    subProfileSlug: string | undefined
-) {
-    const category = await fetchProfileBySlug(profileSlug)
-    return findSubProfile(category, subProfileSlug)
-}
+// export async function fetchSubProfile(
+//     profileSlug: string | undefined,
+//     subProfileSlug: string | undefined
+// ) {
+//     const category = await fetchProfileBySlug(profileSlug)
+//     return findSubProfile(category, subProfileSlug)
+// }

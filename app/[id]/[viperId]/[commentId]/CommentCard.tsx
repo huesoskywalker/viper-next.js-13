@@ -8,25 +8,45 @@ import Link from "next/link"
 
 export async function CommentCard({
     eventId,
-    commentId,
     viperId,
+    commentId,
     text,
+    timestamp,
     likes,
     replies,
+    rePosts,
+    event,
+    blog,
+    reply,
+    showComment,
 }: {
     eventId: string
     commentId: string
     viperId: string
     text: string
+    timestamp: number
     likes: number
     replies: number
+    rePosts: number
+    event: boolean
+    blog: boolean
+    reply: boolean
+    showComment: string
 }) {
+    const blogger_id = eventId.replace(/['"]+/g, "")
+    const blogger = await getViperById(blogger_id)
     const viper = await getViperById(viperId)
+
     const stringifyCommentId = JSON.stringify(commentId)
-    const comment_id = stringifyCommentId.replace(/['"]+/g, "")
+    const comment_id = stringifyCommentId.replace(/[\W]+/g, "")
 
     const likedCookie =
         cookies().get(`_${comment_id}_is_liked`)?.value || "none"
+    const commentCookie =
+        cookies().get(`_${timestamp}_is_commented`)?.value || "none"
+    const rePostCookie =
+        cookies().get(`_${timestamp}_is_rePosted`)?.value || "none"
+
     return (
         <div className="space-y-2">
             <Link href={`/vipers/${viperId}`} className="space-y-4">
@@ -34,15 +54,15 @@ export async function CommentCard({
                     <div className="h-6 w-6 rounded-full bg-gray-700">
                         {" "}
                         <Image
-                            src={`/vipers/${viper?.image}`}
-                            alt={`/vipers/${viper?.image}`}
+                            src={`/vipers/${blogger?.image}`}
+                            alt={`/vipers/${blogger?.image}`}
                             width={50}
                             height={50}
                             className="rounded-full col-start-1 "
                         />
                     </div>
                     <span className="text-sm text-white mt-5 ml-5">
-                        {viper?.name}
+                        {blogger?.name}
                     </span>
                 </div>
                 <div className="text-gray-300 text-base font-light">{text}</div>
@@ -51,21 +71,30 @@ export async function CommentCard({
             <div className=" flex justify-items-start space-x-4 space-y-1">
                 <AddLike
                     eventId={eventId}
-                    likes={likes}
                     commentId={comment_id}
                     replyId={""}
-                    likedCookie={likedCookie}
+                    likes={likes}
+                    timestamp={timestamp}
                     event={false}
                     reply={false}
+                    blog={blog}
+                    likedCookie={likedCookie}
                 />
                 <AddComment
                     id={eventId}
-                    commentId={""}
+                    commentId={comment_id}
                     commentReplies={replies}
-                    // viperIdComment={viperId}
-                    // viperComment={text}
-                    event={false}
-                    reply={true}
+                    rePosts={rePosts}
+                    viperIdImage={viper!.image}
+                    viperIdName={viper!.name}
+                    bloggerIdName={blogger!.name}
+                    timestamp={timestamp}
+                    rePostCookie={rePostCookie}
+                    commentCookie={commentCookie}
+                    event={event}
+                    reply={reply}
+                    blog={blog}
+                    showComment={showComment}
                 />
                 {/* <span className="text-sm text-gray-400 flex justify-start self-end ml-2">
                     Replies: {replies}

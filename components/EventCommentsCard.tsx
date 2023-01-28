@@ -64,6 +64,7 @@ export async function EventCommentsCard({
                     likedCookie={likedCookie}
                     event={false}
                     reply={false}
+                    blog={false}
                 />
 
                 <AddComment
@@ -74,6 +75,7 @@ export async function EventCommentsCard({
                     // viperIdComment={comment.viperId}
                     event={false}
                     reply={true}
+                    blog={false}
                 />
             </div>
         </div>

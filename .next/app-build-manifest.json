@@ -1,5 +1,10 @@
 {
   "pages": {
+    "/profile/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/profile/layout.js"
+    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -20,15 +25,20 @@
       "static/chunks/main-app.js",
       "static/chunks/app/profile/page.js"
     ],
-    "/profile/layout": [
+    "/profile/[profileSlug]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/profile/layout.js"
+      "static/chunks/app/profile/[profileSlug]/page.js"
     ],
-    "/page": [
+    "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/dashboard/page.js"
+    ],
+    "/dashboard/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/dashboard/layout.js"
     ],
     "/events/(main)/page": [
       "static/chunks/webpack.js",
@@ -45,35 +55,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/events/(main)/loading.js"
     ],
-    "/vipers/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/vipers/page.js"
+      "static/chunks/app/page.js"
     ],
-    "/vipers/loading": [
+    "/profile/edit/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/vipers/loading.js"
+      "static/chunks/app/profile/edit/[id]/page.js"
     ],
-    "/[id]/layout": [
+    "/profile/edit/[id]/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[id]/layout.js"
+      "static/chunks/app/profile/edit/[id]/layout.js"
     ],
-    "/[id]/page": [
+    "/dashboard/vipers/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/[id]/page.js"
+      "static/chunks/app/dashboard/vipers/page.js"
     ],
-    "/vipers/[id]/page": [
+    "/dashboard/vipers/loading": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/vipers/[id]/page.js"
-    ],
-    "/[id]/[viperId]/[commentId]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/[id]/[viperId]/[commentId]/page.js"
+      "static/chunks/app/dashboard/vipers/loading.js"
     ]
   }
 }

@@ -10,7 +10,6 @@ export default async function CommentIdPage({ params }: PageProps) {
 
     const eventComment = await getEventComment(eventId, commentId)
     const eventReplies = await getEventReplies(eventId, commentId, viperId)
-
     return (
         <div className="grid grid-cols-7 gap-4 ">
             <div className="col-start-2 col-span-5 mx-2 max-w-6xl  lg:border-x  lg:border-gray-800 rounded-lg  p-px shadow-lg shadow-black/20 lg:py-2 lg:px-2">
@@ -26,6 +25,9 @@ export default async function CommentIdPage({ params }: PageProps) {
                                 text={comment.comments.text}
                                 likes={comment.comments.likes.length}
                                 replies={comment.comments.replies.length}
+                                event={true}
+                                blog={false}
+                                reply={true}
                             />
                         )
                     })}

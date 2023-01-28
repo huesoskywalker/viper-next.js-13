@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import clientPromise from "../../lib/mongodb"
 import { Chats } from "../../lib/vipers"
+import { ObjectId } from "mongodb"
 
 export default async function handler(
     req: NextApiRequest,
@@ -17,15 +18,26 @@ export default async function handler(
                 {
                     $or: [
                         {
-                            members: [body.viperId, body.id],
+                            members: [
+                                new ObjectId(body.viperId),
+                                new ObjectId(body.id),
+                            ],
                         },
                         {
-                            members: [body.id, body.viperId],
+                            members: [
+                                new ObjectId(body.id),
+                                new ObjectId(body.viperId),
+                            ],
                         },
                     ],
                 },
                 {
-                    $setOnInsert: { members: [body.viperId, body.id] },
+                    $setOnInsert: {
+                        members: [
+                            new ObjectId(body.viperId),
+                            new ObjectId(body.id),
+                        ],
+                    },
                 },
                 { upsert: true }
             )
@@ -34,19 +46,26 @@ export default async function handler(
                 {
                     $or: [
                         {
-                            members: [body.viperId, body.id],
+                            members: [
+                                new ObjectId(body.viperId),
+                                new ObjectId(body.id),
+                            ],
                         },
                         {
-                            members: [body.id, body.viperId],
+                            members: [
+                                new ObjectId(body.id),
+                                new ObjectId(body.viperId),
+                            ],
                         },
                     ],
                 },
                 {
                     $push: {
                         messages: {
-                            sender: body.viperId,
+                            _id: new ObjectId(),
+                            sender: new ObjectId(body.viperId),
                             message: body.message,
-                            time: new Date(),
+                            timestamp: Date.now(),
                         },
                     },
                 }

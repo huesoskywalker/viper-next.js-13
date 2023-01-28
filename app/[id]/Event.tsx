@@ -91,7 +91,7 @@ export async function Event({
                 >
                     <Image
                         src={`/vipers/${viper?.image}`}
-                        alt={viper!.image}
+                        alt={"viper?.image"}
                         width={50}
                         height={50}
                         className="rounded-full"
@@ -107,15 +107,18 @@ export async function Event({
                     likes={selectedEvent?.likes.length}
                     event={true}
                     reply={false}
+                    blog={false}
                     likedCookie={likedCookie}
                 />
 
                 <AddComment
                     id={id}
-                    commentReplies={selectedEvent?.comments.length}
                     commentId={""}
+                    commentReplies={selectedEvent?.comments.length}
+                    timestamp={0}
                     event={true}
                     reply={false}
+                    blog={false}
                 />
             </div>
         </div>

@@ -21,7 +21,7 @@ export interface EventInterface {
 }
 export interface Comments {
     readonly _id: ObjectId
-    viperId: string
+    viperId: ObjectId
     text: string
     likes: string[]
     replies: Reply[]

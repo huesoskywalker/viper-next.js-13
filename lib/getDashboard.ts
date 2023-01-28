@@ -18,6 +18,11 @@ export const getDashboard = cache((): Dashboard[] => [
         ],
     },
     {
+        name: "Vipers",
+        slug: "vipers",
+        items: [],
+    },
+    {
         name: "Messages",
         slug: "messages",
         items: [
@@ -26,15 +31,15 @@ export const getDashboard = cache((): Dashboard[] => [
             // { name: "Shoes", slug: "shoes" },
         ],
     },
-    {
-        name: "Analytics",
-        slug: "analytics",
-        items: [
-            { name: "Best Ones", slug: "best" },
-            // { name: "Biography", slug: "biography" },
-            // { name: "Education", slug: "education" },
-        ],
-    },
+    // {
+    //     name: "Analytics",
+    //     slug: "analytics",
+    //     items: [
+    //         { name: "Best Ones", slug: "best" },
+    //         // { name: "Biography", slug: "biography" },
+    //         // { name: "Education", slug: "education" },
+    //     ],
+    // },
 ])
 
 export async function fetchDashboardBySlug(slug: string | undefined) {

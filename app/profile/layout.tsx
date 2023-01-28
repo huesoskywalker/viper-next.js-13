@@ -19,9 +19,18 @@ export default async function Layout({ children }: PageProps) {
                     <AddComment
                         id={""}
                         commentId={""}
+                        viperIdImage={""}
+                        viperIdName=""
+                        bloggerIdName=""
                         commentReplies={null}
+                        rePosts={0}
+                        timestamp={0}
+                        commentCookie={""}
+                        rePostCookie={""}
                         event={false}
                         reply={false}
+                        blog={false}
+                        showComment={""}
                     />
 
                     <TabGroup

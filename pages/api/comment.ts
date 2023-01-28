@@ -25,7 +25,7 @@ export default async function handler(
                 $push: {
                     comments: {
                         _id: new ObjectId(),
-                        viperId: body.viperId,
+                        viperId: new ObjectId(body.viperId),
                         text: body.comment,
                         likes: [],
                         replies: [],

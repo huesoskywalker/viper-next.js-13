@@ -51,7 +51,7 @@ export function Follow({
     return (
         <div>
             <button
-                className="flex w-28 items-center space-x-1 rounded-lg bg-gray-700 ml-20 px-3 py-1  text-sm font-medium text-white hover:bg-vercel-blue/90 disabled:text-white/70"
+                className="flex w-28 items-center space-x-1 rounded-lg bg-yellow-800/70 hover:bg-yellow-600/70 ml-20 px-3 py-1  text-sm font-medium text-white hover:bg-vercel-blue/90 disabled:text-white/70"
                 onClick={follow}
                 disabled={isPending}
             >

@@ -19,7 +19,14 @@ export default async function handler(
                 },
                 {
                     $push: {
-                        blog: { _id: new ObjectId(), content: body.comment },
+                        blog: {
+                            _id: new ObjectId(),
+                            content: body.comment,
+                            likes: [],
+                            comments: [],
+                            rePosts: [],
+                            timestamp: Date.now(),
+                        },
                     },
                 }
             )

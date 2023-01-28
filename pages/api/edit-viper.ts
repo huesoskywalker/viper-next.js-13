@@ -26,10 +26,15 @@ export default async function handler(
                             image: body.imageUrl,
                             backgroundImage: body.bgImageUrl,
                             location: body.location,
+
+                            //THIS IS PROVISORY TO FETCH THE CONCAT ARRAYS
+                            blog: [],
+                            blogLikes: [],
+                            blogCommented: [],
+                            blogRePosts: [],
                         },
                     }
                 )
-            console.log(editProfile)
             return res.status(200).json(editProfile)
         } catch (error) {
             return res.status(400).json(error)
