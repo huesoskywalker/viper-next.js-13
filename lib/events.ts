@@ -25,6 +25,7 @@ export interface Comments {
     text: string
     likes: string[]
     replies: Reply[]
+    timestamp: number
 }
 
 export interface Reply {
@@ -309,7 +310,7 @@ export async function getEventReplies(
             {
                 $match: {
                     "comments._id": new ObjectId(commentId),
-                    "comments.viperId": viperId,
+                    "comments.viperId": new ObjectId(viperId),
                 },
             },
             {

@@ -1,6 +1,6 @@
 import { getViperById } from "../../../../lib/vipers"
 import { PageProps } from "../../../../lib/utils"
-import { CommentCard } from "../../../[id]/[viperId]/[commentId]/CommentCard"
+import { CommentCard } from "../../../[id]/[commentId]/[viperId]/CommentCard"
 
 export default async function ViperPage({ params }: PageProps) {
     const id: string = params.id
@@ -31,11 +31,5 @@ export default async function ViperPage({ params }: PageProps) {
                     )
                 })}
         </div>
-        // <div>
-        //     <h3 className="text-gray-300 text-sm">viper</h3>
-        //     <div className="flex justify-center">
-
-        //     </div>
-        // </div>
     )
 }

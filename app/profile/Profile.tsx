@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Viper } from "../../lib/vipers"
+import getViperFollowById, { Viper } from "../../lib/vipers"
 import { Follow } from "../../components/Follow"
 import { cookies } from "next/headers"
 import ShowFollows from "./ShowFollows"
@@ -9,14 +9,23 @@ import ViperInfo from "./ViperInfo"
 export const Profile = async ({
     fullViper,
     params,
+    currentViper,
 }: {
     fullViper: Viper
     params: string
+    currentViper: string
 }) => {
     const string: string = JSON.stringify(fullViper._id)
     const id: string = string.slice(1, -1)
 
-    const followCookie = cookies().get("_is_followed")?.value || "Follow"
+    const firstLogin = (string: string) => {
+        if (string.startsWith("https")) return true
+    }
+
+    const isViperFollowed = await getViperFollowById(params, currentViper)
+    type Truthy = "true" | "false"
+    const isFollowed: Truthy = `${isViperFollowed ? true : false}`
+    // console.log(isFollowed())
 
     return (
         <div className="grid grid-cols-4">
@@ -32,7 +41,11 @@ export const Profile = async ({
                 ></Image>
                 <div className="z-10 relative bottom-9 left-7">
                     <Image
-                        src={`/vipers/${fullViper.image}`}
+                        src={`${
+                            firstLogin(fullViper.image)
+                                ? fullViper.image
+                                : `/vipers/${fullViper.image}`
+                        }`}
                         width={100}
                         height={100}
                         className="  rounded-full border-solid border-2 border-yellow-600 group-hover:opacity-80 max-h-24 max-w-24 object-cover object-top"
@@ -59,7 +72,9 @@ export const Profile = async ({
                         ) : null}
                         {/* <div className="relative left-20"> */}
                         {params !== undefined ? (
-                            <Follow id={id} followCookie={followCookie} />
+                            <div className="flex justify-start">
+                                <Follow id={id} isFollowed={isFollowed} />
+                            </div>
                         ) : null}
                         {/* </div> */}
                     </div>
@@ -72,6 +87,7 @@ export const Profile = async ({
                         <ShowFollows
                             follows={fullViper.follows?.length}
                             followers={false}
+                            profile={true}
                         >
                             {fullViper.follows?.map((followsId) => {
                                 return (
@@ -84,6 +100,7 @@ export const Profile = async ({
                         <ShowFollows
                             follows={fullViper.followers?.length}
                             followers={true}
+                            profile={true}
                         >
                             {fullViper.followers?.map((followsId) => {
                                 return (

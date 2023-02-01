@@ -1,10 +1,10 @@
 import { SkeletonCard } from "../../../components/SkeletonCard"
+import { TabGroupCard } from "../../../components/TabGroupCard"
 
 export default function Loading() {
     return (
-        <div className="space-y-4 mt-24">
-            <h1 className="text-xl font-medium text-gray-400/80">Loading...</h1>
-
+        <div className="space-y-4 ">
+            <TabGroupCard isLoading={true} />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <SkeletonCard isLoading={true} />
                 <SkeletonCard isLoading={true} />

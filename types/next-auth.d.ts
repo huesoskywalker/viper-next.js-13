@@ -12,7 +12,7 @@ declare module "next-auth" {
             email: string
             image: string
             // backgroundImage: string
-            emailVerified: null
+            // emailVerified: null
             // participated: string[]
             // location: string
             // followers: string[]

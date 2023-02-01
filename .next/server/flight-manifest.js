@@ -5,7 +5,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
         "name": "",
         "chunks": [
-          "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
         ],
         "async": false
       },
@@ -13,7 +13,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
         "name": "*",
         "chunks": [
-          "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
         ],
         "async": false
       },
@@ -21,85 +21,33 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./app/[id]/AddComment.tsx",
         "name": "default",
         "chunks": [
-          "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
         ],
         "async": false
       }
     },
-    "(app-client)/./app/profile/ShowFollows.tsx": {
+    "(app-client)/./app/[id]/AddLike.tsx": {
       "": {
-        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "id": "(sc_client)/./app/[id]/AddLike.tsx",
         "name": "",
         "chunks": [
-          "app/profile/layout:app/profile/layout"
+          "app/dashboard/vipers/[id]/page:app/dashboard/vipers/[id]/page"
         ],
         "async": false
       },
       "*": {
-        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "id": "(sc_client)/./app/[id]/AddLike.tsx",
         "name": "*",
         "chunks": [
-          "app/profile/layout:app/profile/layout"
+          "app/dashboard/vipers/[id]/page:app/dashboard/vipers/[id]/page"
         ],
         "async": false
       },
-      "default": {
-        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
-        "name": "default",
+      "AddLike": {
+        "id": "(sc_client)/./app/[id]/AddLike.tsx",
+        "name": "AddLike",
         "chunks": [
-          "app/profile/layout:app/profile/layout"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./components/Follow.tsx": {
-      "": {
-        "id": "(sc_client)/./components/Follow.tsx",
-        "name": "",
-        "chunks": [
-          "app/profile/layout:app/profile/layout"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./components/Follow.tsx",
-        "name": "*",
-        "chunks": [
-          "app/profile/layout:app/profile/layout"
-        ],
-        "async": false
-      },
-      "Follow": {
-        "id": "(sc_client)/./components/Follow.tsx",
-        "name": "Follow",
-        "chunks": [
-          "app/profile/layout:app/profile/layout"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./components/Tab.tsx": {
-      "": {
-        "id": "(sc_client)/./components/Tab.tsx",
-        "name": "",
-        "chunks": [
-          "app/events/(main)/layout:app/events/(main)/layout"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./components/Tab.tsx",
-        "name": "*",
-        "chunks": [
-          "app/events/(main)/layout:app/events/(main)/layout"
-        ],
-        "async": false
-      },
-      "Tab": {
-        "id": "(sc_client)/./components/Tab.tsx",
-        "name": "Tab",
-        "chunks": [
-          "app/events/(main)/layout:app/events/(main)/layout"
+          "app/dashboard/vipers/[id]/page:app/dashboard/vipers/[id]/page"
         ],
         "async": false
       }
@@ -109,7 +57,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/image.js",
         "name": "",
         "chunks": [
-          "app/dashboard/vipers/page:app/dashboard/vipers/page"
+          "app/events/(main)/page:app/events/(main)/page"
         ],
         "async": false
       },
@@ -117,7 +65,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/image.js",
         "name": "*",
         "chunks": [
-          "app/dashboard/vipers/page:app/dashboard/vipers/page"
+          "app/events/(main)/page:app/events/(main)/page"
         ],
         "async": false
       },
@@ -125,7 +73,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/image.js",
         "name": "default",
         "chunks": [
-          "app/dashboard/vipers/page:app/dashboard/vipers/page"
+          "app/events/(main)/page:app/events/(main)/page"
         ],
         "async": false
       }
@@ -135,7 +83,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "",
         "chunks": [
-          "app/dashboard/vipers/page:app/dashboard/vipers/page"
+          "app/events/(main)/layout:app/events/(main)/layout"
         ],
         "async": false
       },
@@ -143,7 +91,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "*",
         "chunks": [
-          "app/dashboard/vipers/page:app/dashboard/vipers/page"
+          "app/events/(main)/layout:app/events/(main)/layout"
         ],
         "async": false
       },
@@ -151,7 +99,137 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "default",
         "chunks": [
-          "app/dashboard/vipers/page:app/dashboard/vipers/page"
+          "app/events/(main)/layout:app/events/(main)/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/[id]/GoBackArrow.tsx": {
+      "": {
+        "id": "(sc_client)/./app/[id]/GoBackArrow.tsx",
+        "name": "",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./app/[id]/GoBackArrow.tsx",
+        "name": "*",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./app/[id]/GoBackArrow.tsx",
+        "name": "default",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/[id]/Participate.tsx": {
+      "": {
+        "id": "(sc_client)/./app/[id]/Participate.tsx",
+        "name": "",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./app/[id]/Participate.tsx",
+        "name": "*",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      },
+      "Participate": {
+        "id": "(sc_client)/./app/[id]/Participate.tsx",
+        "name": "Participate",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/[id]/ShowViper.tsx": {
+      "": {
+        "id": "(sc_client)/./app/[id]/ShowViper.tsx",
+        "name": "",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./app/[id]/ShowViper.tsx",
+        "name": "*",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./app/[id]/ShowViper.tsx",
+        "name": "default",
+        "chunks": [
+          "app/[id]/layout:app/[id]/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/profile/ShowFollows.tsx": {
+      "": {
+        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "name": "",
+        "chunks": [
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "name": "*",
+        "chunks": [
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./app/profile/ShowFollows.tsx",
+        "name": "default",
+        "chunks": [
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./components/Follow.tsx": {
+      "": {
+        "id": "(sc_client)/./components/Follow.tsx",
+        "name": "",
+        "chunks": [
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./components/Follow.tsx",
+        "name": "*",
+        "chunks": [
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+        ],
+        "async": false
+      },
+      "Follow": {
+        "id": "(sc_client)/./components/Follow.tsx",
+        "name": "Follow",
+        "chunks": [
+          "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
         ],
         "async": false
       }
@@ -204,32 +282,6 @@ self.__RSC_MANIFEST={
         "name": "default",
         "chunks": [
           "app/layout:app/layout"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./app/[id]/AddLike.tsx": {
-      "": {
-        "id": "(sc_client)/./app/[id]/AddLike.tsx",
-        "name": "",
-        "chunks": [
-          "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
-        ],
-        "async": false
-      },
-      "*": {
-        "id": "(sc_client)/./app/[id]/AddLike.tsx",
-        "name": "*",
-        "chunks": [
-          "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
-        ],
-        "async": false
-      },
-      "AddLike": {
-        "id": "(sc_client)/./app/[id]/AddLike.tsx",
-        "name": "AddLike",
-        "chunks": [
-          "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
         ],
         "async": false
       }
@@ -338,28 +390,28 @@ self.__RSC_MANIFEST={
         "async": false
       }
     },
-    "(app-client)/./app/profile/edit/[id]/EditProfile.tsx": {
+    "(app-client)/./components/Tab.tsx": {
       "": {
-        "id": "(sc_client)/./app/profile/edit/[id]/EditProfile.tsx",
+        "id": "(sc_client)/./components/Tab.tsx",
         "name": "",
         "chunks": [
-          "app/profile/edit/[id]/layout:app/profile/edit/[id]/layout"
+          "app/events/(main)/layout:app/events/(main)/layout"
         ],
         "async": false
       },
       "*": {
-        "id": "(sc_client)/./app/profile/edit/[id]/EditProfile.tsx",
+        "id": "(sc_client)/./components/Tab.tsx",
         "name": "*",
         "chunks": [
-          "app/profile/edit/[id]/layout:app/profile/edit/[id]/layout"
+          "app/events/(main)/layout:app/events/(main)/layout"
         ],
         "async": false
       },
-      "default": {
-        "id": "(sc_client)/./app/profile/edit/[id]/EditProfile.tsx",
-        "name": "default",
+      "Tab": {
+        "id": "(sc_client)/./components/Tab.tsx",
+        "name": "Tab",
         "chunks": [
-          "app/profile/edit/[id]/layout:app/profile/edit/[id]/layout"
+          "app/events/(main)/layout:app/events/(main)/layout"
         ],
         "async": false
       }
@@ -376,7 +428,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./app/[id]/AddComment.tsx",
       "name": "",
       "chunks": [
-        "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
       ],
       "async": false
     },
@@ -384,7 +436,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./app/[id]/AddComment.tsx",
       "name": "*",
       "chunks": [
-        "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
       ],
       "async": false
     },
@@ -392,85 +444,33 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./app/[id]/AddComment.tsx",
       "name": "default",
       "chunks": [
-        "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
       ],
       "async": false
     }
   },
-  "/home/hueso/code/viper2.2/app/profile/ShowFollows.tsx": {
+  "/home/hueso/code/viper2.2/app/[id]/AddLike.tsx": {
     "": {
-      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "id": "(app-client)/./app/[id]/AddLike.tsx",
       "name": "",
       "chunks": [
-        "app/profile/layout:app/profile/layout"
+        "app/dashboard/vipers/[id]/page:app/dashboard/vipers/[id]/page"
       ],
       "async": false
     },
     "*": {
-      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "id": "(app-client)/./app/[id]/AddLike.tsx",
       "name": "*",
       "chunks": [
-        "app/profile/layout:app/profile/layout"
+        "app/dashboard/vipers/[id]/page:app/dashboard/vipers/[id]/page"
       ],
       "async": false
     },
-    "default": {
-      "id": "(app-client)/./app/profile/ShowFollows.tsx",
-      "name": "default",
+    "AddLike": {
+      "id": "(app-client)/./app/[id]/AddLike.tsx",
+      "name": "AddLike",
       "chunks": [
-        "app/profile/layout:app/profile/layout"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/components/Follow.tsx": {
-    "": {
-      "id": "(app-client)/./components/Follow.tsx",
-      "name": "",
-      "chunks": [
-        "app/profile/layout:app/profile/layout"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./components/Follow.tsx",
-      "name": "*",
-      "chunks": [
-        "app/profile/layout:app/profile/layout"
-      ],
-      "async": false
-    },
-    "Follow": {
-      "id": "(app-client)/./components/Follow.tsx",
-      "name": "Follow",
-      "chunks": [
-        "app/profile/layout:app/profile/layout"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/components/Tab.tsx": {
-    "": {
-      "id": "(app-client)/./components/Tab.tsx",
-      "name": "",
-      "chunks": [
-        "app/events/(main)/layout:app/events/(main)/layout"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./components/Tab.tsx",
-      "name": "*",
-      "chunks": [
-        "app/events/(main)/layout:app/events/(main)/layout"
-      ],
-      "async": false
-    },
-    "Tab": {
-      "id": "(app-client)/./components/Tab.tsx",
-      "name": "Tab",
-      "chunks": [
-        "app/events/(main)/layout:app/events/(main)/layout"
+        "app/dashboard/vipers/[id]/page:app/dashboard/vipers/[id]/page"
       ],
       "async": false
     }
@@ -480,7 +480,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/image.js",
       "name": "",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/page:app/events/(main)/page"
       ],
       "async": false
     },
@@ -488,7 +488,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/image.js",
       "name": "*",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/page:app/events/(main)/page"
       ],
       "async": false
     },
@@ -496,7 +496,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/image.js",
       "name": "default",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/page:app/events/(main)/page"
       ],
       "async": false
     }
@@ -506,7 +506,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/image.js",
       "name": "",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/page:app/events/(main)/page"
       ],
       "async": false
     },
@@ -514,7 +514,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/image.js",
       "name": "*",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/page:app/events/(main)/page"
       ],
       "async": false
     },
@@ -522,7 +522,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/image.js",
       "name": "default",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/page:app/events/(main)/page"
       ],
       "async": false
     }
@@ -532,7 +532,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     },
@@ -540,7 +540,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     },
@@ -548,7 +548,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "default",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     }
@@ -558,7 +558,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     },
@@ -566,7 +566,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     },
@@ -574,7 +574,137 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "default",
       "chunks": [
-        "app/dashboard/vipers/page:app/dashboard/vipers/page"
+        "app/events/(main)/layout:app/events/(main)/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/app/[id]/GoBackArrow.tsx": {
+    "": {
+      "id": "(app-client)/./app/[id]/GoBackArrow.tsx",
+      "name": "",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./app/[id]/GoBackArrow.tsx",
+      "name": "*",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./app/[id]/GoBackArrow.tsx",
+      "name": "default",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/app/[id]/Participate.tsx": {
+    "": {
+      "id": "(app-client)/./app/[id]/Participate.tsx",
+      "name": "",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./app/[id]/Participate.tsx",
+      "name": "*",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    },
+    "Participate": {
+      "id": "(app-client)/./app/[id]/Participate.tsx",
+      "name": "Participate",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/app/[id]/ShowViper.tsx": {
+    "": {
+      "id": "(app-client)/./app/[id]/ShowViper.tsx",
+      "name": "",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./app/[id]/ShowViper.tsx",
+      "name": "*",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./app/[id]/ShowViper.tsx",
+      "name": "default",
+      "chunks": [
+        "app/[id]/layout:app/[id]/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/app/profile/ShowFollows.tsx": {
+    "": {
+      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "name": "",
+      "chunks": [
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "name": "*",
+      "chunks": [
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./app/profile/ShowFollows.tsx",
+      "name": "default",
+      "chunks": [
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+      ],
+      "async": false
+    }
+  },
+  "/home/hueso/code/viper2.2/components/Follow.tsx": {
+    "": {
+      "id": "(app-client)/./components/Follow.tsx",
+      "name": "",
+      "chunks": [
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./components/Follow.tsx",
+      "name": "*",
+      "chunks": [
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
+      ],
+      "async": false
+    },
+    "Follow": {
+      "id": "(app-client)/./components/Follow.tsx",
+      "name": "Follow",
+      "chunks": [
+        "app/dashboard/vipers/[id]/layout:app/dashboard/vipers/[id]/layout"
       ],
       "async": false
     }
@@ -627,32 +757,6 @@ self.__RSC_MANIFEST={
       "name": "default",
       "chunks": [
         "app/layout:app/layout"
-      ],
-      "async": false
-    }
-  },
-  "/home/hueso/code/viper2.2/app/[id]/AddLike.tsx": {
-    "": {
-      "id": "(app-client)/./app/[id]/AddLike.tsx",
-      "name": "",
-      "chunks": [
-        "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
-      ],
-      "async": false
-    },
-    "*": {
-      "id": "(app-client)/./app/[id]/AddLike.tsx",
-      "name": "*",
-      "chunks": [
-        "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
-      ],
-      "async": false
-    },
-    "AddLike": {
-      "id": "(app-client)/./app/[id]/AddLike.tsx",
-      "name": "AddLike",
-      "chunks": [
-        "app/profile/[profileSlug]/page:app/profile/[profileSlug]/page"
       ],
       "async": false
     }
@@ -865,28 +969,28 @@ self.__RSC_MANIFEST={
       "async": false
     }
   },
-  "/home/hueso/code/viper2.2/app/profile/edit/[id]/EditProfile.tsx": {
+  "/home/hueso/code/viper2.2/components/Tab.tsx": {
     "": {
-      "id": "(app-client)/./app/profile/edit/[id]/EditProfile.tsx",
+      "id": "(app-client)/./components/Tab.tsx",
       "name": "",
       "chunks": [
-        "app/profile/edit/[id]/layout:app/profile/edit/[id]/layout"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     },
     "*": {
-      "id": "(app-client)/./app/profile/edit/[id]/EditProfile.tsx",
+      "id": "(app-client)/./components/Tab.tsx",
       "name": "*",
       "chunks": [
-        "app/profile/edit/[id]/layout:app/profile/edit/[id]/layout"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     },
-    "default": {
-      "id": "(app-client)/./app/profile/edit/[id]/EditProfile.tsx",
-      "name": "default",
+    "Tab": {
+      "id": "(app-client)/./components/Tab.tsx",
+      "name": "Tab",
       "chunks": [
-        "app/profile/edit/[id]/layout:app/profile/edit/[id]/layout"
+        "app/events/(main)/layout:app/events/(main)/layout"
       ],
       "async": false
     }

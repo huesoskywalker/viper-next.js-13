@@ -1,22 +1,21 @@
-import { Event } from "./Event"
+// import { Event } from "./Event"
 import { getEventById } from "../../lib/events"
 import { PageProps } from "../../lib/getCategories"
-import CommentsSkeleton, { Comments } from "./Comments"
+import { Comments } from "./Comments"
 import { Suspense } from "react"
+import { CommentSkeleton } from "../../components/CommentSkeleton"
 
 export default async function EventEditPage({ params }: PageProps) {
-    const id: string = params.id
-    const selectedEvent = await getEventById(id)
+    const eventId: string = params.id
+    const selectedEvent = await getEventById(eventId)
 
     return (
-        <div className="space-y-8 lg:space-y-14">
-            {/* @ts-expect-error Server Component */}
-            <Event selectedEvent={selectedEvent} id={id} />
-
-            <div className="text-xl font-medium text-gray-400/80  flex justify-start mr-3 ">
-                <Suspense fallback={<CommentsSkeleton />}>
+        <div className="space-y-8 lg:space-y-6 ">
+            <div className="border-t-[1px] border-gray-700/80" />
+            <div className="text-xl font-medium text-gray-400/80  w-full ">
+                <Suspense fallback={<CommentSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
-                    <Comments comments={selectedEvent?.comments} id={id} />
+                    <Comments comments={selectedEvent?.comments} id={eventId} />
                 </Suspense>
             </div>
         </div>

@@ -11,13 +11,13 @@ export interface Viper {
     biography: string
     location: string
     participated: string[]
-    followers: string[]
-    follows: string[]
+    followers: ObjectId[]
+    follows: ObjectId[]
     likes: string[]
     blog: Blog[]
-    blogLikes: externalBlogs[]
-    blogCommented: externalBlogs[]
-    blogRePosts: externalBlogs[]
+    blogLikes: ExternalBlog[]
+    blogCommented: CommentBlog[]
+    blogRePosts: ExternalBlog[]
 }
 
 export interface Blog {
@@ -29,7 +29,13 @@ export interface Blog {
     timestamp: number
 }
 
-export interface externalBlogs {
+export interface ExternalBlog {
+    readonly bloggerId: Object
+    readonly blogId: Object
+    readonly viperId: Object
+    timestamp: number
+}
+export interface CommentBlog {
     readonly bloggerId: Object
     readonly blogId: Object
     readonly viperId: Object
@@ -324,4 +330,18 @@ export async function getBlog(bloggerId: string, blogId: string) {
     // } catch (error) {
     //     console.error(error)
     // }
+}
+
+export default async function getViperFollowById(
+    viperId: string,
+    currentViper: string
+) {
+    const client = await clientPromise
+    const db = client.db("viperDb").collection<Viper>("users")
+
+    const viperFollower = db.findOne({
+        _id: new ObjectId(viperId),
+        followers: new ObjectId(currentViper),
+    })
+    return viperFollower
 }

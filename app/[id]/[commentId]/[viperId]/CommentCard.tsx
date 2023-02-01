@@ -1,10 +1,10 @@
-import { getEventById, Comments } from "../../../../lib/events"
 import { getViperById } from "../../../../lib/vipers"
 import Image from "next/image"
 import { cookies } from "next/headers"
 import AddComment from "../../AddComment"
 import { AddLike } from "../../AddLike"
 import Link from "next/link"
+import RePostBlog from "../../../../components/RePostBlog"
 
 export async function CommentCard({
     eventId,
@@ -35,10 +35,9 @@ export async function CommentCard({
 }) {
     const blogger_id = eventId.replace(/['"]+/g, "")
     const blogger = await getViperById(blogger_id)
-    const viper = await getViperById(viperId)
-
-    const stringifyCommentId = JSON.stringify(commentId)
-    const comment_id = stringifyCommentId.replace(/[\W]+/g, "")
+    const viper_id = viperId.replace(/['"]+/g, "")
+    const viper = await getViperById(viper_id)
+    const comment_id = commentId.replace(/[\W]+/g, "")
 
     const likedCookie =
         cookies().get(`_${comment_id}_is_liked`)?.value || "none"
@@ -48,8 +47,8 @@ export async function CommentCard({
         cookies().get(`_${timestamp}_is_rePosted`)?.value || "none"
 
     return (
-        <div className="space-y-2">
-            <Link href={`/vipers/${viperId}`} className="space-y-4">
+        <div className="space-y-2 ">
+            <Link href={`/vipers/${viper_id}`} className="space-y-4">
                 <div className="flex items-center space-x-2">
                     <div className="h-6 w-6 rounded-full bg-gray-700">
                         {" "}
@@ -96,9 +95,16 @@ export async function CommentCard({
                     blog={blog}
                     showComment={showComment}
                 />
-                {/* <span className="text-sm text-gray-400 flex justify-start self-end ml-2">
-                    Replies: {replies}
-                </span> */}
+                {/* {blog ?? (
+                    <RePostBlog
+                        bloggerId={eventId}
+                        blogId={comment_id}
+                        viperId={""}
+                        rePosts={rePosts}
+                        timestamp={timestamp}
+                        rePostCookie={rePostCookie}
+                    />
+                )} */}
             </div>
         </div>
     )

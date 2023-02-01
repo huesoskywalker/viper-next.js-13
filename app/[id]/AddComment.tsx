@@ -69,6 +69,12 @@ export default function AddComment({
 
             await response.json()
         } else if (!event && reply && !blog) {
+            console.log(id)
+            console.log(`----------id---------`)
+            console.log(viperId)
+            console.log(`--------viperId--------`)
+            console.log(commentId)
+            console.log(`--------commentId- addComment-------`)
             const response = await fetch(`/api/comment-comment`, {
                 method: "POST",
                 headers: {
@@ -175,7 +181,7 @@ export default function AddComment({
                     >
                         Bloggie
                     </button>
-                ) : !event && !reply && !blog && id === null ? null : blog ? (
+                ) : blog ? (
                     <div className="flex justify-start space-x-4">
                         {reply ? (
                             <button
@@ -233,33 +239,8 @@ export default function AddComment({
                                 </svg>
                             </button>
                         )}
-                        <button
-                            onClick={rePostBlog}
-                            className="grid grid-cols-2 ml-1 text-gray-400 hover:text-green-700"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                className={`w-6 h-6 hover:text-green-700 hover:animate-pulse ${
-                                    isPending && !pendingComment
-                                        ? "text-green-700"
-                                        : `text-${isRePosted}-700`
-                                }`}
-                                // className={"h-5 w-5 text-green-500"}
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 01.615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 00-1.06 1.061l2.999 3a.75.75 0 001.06 0l3.001-3a.75.75 0 10-1.06-1.06l-1.748 1.747a41.31 41.31 0 00-.264-3.386 2.18 2.18 0 00-1.97-1.913 41.512 41.512 0 00-7.477 0 2.18 2.18 0 00-1.969 1.913 41.16 41.16 0 00-.16 1.61.75.75 0 101.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 01.615-.597A40.012 40.012 0 0110 4.5zM5.281 9.22a.75.75 0 00-1.06 0l-3.001 3a.75.75 0 101.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 001.97 1.913 41.533 41.533 0 007.477 0 2.18 2.18 0 001.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 10-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 01-.615.597 40.013 40.013 0 01-7.208 0 .68.68 0 01-.615-.597 39.785 39.785 0 01-.25-3.15l1.689 1.69a.75.75 0 001.06-1.061l-2.999-3z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                            <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
-                                {rePosts ?? "0"}
-                            </span>
-                        </button>
                     </div>
-                ) : (
+                ) : event ? (
                     <button
                         onClick={writeComment}
                         className="grid grid-cols-2 ml-1 text-gray-400 hover:text-blue-700"
@@ -278,7 +259,30 @@ export default function AddComment({
                                 d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
                             />
                         </svg>
-                        <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                        <span className=" text-xs text-gray-400 flex justify-start self-end ml-2">
+                            {commentReplies ?? "0"}
+                        </span>
+                    </button>
+                ) : (
+                    <button
+                        onClick={writeComment}
+                        className="grid grid-cols-2 ml-1 text-gray-400 hover:text-blue-700"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5 "
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+                            />
+                        </svg>
+                        <span className=" text-xs text-gray-400 flex justify-start self-end ml-2">
                             {commentReplies ?? "0"}
                         </span>
                     </button>
@@ -286,7 +290,7 @@ export default function AddComment({
             </div>
             <div>
                 {openCommentInput ? (
-                    <div className="fixed inset-0 z-10 overflow-y-auto">
+                    <div className="fixed inset-0 z-30 overflow-y-auto">
                         <div className="flex items-center min-h-screen px-4 py-8">
                             <div className="relative w-full max-w-lg p-4 mx-auto bg-gray-800 rounded-xl shadow-lg">
                                 <div className="m-1 ">

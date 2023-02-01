@@ -29,6 +29,7 @@ export default async function handler(
                         text: body.comment,
                         likes: [],
                         replies: [],
+                        timestamp: Date.now(),
                     },
                 },
             }

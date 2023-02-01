@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { getCookieParser } from "next/dist/server/api-utils"
-import { useRouter } from "next/navigation"
+import { useRouter, useSelectedLayoutSegments } from "next/navigation"
 import { useTransition, useState, useEffect } from "react"
 
 export function AddLike({
@@ -178,7 +178,7 @@ export function AddLike({
                         viewBox="0 0 24 24"
                         strokeWidth={1.8}
                         stroke="currentColor"
-                        className={`w-6 h-6 mt-1 text-gray-400 hover:text-yellow-900 ${
+                        className={`w-5 h-5 mt-1 text-gray-400 hover:text-yellow-900 ${
                             isPending
                                 ? "text-yellow-600"
                                 : `text-${isLiked}-700`
@@ -191,7 +191,7 @@ export function AddLike({
                         />
                     </svg>
                 )}
-                <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                <span className=" text-xs text-gray-400 flex justify-start self-end ml-2">
                     {likes ?? "0"}
                 </span>
             </button>

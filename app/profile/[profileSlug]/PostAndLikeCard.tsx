@@ -1,5 +1,5 @@
 import { getBlog } from "../../../lib/vipers"
-import { CommentCard } from "../../[id]/[viperId]/[commentId]/CommentCard"
+import { CommentCard } from "../../[id]/[commentId]/[viperId]/CommentCard"
 
 export default async function PostAndLikeCard({
     bloggerId,

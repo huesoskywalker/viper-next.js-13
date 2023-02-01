@@ -26,7 +26,7 @@ export async function ReplyCard({
 
     const likedCookie = cookies().get(`_${reply_id}_is_liked`)?.value || "none"
     return (
-        <div className="space-y-2 lg:border-b lg:border-gray-800 pb-3 mr-10">
+        <div className="space-y-2 lg:border-b lg:border-gray-800 pb-3 mr-10 mt-5">
             <Link href={`/vipers/${viperId}`} className="space-y-4">
                 <div className="flex items-center space-x-2">
                     <div className="h-6 w-6 rounded-full bg-gray-700">
@@ -39,7 +39,7 @@ export async function ReplyCard({
                             className="rounded-full col-start-1 "
                         />
                     </div>
-                    <span className="text-sm text-white mt-5 ml-5">
+                    <span className="text-sm text-white  ml-5">
                         {viper?.name}
                     </span>
                 </div>

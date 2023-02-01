@@ -12,7 +12,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
     return (
         <div>
             <div className="grid grid-cols-4 gap-4 ">
-                <div className=" lg:border-r lg:border-gray-800 ">
+                <div className="col-span-1 lg:border-r lg:border-gray-800 ">
                     <h1 className="text-gray-300 text-sm py-3 ">Contacts</h1>
                     {follows?.map((followsId) => {
                         return (

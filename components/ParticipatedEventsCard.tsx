@@ -10,6 +10,7 @@ export const ParticipatedEventsCard = async ({
     id: string
     href: string
 }) => {
+    console.log(id)
     const event = await getEventById(id)
 
     return (

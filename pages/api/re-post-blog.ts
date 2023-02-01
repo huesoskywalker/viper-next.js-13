@@ -12,7 +12,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         .aggregate([
             {
                 $match: {
-                    _id: new ObjectId(body.bloggerId),
+                    _id: new ObjectId(body.viperId),
                 },
             },
             {

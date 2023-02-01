@@ -1,6 +1,6 @@
 import { getCurrentViper } from "../../lib/session"
 import { getViperById } from "../../lib/vipers"
-import { CommentCard } from "../[id]/[viperId]/[commentId]/CommentCard"
+import { CommentCard } from "../[id]/[commentId]/[viperId]/CommentCard"
 
 export default async function ProfilePage() {
     const viper = await getCurrentViper()

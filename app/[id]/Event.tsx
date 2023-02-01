@@ -2,11 +2,14 @@ import Image from "next/image"
 import { Suspense } from "react"
 import { type EventInterface } from "../../lib/events"
 import { EventInfo, InfoSkeleton } from "./EventInfo"
-import Link from "next/link"
 import { AddLike } from "./AddLike"
 import { cookies } from "next/headers"
 import AddComment from "./AddComment"
 import { getViperById } from "../../lib/vipers"
+import ShowViper from "./ShowViper"
+import OrganizerInfo from "./OrganizerInfo"
+import ShowFollows from "../profile/ShowFollows"
+import ViperInfo from "../profile/ViperInfo"
 
 export async function Event({
     selectedEvent,
@@ -25,17 +28,17 @@ export async function Event({
                 <div className="space-y-2">
                     <Image
                         src={`/upload/${selectedEvent?.image}`}
-                        className="hidden rounded-lg  lg:block"
                         alt={selectedEvent?.title}
                         height={400}
                         width={400}
+                        className="hidden rounded-lg  lg:block max-h-24  object-cover object-center"
                     />
 
                     <div className="flex space-x-2">
                         <div className="w-1/3">
                             <Image
                                 src={`/upload/${selectedEvent?.image}`}
-                                className="rounded-lg grayscale"
+                                className="rounded-lg grayscale max-h-8  object-cover object-center"
                                 alt={selectedEvent?.title}
                                 height={180}
                                 width={180}
@@ -44,7 +47,7 @@ export async function Event({
                         <div className="w-1/3">
                             <Image
                                 src={`/upload/${selectedEvent?.image}`}
-                                className="rounded-lg grayscale"
+                                className="rounded-lg grayscale max-h-8  object-cover object-center"
                                 alt={selectedEvent?.title}
                                 height={180}
                                 width={180}
@@ -53,7 +56,7 @@ export async function Event({
                         <div className="w-1/3">
                             <Image
                                 src={`/upload/${selectedEvent?.image}`}
-                                className="rounded-lg grayscale"
+                                className="rounded-lg grayscale max-h-8  object-cover object-center"
                                 alt={selectedEvent?.title}
                                 height={180}
                                 width={180}
@@ -84,27 +87,53 @@ export async function Event({
                     <EventInfo selectedEvent={selectedEvent} />
                 </Suspense>
             </div>
-            <div className="mt-2 col-start-1 col-span-2">
-                <Link
-                    href={`/vipers/${viper?._id}`}
-                    className="truncate text-xl font-medium text-white lg:text-2xl"
+            <div className="mt-2 col-start-1 col-span-2 max-h-auto">
+                <ShowViper
+                    viperName={viper!.name}
+                    // viperImage={viper!.image}
                 >
-                    <Image
-                        src={`/vipers/${viper?.image}`}
-                        alt={"viper?.image"}
-                        width={50}
-                        height={50}
-                        className="rounded-full"
+                    {/* @ts-expect-error Async Server Component */}
+                    <OrganizerInfo
+                        key={JSON.stringify(viper?._id)}
+                        id={JSON.stringify(viper?._id)}
+                        eventId={id}
                     />
-                    <span>{viper?.name}</span>
-                </Link>
+                    <div className="mt-5 space-x-8 text-gray-300 text-xs">
+                        <ShowFollows
+                            follows={viper!.follows?.length}
+                            followers={false}
+                            profile={false}
+                        >
+                            {viper!.follows?.map((followsId) => {
+                                return (
+                                    /* @ts-expect-error Async Server Component */
+                                    <ViperInfo key={followsId} id={followsId} />
+                                )
+                            })}
+                        </ShowFollows>
+
+                        <ShowFollows
+                            follows={viper!.followers?.length}
+                            followers={false}
+                            profile={false}
+                        >
+                            {viper!.followers?.map((followsId) => {
+                                return (
+                                    /* @ts-expect-error Async Server Component */
+                                    <ViperInfo key={followsId} id={followsId} />
+                                )
+                            })}
+                        </ShowFollows>
+                    </div>
+                </ShowViper>
             </div>
             <div className="text-gray-300 col-start-4">
                 <AddLike
                     eventId={id}
-                    commentId={""}
+                    commentId={JSON.stringify(selectedEvent._id)}
                     replyId={""}
                     likes={selectedEvent?.likes.length}
+                    // timestamp={selectedEvent.timestamp}
                     event={true}
                     reply={false}
                     blog={false}
@@ -113,9 +142,9 @@ export async function Event({
 
                 <AddComment
                     id={id}
-                    commentId={""}
+                    commentId={JSON.stringify(selectedEvent._id)}
                     commentReplies={selectedEvent?.comments.length}
-                    timestamp={0}
+                    // timestamp={0}
                     event={true}
                     reply={false}
                     blog={false}

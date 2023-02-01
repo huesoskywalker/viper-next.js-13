@@ -8,6 +8,9 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const comment_id = body.commentId.replace(/[\W]+/g, "")
+    console.log(comment_id)
+    console.log(`----comment-comment--------`)
     const client = await clientPromise
     const db = client
         .db("viperDb")
@@ -17,14 +20,13 @@ export default async function handler(
             const commentTheComment = await db.findOneAndUpdate(
                 {
                     _id: new ObjectId(body.id),
-                    "comments._id": new ObjectId(body.commentId),
-                    // "comments.text": body.viperComment,
+                    "comments._id": new ObjectId(comment_id),
                 },
                 {
                     $push: {
                         "comments.$.replies": {
                             _id: new ObjectId(),
-                            viperId: body.viperId,
+                            viperId: new ObjectId(body.viperId),
                             reply: body.comment,
                             likes: [],
                         },

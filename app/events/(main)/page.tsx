@@ -8,7 +8,6 @@ export default async function EventsPage({}) {
 
     return (
         <div className="space-y-9">
-            <h1>Events</h1>
             <div className="flex justify-between">
                 <Suspense fallback={<Loading />}>
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

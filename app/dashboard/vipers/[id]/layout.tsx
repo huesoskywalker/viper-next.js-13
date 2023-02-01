@@ -10,13 +10,17 @@ export default async function Layout({ children, params }: PageProps) {
     const id: string = params.id
     const viper = await getViperById(id)
     const category = await fetchProfile()
-    // const viper = await getCurrentViper()
+    const currentViper = await getCurrentViper()
     // const fullViper = await getViperById(viper!.id)
     return (
         <div className="grid grid-cols-7 gap-4 ">
-            <div className="col-span-7 mx-2 max-w-6xl  lg:border-x  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-2">
+            <div className="col-span-7 mx-2 max-w-6xl  lg:border-r  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-2">
                 {/* @ts-expect-error Async Server Component */}
-                <Profile fullViper={viper} params={id} />
+                <Profile
+                    fullViper={viper!}
+                    params={id}
+                    currentViper={currentViper!.id}
+                />
                 <div className="flex justify-center lg:border-b lg:border-gray-800 pb-3 mr-10">
                     <AddComment
                         id={null}

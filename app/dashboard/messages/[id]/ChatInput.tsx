@@ -35,12 +35,12 @@ export default function ChatInput({
             <label className="flex items-stretch ">
                 <input
                     type="text"
-                    className=" p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    className="p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
                 />
-                <button onClick={sendMessage} className="">
+                <button onClick={sendMessage}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
