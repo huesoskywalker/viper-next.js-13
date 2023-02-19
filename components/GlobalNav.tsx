@@ -110,7 +110,7 @@ export default function GlobalNav() {
                     ) : session ? (
                         <li>
                             <Link
-                                href="#"
+                                href="/"
                                 onClick={() => signOut()}
                                 className="block rounded-md px-3 py-2 text-sm font-medium text-gray-400 hover:text-gray-300 hover:bg-gray-800"
                             >

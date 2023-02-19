@@ -14,10 +14,16 @@ export interface EventInterface {
     creationDate: Date
     image: string
     price: number
-    participants: string[]
+    participants: Participants[]
     editionDate: Date
-    likes: string[]
+    likes: Likes[]
     comments: Comments[]
+}
+export interface Participants {
+    readonly _id: ObjectId
+}
+export interface Likes {
+    readonly _id: ObjectId
 }
 export interface Comments {
     readonly _id: ObjectId
@@ -213,7 +219,11 @@ export async function getViperCreatedEvents(id: string) {
                     date: 1,
                     category: 1,
                     creationDate: 1,
+                    price: 1,
                     image: 1,
+                    participants: 1,
+                    likes: 1,
+                    comments: 1,
                 },
             },
         ])
@@ -271,6 +281,7 @@ export async function getEventComment(eventId: string, commentId: string) {
                     "comments._id": new ObjectId(commentId),
                 },
             },
+
             {
                 $project: {
                     _id: 0,
@@ -322,9 +333,12 @@ export async function getEventReplies(
                     replies: "$comments.replies",
                 },
             },
-            {
-                $unwind: "$replies",
-            },
+            // {
+            //     $unwind: "$replies",
+            // },
+            // {
+            //     $sort: { "replies.timestamp": -1 },
+            // },
         ])
         .toArray()
 

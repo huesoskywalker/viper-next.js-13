@@ -4,6 +4,7 @@ import { PageProps } from "../../lib/getCategories"
 import { Comments } from "./Comments"
 import { Suspense } from "react"
 import { CommentSkeleton } from "../../components/CommentSkeleton"
+import Loading from "../loading"
 
 export default async function EventEditPage({ params }: PageProps) {
     const eventId: string = params.id
@@ -11,7 +12,6 @@ export default async function EventEditPage({ params }: PageProps) {
 
     return (
         <div className="space-y-8 lg:space-y-6 ">
-            <div className="border-t-[1px] border-gray-700/80" />
             <div className="text-xl font-medium text-gray-400/80  w-full ">
                 <Suspense fallback={<CommentSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}

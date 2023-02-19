@@ -7,7 +7,7 @@ export default async function ProfileSlugPage() {
     const blogLikesAndRePosts = await getBlogLikesAndRePosts(viper!.id)
 
     return (
-        <div>
+        <div className="space-y-4">
             {blogLikesAndRePosts?.map((blog) => {
                 return (
                     /* @ts-expect-error Server Component */

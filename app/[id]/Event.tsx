@@ -21,7 +21,6 @@ export async function Event({
     const likedCookie = cookies().get("_is_liked")?.value || "none"
 
     const viper = await getViperById(selectedEvent?.organizer.id)
-
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">
@@ -34,7 +33,7 @@ export async function Event({
                         className="hidden rounded-lg  lg:block max-h-24  object-cover object-center"
                     />
 
-                    <div className="flex space-x-2">
+                    {/* <div className="flex space-x-2">
                         <div className="w-1/3">
                             <Image
                                 src={`/upload/${selectedEvent?.image}`}
@@ -62,7 +61,7 @@ export async function Event({
                                 width={180}
                             />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -77,6 +76,18 @@ export async function Event({
                     {selectedEvent?.content}
                 </div>
                 <div className="space-y-4 text-sm text-gray-200 flex">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="w-[15px] h-[15px]"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
                     {selectedEvent?.address}
                 </div>
             </div>
@@ -90,13 +101,15 @@ export async function Event({
             <div className="mt-2 col-start-1 col-span-2 max-h-auto">
                 <ShowViper
                     viperName={viper!.name}
+                    event={true}
+                    blog={true}
                     // viperImage={viper!.image}
                 >
                     {/* @ts-expect-error Async Server Component */}
                     <OrganizerInfo
                         key={JSON.stringify(viper?._id)}
                         id={JSON.stringify(viper?._id)}
-                        eventId={id}
+                        event={true}
                     />
                     <div className="mt-5 space-x-8 text-gray-300 text-xs">
                         <ShowFollows
@@ -107,20 +120,26 @@ export async function Event({
                             {viper!.follows?.map((followsId) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
-                                    <ViperInfo key={followsId} id={followsId} />
+                                    <ViperInfo
+                                        key={JSON.stringify(followsId)}
+                                        id={JSON.stringify(followsId)}
+                                    />
                                 )
                             })}
                         </ShowFollows>
 
                         <ShowFollows
                             follows={viper!.followers?.length}
-                            followers={false}
+                            followers={true}
                             profile={false}
                         >
                             {viper!.followers?.map((followsId) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
-                                    <ViperInfo key={followsId} id={followsId} />
+                                    <ViperInfo
+                                        key={JSON.stringify(followsId)}
+                                        id={JSON.stringify(followsId)}
+                                    />
                                 )
                             })}
                         </ShowFollows>
@@ -131,9 +150,9 @@ export async function Event({
                 <AddLike
                     eventId={id}
                     commentId={JSON.stringify(selectedEvent._id)}
-                    replyId={""}
+                    replyId={JSON.stringify(selectedEvent._id)}
                     likes={selectedEvent?.likes.length}
-                    // timestamp={selectedEvent.timestamp}
+                    timestamp={selectedEvent.creationDate}
                     event={true}
                     reply={false}
                     blog={false}

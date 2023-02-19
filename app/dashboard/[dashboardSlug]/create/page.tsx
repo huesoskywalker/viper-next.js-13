@@ -1,37 +1,43 @@
 import { getViperCreatedEvents, EventInterface } from "../../../../lib/events"
 import { getCurrentViper } from "../../../../lib/session"
-import { EventCard } from "../../../../components/EventCard"
 import { EditEvent } from "../EditEvent"
 import { Suspense } from "react"
 import Loading from "./loading"
+import { Event } from "../../../[id]/Event"
+import ShowEventButton from "./ShowEventButton"
 
 export default async function CreatePage() {
     const viper = await getCurrentViper()
     if (!viper) return
     const events: EventInterface[] = await getViperCreatedEvents(viper.id)
     const lastEvent: EventInterface = events[0]
-
+    const stringId = JSON.stringify(lastEvent?._id)
+    const eventId = stringId?.slice(1, -1)
     return (
-        <div>
+        <div className="flex justify-start">
             <Suspense fallback={<Loading />}>
-                {lastEvent ? (
-                    <div>
-                        <EditEvent
-                            href={`/dashboard/myevents/${lastEvent._id}`}
-                        />
-                        <EventCard
-                            key={JSON.stringify(lastEvent._id)}
-                            event={lastEvent}
-                            href={`/${lastEvent._id}`}
-                        />
-                    </div>
-                ) : (
-                    <h1 className="text-gray-300 font-bold">
-                        Create your first Event!
-                    </h1>
-                )}
+                <ShowEventButton>
+                    {lastEvent ? (
+                        <div>
+                            <span className="text-gray-400 text-xs flex justify-start align-baseline">
+                                The last event you created
+                            </span>
+                            <EditEvent
+                                href={`/dashboard/myevents/${eventId}`}
+                            />
+                            {/* @ts-expect-error Async Server Component */}
+                            <Event
+                                selectedEvent={lastEvent}
+                                id={JSON.stringify(lastEvent._id)}
+                            />
+                        </div>
+                    ) : (
+                        <h1 className="text-gray-300 font-bold">
+                            Create your first Event!
+                        </h1>
+                    )}
+                </ShowEventButton>
             </Suspense>
-            <div></div>
         </div>
     )
 }

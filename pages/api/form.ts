@@ -25,7 +25,7 @@ export default async function handler(
                 location: body.location,
                 address: body.address,
                 date: new Date(body.date + "T" + body.time),
-                category: body.category.toLowerCase(),
+                category: body.category,
                 creationDate: new Date(),
                 price: Number(body.price),
                 image: body.imageUrl,

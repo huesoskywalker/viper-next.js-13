@@ -61,7 +61,7 @@ export default function ShowFollows({
                         </div>
                     </div>
                 ) : (
-                    <div className="absolute top-0 left-0 z-10 overflow-y-auto">
+                    <div className="relative top-0 left-0 z-10 overflow-y-auto">
                         <div className="flex items-center min-h-screen px-4 py-8">
                             <div className="relative w-[14rem] h-[11rem] max-w-lg p-4 mx-auto bg-gray-800 rounded-xl shadow-lg">
                                 <button

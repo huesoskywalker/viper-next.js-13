@@ -1,6 +1,7 @@
 import { getViperById } from "../../../lib/vipers"
 import Image from "next/image"
 import Link from "next/link"
+import { firstLogin } from "../../../lib/utils"
 
 export default async function Contacts({ id }: { id: string }) {
     const viper = await getViperById(id!)
@@ -11,14 +12,18 @@ export default async function Contacts({ id }: { id: string }) {
                 <div className="h-6 w-6 rounded-full bg-gray-700 ">
                     {" "}
                     <Image
-                        src={`/vipers/${viper?.image}`}
+                        src={`${
+                            firstLogin(viper!.image)
+                                ? viper?.image
+                                : `/vipers/${viper?.image}`
+                        }`}
                         alt={`/vipers/${viper?.image}`}
                         width={50}
                         height={50}
                         className="rounded-full col-start-1 my-2"
                     />
                 </div>
-                <div className="text-sm text-white mt-5 -ml-2 flex justify-start">
+                <div className="text-sm text-white mt-3 -ml-2 flex justify-start">
                     {viper?.name}
                 </div>
             </Link>

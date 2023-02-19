@@ -1,5 +1,7 @@
+import { Suspense } from "react"
 import { getBlog } from "../../../lib/vipers"
 import { CommentCard } from "../../[id]/[commentId]/[viperId]/CommentCard"
+import { CommentSkeleton } from "../../../components/CommentSkeleton"
 
 export default async function PostAndLikeCard({
     bloggerId,
@@ -15,32 +17,35 @@ export default async function PostAndLikeCard({
     showComment: string
 }) {
     const allBlogs = await getBlog(bloggerId, blogId)
-    // console.log(allBlogs)
-    // console.log(`-----------`)
 
     const viper_id = viperId.replace(/['"]+/g, "")
+    const blogger_id = bloggerId.replace(/['"]+/g, "")
+    const blog_id = blogId.replace(/['"]+/g, "")
     // const viper_id = JSON.stringify(viperId)
     return (
         <div>
+            {/* <Suspense fallback={<CommentSkeleton />}> */}
             {allBlogs?.map((blog) => {
                 return (
                     /* @ts-expect-error Server Component */
                     <CommentCard
                         key={JSON.stringify(blog._id)}
-                        eventId={bloggerId}
+                        eventId={blogger_id}
                         viperId={viper_id}
-                        commentId={blogId}
+                        commentId={blog_id}
                         text={blog.content}
                         timestamp={blog.timestamp}
                         likes={blog.likes?.length}
                         replies={blog.comments?.length}
                         rePosts={blog.rePosts.length}
-                        reply={false}
+                        event={false}
+                        reply={true}
                         blog={true}
                         showComment={showComment}
                     />
                 )
             })}
+            {/* </Suspense> */}
         </div>
     )
 }

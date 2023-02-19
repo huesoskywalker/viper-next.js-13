@@ -2,6 +2,7 @@ import { getCurrentViper } from "../../../../lib/session"
 import { getViperLikedEvents } from "../../../../lib/vipers"
 import { ParticipatedEventsCard } from "../../../../components/ParticipatedEventsCard"
 import { Suspense } from "react"
+import Loading from "./loading"
 // import Loading from "./loading"
 
 export default async function LikedPage() {
@@ -12,16 +13,21 @@ export default async function LikedPage() {
     const events = liked.map((event) => {
         return event.likes
     })
-    console.log(events)
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {events?.map((eventId) => {
-                return (
-                    /* @ts-expect-error Async Server Component */
-                    <ParticipatedEventsCard id={eventId} href={`/${eventId}`} />
-                )
-            })}
+            <Suspense fallback={<Loading />}>
+                {events?.map((eventId) => {
+                    return (
+                        /* @ts-expect-error Async Server Component */
+                        <ParticipatedEventsCard
+                            key={JSON.stringify(eventId._id)}
+                            id={JSON.stringify(eventId._id)}
+                            href={`/${eventId}`}
+                        />
+                    )
+                })}
+            </Suspense>
         </div>
     )
 }

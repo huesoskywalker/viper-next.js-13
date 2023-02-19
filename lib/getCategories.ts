@@ -13,22 +13,22 @@ export type Category = {
 
 export const getCategories = cache((): Category[] => [
     {
-        name: "Drinks",
-        slug: "drinks",
+        name: "Bars",
+        slug: "bars",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
             // { name: "Laptops", slug: "laptops", count: 2 },
         ],
     },
+
     {
-        name: "Food",
-        slug: "food",
+        name: "Clubs",
+        slug: "clubs",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
-            // { name: "Shorts", slug: "shorts", count: 4 },
-            // { name: "Shoes", slug: "shoes", count: 5 },
+            // { name: "Education", slug: "education", count: 3 },
         ],
     },
     {
@@ -44,9 +44,19 @@ export const getCategories = cache((): Category[] => [
         name: "Sports",
         slug: "sports",
         items: [
-            { name: "Football", slug: "football" },
-            { name: "Basketball", slug: "basketball" },
+            { name: "Most Liked", slug: "likes" },
+            { name: "Closer to Date", slug: "date" },
             // { name: "Education", slug: "education", count: 3 },
+        ],
+    },
+    {
+        name: "Art",
+        slug: "art",
+        items: [
+            { name: "Most Liked", slug: "likes" },
+            { name: "Closer to Date", slug: "date" },
+            // { name: "Shorts", slug: "shorts", count: 4 },
+            // { name: "Shoes", slug: "shoes", count: 5 },
         ],
     },
 ])

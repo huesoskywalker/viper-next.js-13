@@ -1,6 +1,8 @@
 import { getViperById } from "../../../../lib/vipers"
 import { PageProps } from "../../../../lib/utils"
 import { CommentCard } from "../../../[id]/[commentId]/[viperId]/CommentCard"
+import { Suspense } from "react"
+import Loading from "./loading"
 
 export default async function ViperPage({ params }: PageProps) {
     const id: string = params.id
@@ -10,26 +12,29 @@ export default async function ViperPage({ params }: PageProps) {
 
     return (
         <div>
-            {viper?.blog
-                ?.sort((a, b) => b.timestamp - a.timestamp)
-                .map((blog) => {
-                    return (
-                        /* @ts-expect-error Server Component */
-                        <CommentCard
-                            key={JSON.stringify(blog._id)}
-                            eventId={viperId}
-                            viperId={viperId}
-                            commentId={JSON.stringify(blog._id)}
-                            text={blog.content}
-                            timestamp={blog.timestamp}
-                            likes={blog.likes.length}
-                            replies={blog.comments?.length}
-                            rePosts={blog.rePosts.length}
-                            reply={true}
-                            blog={true}
-                        />
-                    )
-                })}
+            <Suspense fallback={<Loading />}>
+                {viper?.blog
+                    ?.sort((a, b) => b.timestamp - a.timestamp)
+                    .map((blog) => {
+                        return (
+                            /* @ts-expect-error Server Component */
+                            <CommentCard
+                                key={JSON.stringify(blog._id)}
+                                eventId={viperId}
+                                viperId={viperId}
+                                commentId={JSON.stringify(blog._id)}
+                                text={blog.content}
+                                timestamp={blog.timestamp}
+                                likes={blog.likes.length}
+                                replies={blog.comments?.length}
+                                rePosts={blog.rePosts.length}
+                                event={false}
+                                reply={true}
+                                blog={true}
+                            />
+                        )
+                    })}
+            </Suspense>
         </div>
     )
 }

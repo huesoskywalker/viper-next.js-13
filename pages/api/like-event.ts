@@ -17,7 +17,7 @@ export default async function handler(
         .collection<EventInterface>("organized_events")
         .findOne({
             _id: new ObjectId(body.id),
-            likes: body.viperId,
+            "likes._id": new ObjectId(body.viperId),
         })
 
     if (!isLiked) {
@@ -30,7 +30,9 @@ export default async function handler(
                     },
                     {
                         $push: {
-                            likes: body.viperId,
+                            likes: {
+                                _id: new ObjectId(body.viperId),
+                            },
                         },
                     }
                 )
@@ -43,7 +45,9 @@ export default async function handler(
                     },
                     {
                         $push: {
-                            likes: body.id,
+                            likes: {
+                                _id: new ObjectId(body.id),
+                            },
                         },
                     }
                 )
@@ -61,7 +65,9 @@ export default async function handler(
                     },
                     {
                         $pull: {
-                            likes: body.viperId,
+                            likes: {
+                                _id: new ObjectId(body.viperId),
+                            },
                         },
                     }
                 )
@@ -73,7 +79,9 @@ export default async function handler(
                     },
                     {
                         $pull: {
-                            likes: body.id,
+                            likes: {
+                                _id: new ObjectId(body.id),
+                            },
                         },
                     }
                 )

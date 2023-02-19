@@ -3,16 +3,15 @@ import Image from "next/image"
 import { getViperById } from "../../lib/vipers"
 
 export default async function ViperInfo({ id }: { id: string }) {
-    const viperId = id.replace(/["']+/g, "")
+    const viperId = id.replace(/['"]+/g, "")
     const viper = await getViperById(viperId)
-
     const firstLogin = (string: string) => {
         if (string.startsWith("https")) return true
     }
 
     return (
         <div>
-            <Link href={`/dashboard/vipers/${id}`} className="group-block">
+            <Link href={`/dashboard/vipers/${viperId}`} className="group-block">
                 <div className="space-y-4">
                     <Image
                         src={`${

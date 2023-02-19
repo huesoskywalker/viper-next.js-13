@@ -9,8 +9,6 @@ export default async function handler(
 ) {
     const body = req.body
     const comment_id = body.commentId.replace(/[\W]+/g, "")
-    console.log(comment_id)
-    console.log(`----comment-comment--------`)
     const client = await clientPromise
     const db = client
         .db("viperDb")
@@ -29,6 +27,7 @@ export default async function handler(
                             viperId: new ObjectId(body.viperId),
                             reply: body.comment,
                             likes: [],
+                            timestamp: Date.now(),
                         },
                     },
                 }

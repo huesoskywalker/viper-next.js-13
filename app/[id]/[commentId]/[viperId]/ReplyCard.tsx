@@ -19,7 +19,6 @@ export async function ReplyCard({
     comment: string
     likes: number
 }) {
-    // console.log(likes)
     const viper = await getViperById(viperId)
     const stringifyCommentId = JSON.stringify(replyId)
     const reply_id = stringifyCommentId.replace(/['"]+/g, "")

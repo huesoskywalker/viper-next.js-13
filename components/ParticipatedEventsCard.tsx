@@ -11,10 +11,13 @@ export const ParticipatedEventsCard = async ({
     href: string
 }) => {
     console.log(id)
-    const event = await getEventById(id)
+    console.log(`-----id------`)
+    const eventId = id.slice(1, -1)
+    const link = href.slice(1, -1)
+    const event = await getEventById(eventId)
 
     return (
-        <Link href={href} className="group block">
+        <Link href={link} className="group block">
             <div className="space-y-4">
                 <div className="space-y-2">
                     <Image

@@ -13,26 +13,68 @@ export default async function handler(
     const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
-
     if (req.method === "POST") {
-        const isLiked = await db.findOne({
-            _id: new ObjectId(body.eventId),
-            "comments._id": new ObjectId(body.commentId),
-            "comments.replies._id": new ObjectId(body.replyId),
-            "comments.replies.likes": body.viperId,
-        })
+        const reply_id = body.replyId.replace(/["']+/g, "")
+        const isLiked = await db
+            .aggregate([
+                {
+                    $match: {
+                        _id: new ObjectId(body.eventId),
+                    },
+                },
+                {
+                    $unwind: "$comments",
+                },
+                {
+                    $match: {
+                        "comments._id": new ObjectId(body.commentId),
+                    },
+                },
+                {
+                    $unwind: "$comments.replies",
+                },
+                {
+                    $match: {
+                        "comments.replies._id": new ObjectId(reply_id),
+                        "comments.replies.likes": new ObjectId(body.viperId),
+                    },
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        "comments.replies": 1,
+                    },
+                },
+            ])
+            .toArray()
 
-        if (!isLiked) {
+        // .findOne({
+        //     _id: new ObjectId(body.eventId),
+        //     comments: {
+        //         $elemMatch: {
+        //             _id: new ObjectId(body.commentId),
+        //             "replies._id": new ObjectId(reply_id),
+        //             "replies.likes": new ObjectId(body.viperId),
+        //         },
+        //     },
+        // })
+
+        if (isLiked.length === 0) {
+            console.log(body.eventId)
+            console.log(body.commentId)
+            console.log(reply_id)
             try {
                 const likeReply = await db.findOneAndUpdate(
                     {
                         _id: new ObjectId(body.eventId),
                         "comments._id": new ObjectId(body.commentId),
-                        "comments.replies._id": new ObjectId(body.replyId),
+                        "comments.replies._id": new ObjectId(reply_id),
                     },
                     {
                         $push: {
-                            "comments.$[i].replies.$[j].likes": body.viperId,
+                            "comments.$[i].replies.$[j].likes": new ObjectId(
+                                body.viperId
+                            ),
                         },
                     },
                     {
@@ -41,11 +83,12 @@ export default async function handler(
                                 "i._id": new ObjectId(body.commentId),
                             },
                             {
-                                "j._id": new ObjectId(body.replyId),
+                                "j._id": new ObjectId(reply_id),
                             },
                         ],
                     }
                 )
+                console.log(likeReply)
                 return res.status(200).json(likeReply)
             } catch (error) {
                 return res.status(400).json(error)
@@ -56,11 +99,13 @@ export default async function handler(
                     {
                         _id: new ObjectId(body.eventId),
                         "comments._id": new ObjectId(body.commentId),
-                        "comments.replies._id": new ObjectId(body.replyId),
+                        "comments.replies._id": new ObjectId(reply_id),
                     },
                     {
                         $pull: {
-                            "comments.$[i].replies.$[j].likes": body.viperId,
+                            "comments.$[i].replies.$[j].likes": new ObjectId(
+                                body.viperId
+                            ),
                         },
                     },
                     {
@@ -69,7 +114,7 @@ export default async function handler(
                                 "i._id": new ObjectId(body.commentId),
                             },
                             {
-                                "j._id": new ObjectId(body.replyId),
+                                "j._id": new ObjectId(reply_id),
                             },
                         ],
                     }

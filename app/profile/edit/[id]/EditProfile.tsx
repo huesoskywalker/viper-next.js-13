@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { Viper } from "../../../../lib/vipers"
+import Image from "next/image"
 
 export default function EditProfile({ viper }: { viper: Viper }) {
     const [name, setName] = useState<string>(viper.name)
@@ -13,6 +14,8 @@ export default function EditProfile({ viper }: { viper: Viper }) {
         viper.backgroundImage
     )
     const [location, setLocation] = useState<string>(viper.location)
+    const [createObjectURL, setCreateObjectURL] = useState<string>("")
+    const [showProfileImg, setShowProfileImg] = useState<boolean>(false)
 
     const router = useRouter()
 
@@ -109,18 +112,23 @@ export default function EditProfile({ viper }: { viper: Viper }) {
             const i = event.target.files[0]
 
             setProfileImage(i)
-            // setCreateObjectURL(URL.createObjectURL(i))
+            setCreateObjectURL(URL.createObjectURL(i))
+            setShowProfileImg(!showProfileImg)
         }
+    }
+
+    const likeProfileImg = () => {
+        setShowProfileImg(!showProfileImg)
     }
 
     return (
         <div className="fixed inset-0 z-10 overflow-y-auto">
             <div className="flex items-center min-h-screen px-4 py-2 ">
-                <div className="relative left-24 w-full max-w-lg p-3 mx-auto bg-gray-800 rounded-xl shadow-lg">
+                <div className="relative left-24 w-full max-w-lg p-3 mx-auto bg-gray-900 rounded-xl shadow-lg">
                     <div className="m-1 ">
                         <Link
                             href={`/profile`}
-                            className="flex justify-start self-start text-red-800 hover:text-red-600"
+                            className="flex justify-start self-start w-fit text-gray-400 hover:text-red-600"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +136,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                 viewBox="0 0 24 24"
                                 strokeWidth={1.7}
                                 stroke="currentColor"
-                                className="w-6 h-6"
+                                className="w-5 h-5"
                             >
                                 <path
                                     strokeLinecap="round"
@@ -153,7 +161,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             </span>
                                             <input
                                                 type="text"
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
                                                 value={name}
                                                 onChange={(e) =>
                                                     setName(e.target.value)
@@ -165,7 +173,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Add a biography
                                             </span>
                                             <textarea
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
                                                 value={biography}
                                                 onChange={(e) =>
                                                     setBiography(e.target.value)
@@ -178,17 +186,52 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Profile Image
                                             </span>
                                             <input
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                className="block p-2 w-full text-gray-900 hover:cursor-pointer bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
                                                 type={"file"}
                                                 onChange={uploadProfileImage}
                                             ></input>
                                         </label>
+                                        {showProfileImg ? (
+                                            <div className="fixed inset-auto">
+                                                <div className="flex justify-end">
+                                                    <button
+                                                        onClick={likeProfileImg}
+                                                        className="fixed j rounded-full bg-black z-10"
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                            className="w-5 h-5 text-yellow-300 hover:text-yellow-300/80"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                    <Image
+                                                        src={createObjectURL}
+                                                        className="hidden rounded-full border-solid border-2 border-yellow-600 lg:block"
+                                                        alt={createObjectURL}
+                                                        width={100}
+                                                        height={100}
+                                                        placeholder="blur"
+                                                        blurDataURL={
+                                                            viper.image
+                                                        }
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ) : null}
                                         <label className="block py-1">
                                             <span className="text-gray-300">
                                                 Background Image
                                             </span>
                                             <input
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                className="block p-2 w-full text-gray-900 hover:cursor-pointer bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
                                                 type={"file"}
                                                 onChange={uploadBackgroundImage}
                                             ></input>
@@ -198,7 +241,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Where are you located?
                                             </span>
                                             <select
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
                                                 value={location}
                                                 onChange={(e) =>
                                                     setLocation(e.target.value)
@@ -233,7 +276,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                         </label>
                                         <div className="flex justify-center">
                                             <button
-                                                className="relative w-full items-center space-x-3 rounded-lg bg-gray-700 my-3 mx-28 py-2 px-5 text-sm font-medium text-white disabled:text-white/70"
+                                                className="relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-gray-200 hover:text-white hover:bg-yellow-600/80 disabled:text-white/70"
                                                 disabled={isPending}
                                                 onClick={(e) => handleSubmit(e)}
                                             >

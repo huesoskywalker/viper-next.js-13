@@ -8,11 +8,11 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
-    const blogId = body.blogId.replace(/[\W]+/g, "")
+
+    // const blogId = body.blogId.replace(/[\W]+/g, "")
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
-
     const isLiked = await db
         .aggregate([
             {
@@ -31,14 +31,14 @@ export default async function handler(
             },
             {
                 $match: {
-                    "blog._id": new ObjectId(blogId),
+                    "blog._id": new ObjectId(body.blogId),
                 },
             },
             {
                 $unwind: "$blog.likes",
             },
             {
-                $match: { "blog.likes": body.viperId },
+                $match: { "blog.likes": new ObjectId(body.viperId) },
             },
         ])
         .toArray()
@@ -47,10 +47,10 @@ export default async function handler(
         try {
             const like = await db.findOneAndUpdate(
                 {
-                    "blog._id": new ObjectId(blogId),
+                    "blog._id": new ObjectId(body.blogId),
                 },
                 {
-                    $push: { "blog.$.likes": body.viperId },
+                    $push: { "blog.$.likes": new ObjectId(body.viperId) },
                 }
             )
 
@@ -78,11 +78,11 @@ export default async function handler(
         try {
             const disLike = await db.findOneAndUpdate(
                 {
-                    "blog._id": new ObjectId(blogId),
+                    "blog._id": new ObjectId(body.blogId),
                 },
                 {
                     $pull: {
-                        "blog.$.likes": body.viperId,
+                        "blog.$.likes": new ObjectId(body.viperId),
                     },
                 }
             )

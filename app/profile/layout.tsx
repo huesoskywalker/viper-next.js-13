@@ -23,7 +23,7 @@ export default async function Layout({ children }: PageProps) {
                         viperIdName=""
                         bloggerIdName=""
                         commentReplies={null}
-                        rePosts={0}
+                        // rePosts={0}
                         timestamp={0}
                         commentCookie={""}
                         rePostCookie={""}

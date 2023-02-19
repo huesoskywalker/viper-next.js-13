@@ -22,20 +22,24 @@ export default async function handler(
                     },
                 },
                 {
-                    $project: { _id: 0, "comments.likes": 1 },
+                    $unwind: "$comments",
                 },
                 {
-                    $unwind: "$comments",
+                    $match: {
+                        "comments._id": new ObjectId(body.commentId),
+                    },
                 },
                 {
                     $unwind: "$comments.likes",
                 },
                 {
-                    $match: { "comments.likes": body.viperId },
+                    $match: { "comments.likes": new ObjectId(body.viperId) },
+                },
+                {
+                    $project: { _id: 0, "comments.likes": 1 },
                 },
             ])
             .toArray()
-
         if (isLiked.length === 0) {
             try {
                 const likeComment = await db.findOneAndUpdate(
@@ -50,7 +54,7 @@ export default async function handler(
                     },
                     {
                         $push: {
-                            "comments.$.likes": body.viperId,
+                            "comments.$.likes": new ObjectId(body.viperId),
                         },
                     }
                 )
@@ -72,7 +76,7 @@ export default async function handler(
                     },
                     {
                         $pull: {
-                            "comments.$.likes": body.viperId,
+                            "comments.$.likes": new ObjectId(body.viperId),
                         },
                     }
                 )

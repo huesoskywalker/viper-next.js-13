@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
+import { usePathname, useRouter } from "next/navigation"
 
 export default function RePostBlog({
     bloggerId,
@@ -21,6 +20,10 @@ export default function RePostBlog({
     const [isPending, startTransition] = useTransition()
     const [isRePosted, setIsRePosted] = useState<string>(rePostCookie)
     const router = useRouter()
+
+    // const pathname = usePathname()?.split("/").pop()
+    // console.log(pathname)
+
     const rePostBlog = async (e: any) => {
         e.preventDefault()
 
@@ -70,6 +73,7 @@ export default function RePostBlog({
                     />
                 </svg>
                 <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                    {/* {pathname === "replies" ? null : rePosts ?? "0"} */}
                     {rePosts ?? "0"}
                 </span>
             </button>

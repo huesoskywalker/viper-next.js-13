@@ -2,7 +2,7 @@ import clsx from "clsx"
 
 export const EventSkeletonCard = ({ isLoading }: { isLoading?: boolean }) => (
     <div
-        className={clsx("rounded-2xl bg-gray-900/80 p-2 w-2/4 ", {
+        className={clsx("rounded-2xl bg-gray-900/80 p-2 max-w-screen-lg ", {
             "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent":
                 isLoading,
         })}

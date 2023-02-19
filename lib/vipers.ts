@@ -10,16 +10,21 @@ export interface Viper {
     backgroundImage: string
     biography: string
     location: string
-    participated: string[]
+    participated: Participated[]
     followers: ObjectId[]
     follows: ObjectId[]
-    likes: string[]
+    likes: Likes[]
     blog: Blog[]
     blogLikes: ExternalBlog[]
     blogCommented: CommentBlog[]
     blogRePosts: ExternalBlog[]
 }
-
+export interface Participated {
+    readonly _id: ObjectId
+}
+export interface Likes {
+    readonly _id: ObjectId
+}
 export interface Blog {
     readonly _id: ObjectId
     content: string
@@ -53,11 +58,15 @@ export async function getViperById(id: string) {
     const client = await clientPromise
     const db = await client.db("viperDb").collection<Viper>("users")
 
-    const viper = await db.findOne<Viper>({
-        _id: new ObjectId(id),
-    })
+    try {
+        const viper = await db.findOne({
+            _id: new ObjectId(id),
+        })
 
-    return viper
+        return viper
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 export async function getVipers() {
@@ -81,8 +90,8 @@ export async function getViperParticipatedEvents(id: string) {
             },
             {
                 $project: {
-                    _id: 0,
-                    participated: 1,
+                    _id: "$participated._id",
+                    // participated: ,
                 },
             },
         ])
@@ -226,110 +235,64 @@ export async function getBlogLikesAndRePosts(id: string) {
     return viperBlog
 }
 
-// export async function getViperBlogAndRePosts(id: string) {
-//     const client = await clientPromise
-//     const db = client.db("viperDb").collection<Viper>("users")
-
-//     const viperBlog = await db
-//         .aggregate([
-//             {
-//                 $match: {
-//                     _id: new ObjectId(id),
-//                 },
-//             },
-//             // {
-//             //     $unwind: "$blogRePosts",
-//             // },
-//             // {
-//             //     $unwind: "$blogLikes",
-//             // },
-//             {
-//                 $project: {
-//                     _id: 0,
-//                     blogLikesAndRePosts: {
-//                         $concatArrays: [
-//                             "$blogLikes",
-//                             "$blogRePosts",
-//                             "$blogCommented",
-//                         ],
-//                     },
-//                     //         // bloggerId: "$blogLikes.bloggerId",
-//                     //         // blogId: "$blogLikes.blogId",
-//                     //         // timestamp: "$blogLikes.timestamp",
-//                 },
-//             },
-//             {
-//                 $unwind: "$blogLikesAndRePosts",
-//             },
-//             {
-//                 $project: {
-//                     bloggerId: "$blogLikesAndRePosts.bloggerId",
-//                     blogId: "$blogLikesAndRePosts.blogId",
-//                     timestamp: "$blogLikesAndRePosts.timestamp",
-//                     comment: "$blogLikesAndRePosts.comments",
-//                 },
-//             },
-//         ])
-//         .toArray()
-//     return viperBlog
-// }
-
 export async function getBlog(bloggerId: string, blogId: string) {
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
     const vId = bloggerId.slice(1, -1)
     const bId = blogId.slice(1, -1)
-    // try {
-    const viperBlog = db
-        .aggregate([
-            {
-                $match: {
-                    _id: new ObjectId(vId),
-                    "blog._id": new ObjectId(bId),
+    try {
+        const viperBlog = db
+            .aggregate([
+                {
+                    $match: {
+                        _id: new ObjectId(vId),
+                        "blog._id": new ObjectId(bId),
+                    },
                 },
-            },
-            // {
-            //     $unwind: "$blog",
-            // },
+                // {
+                //     $unwind: "$blog",
+                // },
 
-            // {
-            //     $project: {
-            //         _id: "$blog._id",
-            //         content: "$blog.content",
-            //         likes: "$blog.likes",
-            //         timestamp: "$blog.timestamp",
-            //         rePosts: "$blog.rePosts",
-            //     },
-            // },
-            {
-                $project: {
-                    blog: {
-                        $filter: {
-                            input: "$blog",
-                            as: "b",
-                            cond: { $eq: ["$$b._id", new ObjectId(bId)] },
+                // {
+                //     $project: {
+                //         _id: "$blog._id",
+                //         content: "$blog.content",
+                //         likes: "$blog.likes",
+                //         timestamp: "$blog.timestamp",
+                //         rePosts: "$blog.rePosts",
+                //     },
+                // },
+                {
+                    $project: {
+                        blog: {
+                            $filter: {
+                                input: "$blog",
+                                as: "b",
+                                cond: { $eq: ["$$b._id", new ObjectId(bId)] },
+                            },
                         },
                     },
                 },
-            },
-            {
-                $unwind: "$blog",
-            },
-            {
-                $project: {
-                    _id: "$blog._id",
-                    content: "$blog.content",
-                    likes: "$blog.likes",
-                    timestamp: "$blog.timestamp",
-                    rePosts: "$blog.rePosts",
+                {
+                    $unwind: "$blog",
                 },
-            },
-        ])
-        .toArray()
-    return viperBlog
-    // } catch (error) {
-    //     console.error(error)
-    // }
+                {
+                    $project: {
+                        _id: "$blog._id",
+                        content: "$blog.content",
+                        likes: "$blog.likes",
+                        comments: "$blog.comments",
+                        timestamp: "$blog.timestamp",
+                        rePosts: "$blog.rePosts",
+                    },
+                },
+            ])
+            .toArray()
+
+        return viperBlog
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 export default async function getViperFollowById(

@@ -1,4 +1,7 @@
+import { delay } from "../../../lib/delay"
+
 export default async function MessagesPage() {
+    await delay(1500)
     return (
         <div>
             <h1 className="flex justify-center text-gray-400 text-sm my-4">

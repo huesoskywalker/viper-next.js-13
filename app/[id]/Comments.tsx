@@ -1,9 +1,6 @@
-import { EventCommentsCard } from "../../components/EventCommentsCard"
+import { EventCommentsCard } from "./EventCommentsCard"
 import { Comments } from "../../lib/events"
 import { delay } from "../../lib/delay"
-import { CommentCard } from "./[commentId]/[viperId]/CommentCard"
-import { Suspense } from "react"
-import { InfoSkeleton } from "./EventInfo"
 
 export async function Comments({
     comments,
@@ -14,7 +11,6 @@ export async function Comments({
 }) {
     // Normally you would fetch data here
     await delay(1500)
-
     return (
         <div className="space-y-6">
             {/* <Suspense fallback={<InfoSkeleton />}> */}
@@ -31,6 +27,10 @@ export async function Comments({
                             commentLikes={comment.likes.length}
                             commentReplies={comment.replies.length}
                             timestamp={comment.timestamp}
+                            event={false}
+                            // comment={true}
+                            reply={false}
+                            blog={false}
                         />
                     )
                 })}

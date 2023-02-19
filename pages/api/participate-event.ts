@@ -16,7 +16,7 @@ export default async function handler(
 
             const finder = await db.collection<Viper>("users").findOne({
                 _id: new ObjectId(body.viper),
-                participated: body.id,
+                "participated._id": new ObjectId(body.id),
             })
 
             if (!finder) {
@@ -28,7 +28,9 @@ export default async function handler(
                         },
                         {
                             $push: {
-                                participated: body.id,
+                                participated: {
+                                    _id: new ObjectId(body.id),
+                                },
                             },
                         }
                     )
@@ -40,7 +42,9 @@ export default async function handler(
                         },
                         {
                             $push: {
-                                participants: body.viper,
+                                participants: {
+                                    _id: new ObjectId(body.id),
+                                },
                             },
                         },
                         { upsert: true }
@@ -56,7 +60,9 @@ export default async function handler(
                         },
                         {
                             $pull: {
-                                participated: body.id,
+                                participated: {
+                                    _id: new ObjectId(body.id),
+                                },
                             },
                         }
                     )
@@ -69,7 +75,9 @@ export default async function handler(
                         },
                         {
                             $pull: {
-                                participants: body.viper,
+                                participants: {
+                                    _id: new ObjectId(body.id),
+                                },
                             },
                         }
                     )

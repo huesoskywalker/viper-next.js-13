@@ -50,3 +50,6 @@ export default function PrivatePage() {
         </div>
     )
 }
+
+// API shopify
+// 847ad7f2319e5ebc7408492309bd9fb7

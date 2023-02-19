@@ -5,6 +5,7 @@ import { cookies } from "next/headers"
 import ShowFollows from "./ShowFollows"
 import Link from "next/link"
 import ViperInfo from "./ViperInfo"
+import { firstLogin } from "../../lib/utils"
 
 export const Profile = async ({
     fullViper,
@@ -15,23 +16,23 @@ export const Profile = async ({
     params: string
     currentViper: string
 }) => {
-    const string: string = JSON.stringify(fullViper._id)
+    const string: string = JSON.stringify(fullViper!._id)
     const id: string = string.slice(1, -1)
 
-    const firstLogin = (string: string) => {
-        if (string.startsWith("https")) return true
-    }
-
-    const isViperFollowed = await getViperFollowById(params, currentViper)
+    const isViperFollowed = await getViperFollowById(id, currentViper)
     type Truthy = "true" | "false"
     const isFollowed: Truthy = `${isViperFollowed ? true : false}`
-    // console.log(isFollowed())
 
     return (
         <div className="grid grid-cols-4">
             <div className="col-span-4 overflow-hidden">
                 <Image
-                    src={`/vipers/${fullViper.backgroundImage}`}
+                    src={
+                        fullViper.backgroundImage !== undefined
+                            ? `/vipers/${fullViper.backgroundImage}`
+                            : fullViper.image
+                    }
+                    // src={`/vipers/${fullViper.backgroundImage}`}
                     width={580}
                     height={80}
                     className="-z-10 rounded-xl  group-hover:opacity-80 max-h-44 object-cover object-center -mb-2"
@@ -52,18 +53,25 @@ export const Profile = async ({
                         alt={fullViper.name}
                         placeholder="blur"
                         blurDataURL={fullViper.image}
+                        loading="lazy"
                     />
                     <div className="grid grid-cols-2">
-                        <h1 className="text-sm text-gray-300 mt-3">
+                        <h1 className="text-sm text-yellow-700 mt-4">
                             {fullViper.name}
-                            <p className="text-sm text-gray-300 mt-1">
+                            <p className="text-xs text-gray-300 mt-1">
                                 {fullViper.email}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-2">
+                                Settled in{" "}
+                                <span className="text-gray-200 ">
+                                    {fullViper.location ?? "Planet Earth"}
+                                </span>
                             </p>
                         </h1>
                         {params === undefined ? (
                             <div className="relative left-10 ">
                                 <Link
-                                    href={`/profile/edit/${fullViper?._id}`}
+                                    href={`/profile/edit/${id}`}
                                     className="block row-end-4 rounded-md  px-3 py-2 text-sm font-medium text-yellow-600 hover:text-gray-300"
                                 >
                                     Edit profile
@@ -73,7 +81,11 @@ export const Profile = async ({
                         {/* <div className="relative left-20"> */}
                         {params !== undefined ? (
                             <div className="flex justify-start">
-                                <Follow id={id} isFollowed={isFollowed} />
+                                <Follow
+                                    id={id}
+                                    isFollowed={isFollowed}
+                                    event={true}
+                                />
                             </div>
                         ) : null}
                         {/* </div> */}
@@ -92,7 +104,10 @@ export const Profile = async ({
                             {fullViper.follows?.map((followsId) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
-                                    <ViperInfo key={followsId} id={followsId} />
+                                    <ViperInfo
+                                        key={JSON.stringify(followsId)}
+                                        id={JSON.stringify(followsId)}
+                                    />
                                 )
                             })}
                         </ShowFollows>
@@ -102,10 +117,13 @@ export const Profile = async ({
                             followers={true}
                             profile={true}
                         >
-                            {fullViper.followers?.map((followsId) => {
+                            {fullViper.followers?.map((followersId) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
-                                    <ViperInfo key={followsId} id={followsId} />
+                                    <ViperInfo
+                                        key={JSON.stringify(followersId)}
+                                        id={JSON.stringify(followersId)}
+                                    />
                                 )
                             })}
                         </ShowFollows>

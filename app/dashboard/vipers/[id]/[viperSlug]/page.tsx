@@ -1,9 +1,8 @@
 import { PageProps } from "../../../../../lib/getCategories"
-import { getCurrentViper } from "../../../../../lib/session"
-import { getBlogLikesAndRePosts, getViperById } from "../../../../../lib/vipers"
+import { getBlogLikesAndRePosts } from "../../../../../lib/vipers"
 import PostAndLikeCard from "../../../../profile/[profileSlug]/PostAndLikeCard"
 
-export default async function ProfileSlugPage({ params }: PageProps) {
+export default async function ViperSlugPage({ params }: PageProps) {
     const viperId: string = params.id
     // const viper = await getCurrentViper()
     const blogLikesAndRePosts = await getBlogLikesAndRePosts(viperId)

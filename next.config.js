@@ -12,6 +12,7 @@ const nextConfig = {
                 hostname: "avatars.githubusercontent.com",
             },
         ],
+        domains: ["shopify.com", "cdn.shopify.com", "google.com", "github.com"],
     },
 }
 

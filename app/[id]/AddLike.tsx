@@ -1,8 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { getCookieParser } from "next/dist/server/api-utils"
-import { useRouter, useSelectedLayoutSegments } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useTransition, useState, useEffect } from "react"
 
 export function AddLike({
@@ -20,7 +19,7 @@ export function AddLike({
     commentId: string
     replyId: string
     likes: number
-    timestamp: number
+    timestamp: number | Date
     event: boolean
     reply: boolean
     blog: boolean
@@ -67,7 +66,6 @@ export function AddLike({
                 body: JSON.stringify({
                     id: eventId,
                     commentId: commentId,
-                    // comment: comment,
                     viperId: viperId,
                 }),
             })
@@ -83,12 +81,12 @@ export function AddLike({
                     eventId: eventId,
                     commentId: commentId,
                     replyId: replyId,
-                    // comment: comment,
                     viperId: viperId,
                 }),
             })
-        } else if (blog) {
-            const response = await fetch(`api/like-blog`, {
+            await response.json()
+        } else if (!event && blog) {
+            const response = await fetch(`/api/like-blog`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
@@ -121,8 +119,8 @@ export function AddLike({
             document.cookie = `_${replyId}_is_liked=${isLiked}; path=/${eventId}; max-age=${
                 60 * 60 * 24 * 30
             }}`
-        } else if (blog) {
-            document.cookie = `_${commentId}_is_liked=${isLiked}; path=/profile; max-age=${
+        } else if (!event && blog) {
+            document.cookie = `_${timestamp}_is_liked=${isLiked}; path=/profile; max-age=${
                 60 * 60 * 24 * 30
             }}`
         }

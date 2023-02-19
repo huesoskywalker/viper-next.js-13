@@ -15,7 +15,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
     const [image, setImage] = useState<string>(toEditEvent.image)
     const [createObjectURL, setCreateObjectURL] = useState<string>()
     const [price, setPrice] = useState<string>(toEditEvent.price.toString())
-    const [newEventPreview, setNewEventPreview] = useState<boolean>(false)
+    // const [newEventPreview, setNewEventPreview] = useState<boolean>(false)
     const [pendingEdit, setPendingEdit] = useState<boolean>(false)
     // const [pendingDelete, setPendingDelete] = useState<boolean>(false)
 
@@ -108,9 +108,9 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
         }
     }
 
-    const showPreview = () => {
-        setNewEventPreview(!newEventPreview)
-    }
+    // const showPreview = () => {
+    //     setNewEventPreview(!newEventPreview)
+    // }
 
     // const uploadToClient = (event: any) => {
     //     if (event.target.files && event.target.files[0]) {
@@ -160,10 +160,14 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 required
                             >
                                 <option value={"All"}>Select an Option</option>
-                                <option value={"Music"}>Music</option>
-                                <option value={"Food"}>Food</option>
-                                <option value={"Drinks"}>Drinks</option>
-                                <option value={"Sports"}>Sport</option>
+                                <option value={"bars"}>Bars</option>
+                                {/* <option value={"restaurants"}>
+                                    Restaurants
+                                </option> */}
+                                <option value={"clubs"}>Clubs</option>
+                                <option value={"music"}>Music</option>
+                                <option value={"sports"}>Sport</option>
+                                <option value={"art"}>Art</option>
                             </select>
                         </label>
                         <label className="block py-1">
@@ -178,14 +182,28 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                             />
                         </label>
                         <label className="block py-1">
-                            <span className="text-gray-300">Location</span>
-                            <input
-                                type="text"
+                            <span className="text-gray-300">
+                                Where is it happening?
+                            </span>
+                            <select
+                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required
-                            />
+                            >
+                                <option value={"Nowhere"}>
+                                    Select an Option
+                                </option>
+                                <option value={"Argentina"}>Argentina</option>
+                                <option value={"California"}>California</option>
+                                <option value={"Uruguay"}>Uruguay</option>
+                                <option value={"Spain"}>Spain</option>
+                                <option value={"Italy"}>Italy</option>
+                                <option value={"Greece"}>Greece</option>
+                                <option value={"New Zealand"}>
+                                    New Zealand
+                                </option>
+                            </select>
                         </label>
 
                         {/* <div>
@@ -229,16 +247,16 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 onChange={(e) => setPrice(e.target.value)}
                             />
                         </label>
-                        <div className="grid grid-cols-2 justify-self-center">
-                            <button
+                        <div className="flex justify-center gap-6">
+                            {/* <button
                                 className="relative w-4/6 items-center space-x-2 rounded-lg bg-gray-700 my-3 ml-16 py-2 text-sm font-medium text-white hover:bg-vercel-blue/90 disabled:text-white/70"
                                 disabled={isPending}
                                 onClick={() => showPreview()}
                             >
                                 Preview
-                            </button>
+                            </button> */}
                             <button
-                                className="relative w-4/6 items-center space-x-2 rounded-lg bg-gray-700 my-3 ml-3 py-2 text-sm font-medium text-white hover:bg-vercel-blue/90 disabled:text-white/70"
+                                className="relative w-2/6 items-center space-x-2 rounded-lg bg-gray-700 my-3  py-2 text-sm font-medium text-gray-200 hover:bg-yellow-700 hover:text-white disabled:text-white/70"
                                 disabled={isPending}
                                 onClick={(e) => handleSubmit(e)}
                             >
@@ -249,37 +267,35 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                         role="status"
                                     >
                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                        {/* <span className="sr-only">
+                                        <span className="sr-only">
                                             Loading...
-                                        </span> */}
+                                        </span>
                                     </div>
                                 ) : null}
                             </button>
-                            <div className="col-span-2">
-                                <button
-                                    className="relative w-3/6 items-center justify-center space-x-2 rounded-lg bg-red-700 my-3 ml-28 py-2 text-sm font-medium text-white hover:bg-vercel-blue/90 disabled:text-white/70"
-                                    disabled={isPending}
-                                    onClick={(e) => deleteEvent(e)}
-                                >
-                                    Delete
-                                    {isPending && !pendingEdit ? (
-                                        <div
-                                            className="absolute right-10 top-1.5"
-                                            role="status"
-                                        >
-                                            <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                            <span className="sr-only">
-                                                Loading...
-                                            </span>
-                                        </div>
-                                    ) : null}
-                                </button>
-                            </div>
+                            <button
+                                className="relative w-2/6 items-center  space-x-2 rounded-lg bg-red-800 my-3  py-2 text-sm font-medium text-black hover:bg-red-600 hover:text-white disabled:text-white/70"
+                                disabled={isPending}
+                                onClick={(e) => deleteEvent(e)}
+                            >
+                                Delete
+                                {isPending && !pendingEdit ? (
+                                    <div
+                                        className="absolute right-10 top-1.5"
+                                        role="status"
+                                    >
+                                        <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
+                                        <span className="sr-only">
+                                            Loading...
+                                        </span>
+                                    </div>
+                                ) : null}
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
-            <div className="w-full">
+            {/* <div className="w-full">
                 {newEventPreview ? (
                     <div className="grid grid-cols-4 gap-6">
                         <div className="col-span-full lg:col-span-1">
@@ -329,7 +345,6 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 {title}
                             </div>
 
-                            {/* <ProductRating rating={selectedEvent.rating} /> */}
 
                             <div className="space-y-4 text-sm text-gray-200">
                                 {content}
@@ -362,7 +377,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                         </div>
                     </div>
                 ) : null}
-            </div>
+            </div> */}
         </div>
     )
 }
