@@ -10,24 +10,22 @@ import ShowViper from "./ShowViper"
 import OrganizerInfo from "./OrganizerInfo"
 import ShowFollows from "../profile/ShowFollows"
 import ViperInfo from "../profile/ViperInfo"
+import { getEventById } from "../../lib/events"
 
-export async function Event({
-    selectedEvent,
-    id,
-}: {
-    selectedEvent: EventInterface
-    id: string
-}) {
+export async function Event({ eventId }: { eventId: string }) {
     const likedCookie = cookies().get("_is_liked")?.value || "none"
+    const selectedEvent = await getEventById(eventId)
+    if (!selectedEvent) return
+    const viper = await getViperById(selectedEvent.organizer.id)
+    if (!viper) return
 
-    const viper = await getViperById(selectedEvent?.organizer.id)
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">
                 <div className="space-y-2">
                     <Image
-                        src={`/upload/${selectedEvent?.image}`}
-                        alt={selectedEvent?.title}
+                        src={`/upload/${selectedEvent.image}`}
+                        alt={selectedEvent.title}
                         height={400}
                         width={400}
                         className="hidden rounded-lg  lg:block max-h-24  object-cover object-center"
@@ -67,20 +65,20 @@ export async function Event({
 
             <div className="col-span-full space-y-4 lg:col-span-2">
                 <div className="truncate text-xl font-medium text-white lg:text-2xl">
-                    {selectedEvent?.title}
+                    {selectedEvent.title}
                 </div>
 
                 {/* <ProductRating rating={selectedEvent.rating} /> */}
 
                 <div className="space-y-4 text-sm text-gray-200">
-                    {selectedEvent?.content}
+                    {selectedEvent.content}
                 </div>
-                <div className="space-y-4 text-sm text-gray-200 flex">
+                <div className="space-y-4 text-sm text-gray-200 flex justify-start">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-[15px] h-[15px]"
+                        className="w-[18px] h-[18px] mr-1 text-red-500/80"
                     >
                         <path
                             fillRule="evenodd"
@@ -88,36 +86,43 @@ export async function Event({
                             clipRule="evenodd"
                         />
                     </svg>
-                    {selectedEvent?.address}
+                    {selectedEvent.address}
                 </div>
             </div>
 
             <div className="col-span-full lg:col-span-1">
                 <Suspense fallback={<InfoSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
-                    <EventInfo selectedEvent={selectedEvent} />
+                    <EventInfo
+                        eventId={eventId}
+                        eventDate={selectedEvent.date}
+                        eventLocation={selectedEvent.location}
+                        eventPrice={selectedEvent.price}
+                        productId={selectedEvent.productId}
+                        eventEntries={selectedEvent.entries}
+                    />
                 </Suspense>
             </div>
             <div className="mt-2 col-start-1 col-span-2 max-h-auto">
                 <ShowViper
-                    viperName={viper!.name}
+                    viperName={viper.name}
                     event={true}
                     blog={true}
                     // viperImage={viper!.image}
                 >
                     {/* @ts-expect-error Async Server Component */}
                     <OrganizerInfo
-                        key={JSON.stringify(viper?._id)}
-                        id={JSON.stringify(viper?._id)}
+                        key={JSON.stringify(viper._id)}
+                        id={JSON.stringify(viper._id)}
                         event={true}
                     />
                     <div className="mt-5 space-x-8 text-gray-300 text-xs">
                         <ShowFollows
-                            follows={viper!.follows?.length}
+                            follows={viper.follows.length}
                             followers={false}
                             profile={false}
                         >
-                            {viper!.follows?.map((followsId) => {
+                            {viper.follows.map((followsId) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo
@@ -129,7 +134,7 @@ export async function Event({
                         </ShowFollows>
 
                         <ShowFollows
-                            follows={viper!.followers?.length}
+                            follows={viper.followers.length}
                             followers={true}
                             profile={false}
                         >
@@ -148,10 +153,10 @@ export async function Event({
             </div>
             <div className="text-gray-300 col-start-4">
                 <AddLike
-                    eventId={id}
+                    eventId={eventId}
                     commentId={JSON.stringify(selectedEvent._id)}
                     replyId={JSON.stringify(selectedEvent._id)}
-                    likes={selectedEvent?.likes.length}
+                    likes={selectedEvent.likes.length}
                     timestamp={selectedEvent.creationDate}
                     event={true}
                     reply={false}
@@ -160,9 +165,9 @@ export async function Event({
                 />
 
                 <AddComment
-                    id={id}
+                    id={eventId}
                     commentId={JSON.stringify(selectedEvent._id)}
-                    commentReplies={selectedEvent?.comments.length}
+                    commentReplies={selectedEvent.comments.length}
                     // timestamp={0}
                     event={true}
                     reply={false}

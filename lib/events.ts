@@ -1,10 +1,10 @@
 import { ObjectId } from "mongodb"
 import clientPromise from "./mongodb"
-import { Session } from "./session"
+import { Session } from "next-auth"
 
 export interface EventInterface {
     readonly _id: ObjectId
-    organizer: Session
+    organizer: Organizer
     title: string
     content: string
     location: string
@@ -14,10 +14,19 @@ export interface EventInterface {
     creationDate: Date
     image: string
     price: number
+    entries: number
     participants: Participants[]
     editionDate: Date
     likes: Likes[]
     comments: Comments[]
+    productId: string
+}
+
+export type Organizer = {
+    readonly id: string
+    name: string
+    email: string
+    image: string
 }
 export interface Participants {
     readonly _id: ObjectId
@@ -343,4 +352,34 @@ export async function getEventReplies(
         .toArray()
 
     return eventReplies
+}
+
+export async function isViperOnTheList(eventId: string, viperId: string) {
+    const client = await clientPromise
+    const db = client
+        .db("viperDb")
+        .collection<EventInterface>("organized_events")
+    const isParticipant = await db.findOne({
+        _id: new ObjectId(eventId),
+        "participants._id": new ObjectId(viperId),
+    })
+    // .aggregate([
+    //     {
+    //         $match: {
+    //             _id: new ObjectId(eventId),
+    //         },
+    //     },
+    //     {
+    //         $unwind: "$participants",
+    //     },
+    //     {
+    //         $match: {
+    //             "participants._id": new ObjectId(viperId),
+    //         },
+    //     },
+    // ])
+    // .toArray()
+    if (!isParticipant) return false
+
+    return true
 }

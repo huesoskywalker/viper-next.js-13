@@ -28,12 +28,12 @@ export const authOptions: NextAuthOptions = {
             session.user.id = user.id
             session.user.name = user.name
             session.user.email = user.email
-            user.image = session.user.image
+            // user.image = session.user.image
+            session.user.image = user.image
+            session.user.location = user.location
+            session.user.address = user.address
+            session.user.customerAccessToken = user.shopify?.customerAccessToken
             // session.user.emailVerified = user.emailVerified
-            // session.user.participated = user.participated
-            // session.user.location = user.location
-            // session.user.followers = user.followers
-            // session.user.follows = user.follows
 
             return session
         },

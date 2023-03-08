@@ -10,16 +10,17 @@ export default async function handler(
 ) {
     if (req.method === "PUT") {
         const body = req.body
+        const checkoutId = body.checkoutId
         try {
             const client = await clientPromise
-            const db = await client.db("viperDb")
+            const db = client.db("viperDb")
 
             const finder = await db.collection<Viper>("users").findOne({
                 _id: new ObjectId(body.viper),
-                "participated._id": new ObjectId(body.id),
+                "participated._id": new ObjectId(body.eventId),
             })
 
-            if (!finder) {
+            if (!finder && !checkoutId) {
                 const viper = await db
                     .collection<Viper>("users")
                     .findOneAndUpdate(
@@ -29,7 +30,8 @@ export default async function handler(
                         {
                             $push: {
                                 participated: {
-                                    _id: new ObjectId(body.id),
+                                    _id: new ObjectId(body.eventId),
+                                    checkoutId: checkoutId,
                                 },
                             },
                         }
@@ -38,12 +40,12 @@ export default async function handler(
                     .collection<EventInterface>("organized_events")
                     .findOneAndUpdate(
                         {
-                            _id: new ObjectId(body.id),
+                            _id: new ObjectId(body.eventId),
                         },
                         {
                             $push: {
                                 participants: {
-                                    _id: new ObjectId(body.id),
+                                    _id: new ObjectId(body.eventId),
                                 },
                             },
                         },
@@ -61,7 +63,7 @@ export default async function handler(
                         {
                             $pull: {
                                 participated: {
-                                    _id: new ObjectId(body.id),
+                                    _id: new ObjectId(body.eventId),
                                 },
                             },
                         }
@@ -71,12 +73,12 @@ export default async function handler(
                     .collection<EventInterface>("organized_events")
                     .findOneAndUpdate(
                         {
-                            _id: new ObjectId(body.id),
+                            _id: new ObjectId(body.eventId),
                         },
                         {
                             $pull: {
                                 participants: {
-                                    _id: new ObjectId(body.id),
+                                    _id: new ObjectId(body.eventId),
                                 },
                             },
                         }

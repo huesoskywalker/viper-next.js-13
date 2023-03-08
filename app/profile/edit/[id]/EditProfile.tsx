@@ -20,6 +20,9 @@ export default function EditProfile({ viper }: { viper: Viper }) {
     const router = useRouter()
 
     const [isPending, startTransition] = useTransition()
+    const [isFetching, setIsFetching] = useState<boolean>(false)
+
+    const isMutating = isFetching || isPending
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
@@ -91,8 +94,10 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                 setLocation("")
                 setProfileImage("")
                 setBackgroundImage("")
+                router.refresh()
             })
-            router.refresh()
+            // Same in EditForm, if works, DELETE
+            router.prefetch("/profile")
             router.push(`/profile`)
         } catch (error) {
             console.error(error)
@@ -124,7 +129,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
     return (
         <div className="fixed inset-0 z-10 overflow-y-auto">
             <div className="flex items-center min-h-screen px-4 py-2 ">
-                <div className="relative left-24 w-full max-w-lg p-3 mx-auto bg-gray-900 rounded-xl shadow-lg">
+                <div className="relative left-24 w-full max-w-lg p-3 mx-auto bg-gray-800 rounded-xl shadow-lg">
                     <div className="m-1 ">
                         <Link
                             href={`/profile`}
@@ -146,10 +151,8 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                             </svg>
                         </Link>
 
-                        {/* aca para abajo, dejando 4 divs es el old edit */}
-
-                        <div className="py-1">
-                            <div className="max-w-md">
+                        <div className="flex justify-center">
+                            <div className="w-full mx-6">
                                 <div className="grid grid-cols-1 gap-6">
                                     <form
                                         onSubmit={(e) => e.preventDefault()}
@@ -161,7 +164,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             </span>
                                             <input
                                                 type="text"
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 value={name}
                                                 onChange={(e) =>
                                                     setName(e.target.value)
@@ -173,7 +176,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Add a biography
                                             </span>
                                             <textarea
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={biography}
                                                 onChange={(e) =>
                                                     setBiography(e.target.value)
@@ -186,7 +189,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Profile Image
                                             </span>
                                             <input
-                                                className="block p-2 w-full text-gray-900 hover:cursor-pointer bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
                                                 onChange={uploadProfileImage}
                                             ></input>
@@ -231,7 +234,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Background Image
                                             </span>
                                             <input
-                                                className="block p-2 w-full text-gray-900 hover:cursor-pointer bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
                                                 onChange={uploadBackgroundImage}
                                             ></input>
@@ -241,7 +244,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 Where are you located?
                                             </span>
                                             <select
-                                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={location}
                                                 onChange={(e) =>
                                                     setLocation(e.target.value)
@@ -276,7 +279,11 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                         </label>
                                         <div className="flex justify-center">
                                             <button
-                                                className="relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-gray-200 hover:text-white hover:bg-yellow-600/80 disabled:text-white/70"
+                                                className={`${
+                                                    isMutating
+                                                        ? "bg-opacity-60"
+                                                        : "bg-opacity-100"
+                                                } relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-gray-200 hover:text-white hover:bg-yellow-600/80 disabled:text-white/70`}
                                                 disabled={isPending}
                                                 onClick={(e) => handleSubmit(e)}
                                             >
@@ -302,101 +309,5 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                 </div>
             </div>
         </div>
-
-        //ACA PARA ABAJO EDIT PROFILE
-
-        // <div className="py-2">
-        //     <div className="max-w-md">
-        //         <div className="grid grid-cols-1 gap-6">
-        //             <form
-        //                 onSubmit={(e) => e.preventDefault()}
-        //                 className="text-sm"
-        //             >
-        //                 <label className="block py-1">
-        //                     <span className="text-gray-300">Full name</span>
-        //                     <input
-        //                         type="text"
-        //                         className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        //                         value={name}
-        //                         onChange={(e) => setName(e.target.value)}
-        //                     />
-        //                 </label>
-        //                 <label className="block py-1">
-        //                     <span className="text-gray-300">
-        //                         Add a biography
-        //                     </span>
-        //                     <textarea
-        //                         className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        //                         value={biography}
-        //                         onChange={(e) => setBiography(e.target.value)}
-        //                         rows={2}
-        //                     ></textarea>
-        //                 </label>
-        //                 <label className="block py-1">
-        //                     <span className="text-gray-300">Profile Image</span>
-        //                     <input
-        //                         className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        //                         type={"file"}
-        //                         onChange={uploadProfileImage}
-        //                     ></input>
-        //                 </label>
-        //                 <label className="block py-1">
-        //                     <span className="text-gray-300">
-        //                         Background Image
-        //                     </span>
-        //                     <input
-        //                         className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        //                         type={"file"}
-        //                         onChange={uploadBackgroundImage}
-        //                     ></input>
-        //                 </label>
-        //                 <label className="block py-1">
-        //                     <span className="text-gray-300">
-        //                         Where are you located?
-        //                     </span>
-        //                     <select
-        //                         className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        //                         value={location}
-        //                         onChange={(e) => setLocation(e.target.value)}
-        //                         // required
-        //                     >
-        //                         <option value={"Nowhere"}>
-        //                             Select an Option
-        //                         </option>
-        //                         <option value={"Argentina"}>Argentina</option>
-        //                         <option value={"California"}>California</option>
-        //                         <option value={"Uruguay"}>Uruguay</option>
-        //                         <option value={"Spain"}>Spain</option>
-        //                         <option value={"Italy"}>Italy</option>
-        //                         <option value={"Greece"}>Greece</option>
-        //                         <option value={"New Zealand"}>
-        //                             New Zealand
-        //                         </option>
-        //                     </select>
-        //                 </label>
-        //                 <div className="flex justify-center">
-        //                     <button
-        //                         className="relative w-full items-center space-x-3 rounded-lg bg-gray-700 my-3 mx-28 py-2 px-5 text-sm font-medium text-white hover:bg-vercel-blue/90 disabled:text-white/70"
-        //                         disabled={isPending}
-        //                         onClick={(e) => handleSubmit(e)}
-        //                     >
-        //                         Edit Profile
-        //                         {isPending ? (
-        //                             <div
-        //                                 className="absolute right-2 top-1.5"
-        //                                 role="status"
-        //                             >
-        //                                 <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-        //                                 {/* <span className="sr-only">
-        //                                     Loading...
-        //                                 </span> */}
-        //                             </div>
-        //                         ) : null}
-        //                     </button>
-        //                 </div>
-        //             </form>
-        //         </div>
-        //     </div>
-        // </div>
     )
 }

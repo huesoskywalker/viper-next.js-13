@@ -10,6 +10,7 @@
         "@headlessui/react": "^1.7.7",
         "@next-auth/mongodb-adapter": "^1.1.1",
         "@shopify/cli": "^3.43.0",
+        "@shopify/shopify-api": "^6.2.0",
         "clsx": "1.2.1",
         "date-fns": "2.29.3",
         "formidable": "^2.1.1",

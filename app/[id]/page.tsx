@@ -6,7 +6,7 @@ import { Suspense } from "react"
 import { CommentSkeleton } from "../../components/CommentSkeleton"
 import Loading from "../loading"
 
-export default async function EventEditPage({ params }: PageProps) {
+export default async function EventPage({ params }: PageProps) {
     const eventId: string = params.id
     const selectedEvent = await getEventById(eventId)
 

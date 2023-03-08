@@ -10,20 +10,22 @@ export default async function LikedPage() {
     if (!viper) return
 
     const liked = await getViperLikedEvents(viper!.id)
-    const events = liked.map((event) => {
-        return event.likes
-    })
+    // const events = liked.map((event) => {
+    //     return event.likes
+    // })
 
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <Suspense fallback={<Loading />}>
-                {events?.map((eventId) => {
+                {liked?.map((event) => {
                     return (
                         /* @ts-expect-error Async Server Component */
                         <ParticipatedEventsCard
-                            key={JSON.stringify(eventId._id)}
-                            id={JSON.stringify(eventId._id)}
-                            href={`/${eventId}`}
+                            key={JSON.stringify(event._id)}
+                            viperId={viper.id}
+                            eventId={JSON.stringify(event._id)}
+                            href={`/${event}`}
+                            collection={false}
                         />
                     )
                 })}

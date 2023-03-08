@@ -1,5 +1,9 @@
 import { ObjectId } from "mongodb"
+import runTest from "../graphql/query/node"
+import { NODE_CHECKOUT_QUERY } from "../graphql/query/nodeCheckout"
+import { shopifyAdmin } from "./adminApi"
 import clientPromise from "./mongodb"
+import { storefrontClient } from "./storefrontApi"
 
 export interface Viper {
     readonly _id: ObjectId
@@ -10,7 +14,9 @@ export interface Viper {
     backgroundImage: string
     biography: string
     location: string
-    participated: Participated[]
+    address: Address
+    customerAccessToken: string
+    collection: Collection[]
     followers: ObjectId[]
     follows: ObjectId[]
     likes: Likes[]
@@ -19,8 +25,17 @@ export interface Viper {
     blogCommented: CommentBlog[]
     blogRePosts: ExternalBlog[]
 }
-export interface Participated {
+type Address = {
+    phone: number
+    address: string
+    province: string
+    country: string
+    zip: number
+    city: string
+}
+export interface Collection {
     readonly _id: ObjectId
+    readonly checkoutId: string
 }
 export interface Likes {
     readonly _id: ObjectId
@@ -56,7 +71,7 @@ export interface Chats {
 
 export async function getViperById(id: string) {
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Viper>("users")
+    const db = client.db("viperDb").collection<Viper>("users")
 
     try {
         const viper = await db.findOne({
@@ -71,7 +86,7 @@ export async function getViperById(id: string) {
 
 export async function getVipers() {
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Viper>("users")
+    const db = client.db("viperDb").collection<Viper>("users")
     const vipers = await db.find<Viper>({}).toArray()
 
     return vipers
@@ -79,18 +94,18 @@ export async function getVipers() {
 
 export async function getViperParticipatedEvents(id: string) {
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Viper>("users")
+    const db = client.db("viperDb").collection<Viper>("users")
     const events = await db
         .aggregate<Viper>([
             {
                 $match: { _id: new ObjectId(id) },
             },
             {
-                $unwind: "$participated",
+                $unwind: "$collection",
             },
             {
                 $project: {
-                    _id: "$participated._id",
+                    _id: "$collection._id",
                     // participated: ,
                 },
             },
@@ -102,7 +117,7 @@ export async function getViperParticipatedEvents(id: string) {
 
 export async function getViperLikedEvents(id: string) {
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Viper>("users")
+    const db = client.db("viperDb").collection<Viper>("users")
     const events = await db
         .aggregate<Viper>([
             {
@@ -113,8 +128,9 @@ export async function getViperLikedEvents(id: string) {
             },
             {
                 $project: {
-                    _id: 0,
-                    likes: 1,
+                    // _id: 0,
+                    // likes: 1,
+                    _id: "$likes._id",
                 },
             },
         ])
@@ -125,7 +141,7 @@ export async function getViperLikedEvents(id: string) {
 
 export async function getViperFollows(id: string) {
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Viper>("users")
+    const db = client.db("viperDb").collection<Viper>("users")
     const viperFollows = await db
         .aggregate([
             {
@@ -147,7 +163,7 @@ export async function getViperFollows(id: string) {
 
 export async function getVipersMessenger(id: string, viperId: string) {
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Chats>("chats")
+    const db = client.db("viperDb").collection<Chats>("chats")
     const vipersMessenger = db
         .aggregate([
             {
@@ -307,4 +323,20 @@ export default async function getViperFollowById(
         followers: new ObjectId(currentViper),
     })
     return viperFollower
+}
+
+export async function requestEventParticipation(
+    viperId: string,
+    eventId: string
+) {
+    const client = await clientPromise
+    const db = client.db("viperDb").collection<Viper>("users")
+
+    const request = await db.findOne({
+        _id: new ObjectId(viperId),
+        "collection._id": new ObjectId(eventId),
+    })
+
+    if (!request) return false
+    return true
 }

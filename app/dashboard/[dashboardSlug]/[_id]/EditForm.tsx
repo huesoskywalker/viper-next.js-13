@@ -20,11 +20,15 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
     // const [pendingDelete, setPendingDelete] = useState<boolean>(false)
 
     const [isPending, startTransition] = useTransition()
+    const [isFetching, setIsFetching] = useState<boolean>(false)
+
+    const isMutating = isFetching || isPending
 
     const router = useRouter()
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
+        setIsFetching(true)
         setPendingEdit(!pendingEdit)
         try {
             // const file = new FormData()
@@ -66,6 +70,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                 }),
             })
             await response.json()
+            setIsFetching(false)
 
             startTransition(() => {
                 setTitle("")
@@ -76,8 +81,10 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                 setImage("")
                 setCreateObjectURL("")
                 setPrice("")
-                router.refresh()
+                // router.refresh()
+                router.prefetch(`/${toEditEvent._id}`)
             })
+            // same in EditProfile, Want to try prefetch inside transition and push outside.
             router.push(`/${toEditEvent._id}`)
         } catch (error) {
             console.error(error)
@@ -88,7 +95,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
         e.preventDefault()
         // setPendingDelete(!pendingDelete)
         try {
-            const response = await fetch(`/api/form`, {
+            const response = await fetch(`/api/create-event`, {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json",
@@ -102,6 +109,8 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
             startTransition(() => {
                 router.refresh()
             })
+            // added the prefetch and did not try it. if this works , DELETE this comment.
+            router.prefetch("/dashboard/myevents")
             router.push("/dashboard/myevents")
         } catch (error) {
             console.error(error)
@@ -256,7 +265,11 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 Preview
                             </button> */}
                             <button
-                                className="relative w-2/6 items-center space-x-2 rounded-lg bg-gray-700 my-3  py-2 text-sm font-medium text-gray-200 hover:bg-yellow-700 hover:text-white disabled:text-white/70"
+                                className={`${
+                                    isMutating
+                                        ? "bg-opacity-60"
+                                        : "bg-opacity-100"
+                                } relative w-2/6 items-center space-x-2 rounded-lg bg-gray-700 my-3  py-2 text-sm font-medium text-gray-200 hover:bg-yellow-700 hover:text-white disabled:text-white/70`}
                                 disabled={isPending}
                                 onClick={(e) => handleSubmit(e)}
                             >

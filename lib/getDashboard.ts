@@ -13,7 +13,7 @@ export const getDashboard = cache((): Dashboard[] => [
         slug: "myevents",
         items: [
             { name: "Create Event", slug: "create" },
-            { name: "Participations", slug: "participations" },
+            { name: "Collection", slug: "collection" },
             { name: "Liked", slug: "liked" },
         ],
     },

@@ -12,7 +12,7 @@ export default async function CreatePage() {
     const events: EventInterface[] = await getViperCreatedEvents(viper.id)
     const lastEvent: EventInterface = events[0]
     const stringId = JSON.stringify(lastEvent?._id)
-    const eventId = stringId?.slice(1, -1)
+    const lastEventId = stringId?.slice(1, -1)
     return (
         <div className="flex justify-start">
             <Suspense fallback={<Loading />}>
@@ -23,13 +23,10 @@ export default async function CreatePage() {
                                 The last event you created
                             </span>
                             <EditEvent
-                                href={`/dashboard/myevents/${eventId}`}
+                                href={`/dashboard/myevents/${lastEventId}`}
                             />
                             {/* @ts-expect-error Async Server Component */}
-                            <Event
-                                selectedEvent={lastEvent}
-                                id={JSON.stringify(lastEvent._id)}
-                            />
+                            <Event eventId={lastEventId} />
                         </div>
                     ) : (
                         <h1 className="text-gray-300 font-bold">

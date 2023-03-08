@@ -5,7 +5,7 @@ export default async function Layout({ children, params }: PageProps) {
     return (
         <>
             <div className="relative top-0 left-0 my-4">
-                <GoBackArrow href={`/${params.id}`} />
+                <GoBackArrow />
             </div>
             {children}
         </>

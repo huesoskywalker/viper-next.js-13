@@ -9,7 +9,7 @@ export default async function handler(
 ) {
     const body = req.body
     const client = await clientPromise
-    const db = await client.db("viperDb")
+    const db = client.db("viperDb")
 
     if (req.method === "PUT") {
         try {

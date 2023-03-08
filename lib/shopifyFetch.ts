@@ -1,6 +1,7 @@
-export async function shopifyFetch(query, variables = {}) {
+export async function shopifyFetch({ query, variables }: any) {
     const endpoint = process.env.SHOPIFY_STORE_DOMAIN
     const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+
     try {
         const result = await fetch(endpoint, {
             method: "POST",
@@ -10,6 +11,7 @@ export async function shopifyFetch(query, variables = {}) {
             },
             body: { query, variables } && JSON.stringify({ query, variables }),
         })
+
         return {
             status: result.status,
             body: await result.json(),
