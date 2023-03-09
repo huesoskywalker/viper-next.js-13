@@ -27,11 +27,6 @@ const isCheckoutFulFilled = async (viper: Viper, eventId: string) => {
     const checkoutOrder = checkout.body.data.node.order
     if (!checkoutOrder) return false
 
-    // return {
-    //     fulfillmentStatus: checkout.body.data.node.order.fulfillmentStatus,
-    //     financialStatus: checkout.body.data.node.order.financialStatus,
-    // }
     return checkoutOrder.financialStatus
-    // return new NextResponse(checkoutOrder)
 }
 export default isCheckoutFulFilled

@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { shopifyAdmin } from "../../lib/adminApi"
-import { loadSession } from "../../lib/shopifySessionStorage"
 import PRODUCT_GET from "../../graphql/query/product"
 import { storefrontClient } from "../../lib/storefrontApi"
 import { CHECKOUT_CREATE } from "../../graphql/mutation/checkoutCreate"

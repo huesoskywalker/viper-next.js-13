@@ -7,7 +7,6 @@ export type PageProps = {
 export type Category = {
     name: string
     slug: string
-    // count?: number
     items: Omit<Category, "items">[]
 }
 
@@ -18,7 +17,6 @@ export const getCategories = cache((): Category[] => [
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
-            // { name: "Laptops", slug: "laptops", count: 2 },
         ],
     },
 
@@ -28,7 +26,6 @@ export const getCategories = cache((): Category[] => [
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
-            // { name: "Education", slug: "education", count: 3 },
         ],
     },
     {
@@ -37,7 +34,6 @@ export const getCategories = cache((): Category[] => [
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
-            // { name: "Education", slug: "education", count: 3 },
         ],
     },
     {
@@ -46,7 +42,6 @@ export const getCategories = cache((): Category[] => [
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
-            // { name: "Education", slug: "education", count: 3 },
         ],
     },
     {
@@ -55,8 +50,6 @@ export const getCategories = cache((): Category[] => [
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
-            // { name: "Shorts", slug: "shorts", count: 4 },
-            // { name: "Shoes", slug: "shoes", count: 5 },
         ],
     },
 ])

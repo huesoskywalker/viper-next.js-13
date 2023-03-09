@@ -14,12 +14,6 @@ declare module "next-auth" {
             location: string
             address: Address
             customerAccessToken: string
-            // backgroundImage: string
-            // emailVerified: null
-            // participated: string[]
-            // followers: string[]
-            // follows: string[]
-            // userRole?: string
         }
     }
 
@@ -30,11 +24,6 @@ declare module "next-auth" {
         location: string
         shopify: Shopify
         address: Address
-        // backgroundImage: string
-        // emailVerified: null
-        // participated: string[]
-        // followers: string[]
-        // follows: string[]
     }
 
     type Shopify = {

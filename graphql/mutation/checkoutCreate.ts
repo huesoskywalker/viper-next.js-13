@@ -14,37 +14,7 @@ export const CHECKOUT_CREATE = gql`
                 id
                 webUrl
                 orderStatusUrl
-
-                # shippingAddress {
-                #     firstName
-                #     lastName
-                #     address1
-                #     province
-                #     country
-                #     zip
-                # }
-                # email
-
-                # subtotalPrice {
-                #     amount
-                #     currencyCode
-                # }
-                # totalTax {
-                #     amount
-                #     currencyCode
-                # }
-                # totalPrice {
-                #     amount
-                #     currencyCode
-                # }
-                # completedAt
-                # createdAt
-                # taxesIncluded
                 lineItems(first: 1) {
-                    # pageInfo {
-                    #     hasNextPage
-                    #     hasPreviousPage
-                    # }
                     edges {
                         node {
                             id
@@ -53,20 +23,10 @@ export const CHECKOUT_CREATE = gql`
                                 id
                                 sku
                                 title
-                                # image {
-                                #     originalSrc
-                                #     altText
-                                #     width
-                                #     height
-                                # }
                                 priceV2 {
                                     amount
                                     currencyCode
                                 }
-                                # compareAtPriceV2 {
-                                #     amount
-                                #     currencyCode
-                                # }
                                 product {
                                     handle
                                 }

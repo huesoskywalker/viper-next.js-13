@@ -41,5 +41,3 @@ export default async function handler(
         }
     }
 }
-
-// 'https://lh3.googleusercontent.com/a/AEdFTp4aMn5bItl_CDwyHf659hv8nTOw2p4QUxQKCHY=s96-c'

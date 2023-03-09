@@ -1,27 +1,27 @@
 import Image from "next/image"
-import getViperFollowById, { Viper } from "../../lib/vipers"
-import { Follow } from "../../components/Follow"
-import { cookies } from "next/headers"
+import getViperFollowById from "../../lib/vipers"
+import { Follow } from "./Follow"
 import ShowFollows from "./ShowFollows"
 import Link from "next/link"
 import ViperInfo from "./ViperInfo"
 import { firstLogin } from "../../lib/utils"
+import { getViperById } from "../../lib/vipers"
 
 export const Profile = async ({
-    fullViper,
-    params,
+    viperId,
     currentViper,
+    profile,
 }: {
-    fullViper: Viper
-    params: string
+    viperId: string
     currentViper: string
+    profile: boolean
 }) => {
-    const string: string = JSON.stringify(fullViper!._id)
-    const id: string = string.slice(1, -1)
+    const fullViper = await getViperById(viperId)
+    if (!fullViper) return
+    const string_id: string = JSON.stringify(fullViper!._id)
+    const id: string = string_id.slice(1, -1)
 
     const isViperFollowed = await getViperFollowById(id, currentViper)
-    type Truthy = "true" | "false"
-    const isFollowed: Truthy = `${isViperFollowed ? true : false}`
 
     return (
         <div className="grid grid-cols-4">
@@ -32,7 +32,6 @@ export const Profile = async ({
                             ? `/vipers/${fullViper.backgroundImage}`
                             : fullViper.image
                     }
-                    // src={`/vipers/${fullViper.backgroundImage}`}
                     width={580}
                     height={80}
                     className="-z-10 rounded-xl  group-hover:opacity-80 max-h-44 object-cover object-center -mb-2"
@@ -68,7 +67,7 @@ export const Profile = async ({
                                 </span>
                             </p>
                         </h1>
-                        {params === undefined ? (
+                        {profile ? (
                             <div className="relative left-10 ">
                                 <Link
                                     href={`/profile/edit/${id}`}
@@ -77,18 +76,15 @@ export const Profile = async ({
                                     Edit profile
                                 </Link>
                             </div>
-                        ) : null}
-                        {/* <div className="relative left-20"> */}
-                        {params !== undefined ? (
+                        ) : (
                             <div className="flex justify-start">
                                 <Follow
                                     id={id}
-                                    isFollowed={isFollowed}
+                                    isFollowed={isViperFollowed}
                                     event={true}
                                 />
                             </div>
-                        ) : null}
-                        {/* </div> */}
+                        )}
                     </div>
                     <div className="break-after-column">
                         <h1 className="text-gray-300 text-sm mt-5">

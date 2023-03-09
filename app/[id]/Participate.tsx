@@ -6,11 +6,6 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
-// type Order = {
-//     fulfillmentStatus: string
-//     financialStatus: string
-// }
-
 export function Participate({
     eventId,
     productId,
@@ -57,8 +52,6 @@ export function Participate({
             }),
         })
         const checkout = await checkoutCreate.json()
-        console.log(`------------checkout from Participate----------------`)
-        console.log(checkout.body.data.checkoutCreate.checkout)
 
         const checkoutId = checkout.body.data.checkoutCreate.checkout.id
 
@@ -77,8 +70,6 @@ export function Participate({
             }
         )
         const association = await checkoutCustomerAssociate.json()
-        console.log(`------------association-------------------------`)
-        console.log(association.body.data.checkoutCustomerAssociateV2)
         const webUrl =
             association.body.data.checkoutCustomerAssociateV2.checkout.webUrl
         setIsCheckout(webUrl)
@@ -100,8 +91,6 @@ export function Participate({
         )
 
         const eventRequest = await requestParticipation.json()
-        console.log(`-----------------eventRequest--------------------`)
-        console.log(eventRequest)
 
         setIsFetching(false)
 
@@ -109,7 +98,7 @@ export function Participate({
             router.refresh()
         })
     }
-
+    // ------------------------------------
     const claimCard = async (e: any) => {
         e.preventDefault()
         setIsFetching(true)
@@ -126,8 +115,6 @@ export function Participate({
         })
 
         const eventCard = await addCardToViper.json()
-        console.log(`------------eventCard------------------------`)
-        console.log(eventCard)
 
         setIsFetching(false)
         startTransition(() => {
@@ -140,9 +127,6 @@ export function Participate({
         console.log(isCheckoutPaid)
     }, [viperOnList, isCheckoutPaid])
 
-    // const holdForOrder = () => {
-    //     router.refresh()
-    // }
     return (
         <div className="space-y-2">
             <div className="flex justify-start items-center text-[16px] text-gray-300">
@@ -195,14 +179,6 @@ export function Participate({
                             ) : null}
                         </button>
                     ) : !isCheckoutPaid ? (
-                        // <form method="POST" action={isCheckout} target="_blank">
-                        //     <button
-                        //         onClick={holdForOrder}
-                        //         className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
-                        //     >
-                        //         VIPER GO
-                        //     </button>
-                        // </form>
                         <a
                             href={isCheckout}
                             target="_blank"

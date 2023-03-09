@@ -1,6 +1,6 @@
 import { getCurrentViper } from "../../../../lib/session"
 import { getViperParticipatedEvents } from "../../../../lib/vipers"
-import { ParticipatedEventsCard } from "../../../../components/ParticipatedEventsCard"
+import { ParticipatedEventsCard } from "./ParticipatedEventsCard"
 import { Suspense } from "react"
 import Loading from "../loading"
 

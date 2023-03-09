@@ -1,7 +1,7 @@
 import { EventInterface, getAllEvents } from "../../../lib/events"
 import { Suspense } from "react"
 import Loading from "./loading"
-import { EventCard } from "../../../components/EventCard"
+import { EventCard } from "./EventCard"
 
 export default async function EventsPage({}) {
     const events: EventInterface[] = await getAllEvents()

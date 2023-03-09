@@ -21,8 +21,6 @@ export default async function handler(
                     $push: {
                         "blog.$.comments": {
                             _id: new ObjectId(),
-                            // bloggerId: new ObjectId(body.id),
-                            // blogId: new ObjectId(body.commentId),
                             viperId: new ObjectId(body.viperId),
                             comment: body.comment,
                             timestamp: Date.now(),

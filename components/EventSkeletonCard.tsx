@@ -13,7 +13,6 @@ export const EventSkeletonCard = ({ isLoading }: { isLoading?: boolean }) => (
                 <div className="h-6 w-8/12 rounded-lg bg-gray-700" />
                 <div className="h-5 w-6/12 rounded-lg bg-gray-700" />
                 <div className="h-16 w-11/12 rounded-lg bg-gray-700" />
-                {/* <div className="h-4 w-11/12 rounded-lg bg-gray-700" /> */}
             </div>
         </div>
     </div>

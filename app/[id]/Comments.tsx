@@ -13,7 +13,6 @@ export async function Comments({
     await delay(1500)
     return (
         <div className="space-y-6">
-            {/* <Suspense fallback={<InfoSkeleton />}> */}
             <div className="space-y-8">
                 {comments?.map((comment) => {
                     return (
@@ -28,14 +27,12 @@ export async function Comments({
                             commentReplies={comment.replies.length}
                             timestamp={comment.timestamp}
                             event={false}
-                            // comment={true}
                             reply={false}
                             blog={false}
                         />
                     )
                 })}
             </div>
-            {/* </Suspense> */}
         </div>
     )
 }

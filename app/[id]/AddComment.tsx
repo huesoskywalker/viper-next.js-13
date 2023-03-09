@@ -13,36 +13,30 @@ export default function AddComment({
     viperIdName,
     bloggerIdName,
     commentReplies,
-    // rePosts,
     timestamp,
     commentCookie,
-    rePostCookie,
     event,
     reply,
     blog,
     showComment,
 }: {
     id: string | null
-    commentId: string
-    viperIdImage: string
-    viperIdName: string
-    bloggerIdName: string
+    commentId: string | null
+    viperIdImage: string | undefined
+    viperIdName: string | undefined
+    bloggerIdName: string | undefined
     commentReplies: number | null
-    // rePosts: number
-    timestamp: number
-    commentCookie: string
-    rePostCookie: string
+    timestamp: number | null
+    commentCookie: string | "none"
     event: boolean
     reply: boolean
     blog: boolean
-    showComment: string
+    showComment: string | undefined
 }) {
     const [comment, setComment] = useState<string>("")
     const [openCommentInput, setOpenCommentInput] = useState<boolean>(false)
     const [pendingComment, setPendingComment] = useState<boolean>(false)
     const [isCommented, setIsCommented] = useState<string>(commentCookie)
-    const [isRePosted, setIsRePosted] = useState<string>(rePostCookie)
-    const [commentEffect, setCommentEffect] = useState<boolean>(false)
     const [isDisplayComment, setIsDisplayComment] = useState<boolean>(false)
 
     const [isPending, startTransition] = useTransition()
@@ -113,8 +107,6 @@ export default function AddComment({
         }
         setIsCommented(isCommented === "none" ? "blue" : "none")
         startTransition(() => {
-            // toggleComment()
-            // setPendingComment(!pendingComment)
             setPendingComment(false)
             setComment("")
             setOpenCommentInput(false)
@@ -123,7 +115,6 @@ export default function AddComment({
     }
 
     const writeComment = () => {
-        setCommentEffect(!commentEffect)
         setPendingComment(true)
         setOpenCommentInput(!openCommentInput)
     }
@@ -132,39 +123,11 @@ export default function AddComment({
         setIsDisplayComment(!isDisplayComment)
     }
 
-    const rePostBlog = async (e: any) => {
-        e.preventDefault()
-
-        const response = await fetch(`/api/re-post-blog`, {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-                bloggerId: id,
-                blogId: commentId,
-                viperId: viperId,
-            }),
-        })
-        // toggleComment()
-
-        setIsRePosted(isRePosted === "none" ? "green" : "none")
-        startTransition(() => {
-            router.refresh()
-        })
-    }
     useEffect(() => {
-        if (commentEffect) {
-            document.cookie = `_${timestamp}_is_commented=${isCommented}; path=/profile; max-age=${
-                60 * 60 * 24 * 30
-            }}`
-            setCommentEffect(!commentEffect)
-        } else {
-            document.cookie = `_${timestamp}_is_rePosted=${isRePosted}; path=/profile; max-age=${
-                60 * 60 * 24 * 30
-            }}`
-        }
-    }, [isCommented, isRePosted])
+        document.cookie = `_${timestamp}_is_commented=${isCommented}; path=/profile; max-age=${
+            60 * 60 * 24 * 30
+        }}`
+    }, [isCommented])
 
     return (
         <div>
@@ -174,7 +137,7 @@ export default function AddComment({
                         onClick={writeComment}
                         className="relative right-16 text-gray-300 bg-yellow-800/70 rounded-xl py-1 px-3 hover:bg-yellow-600/70"
                     >
-                        Bloggie
+                        Let's Blog
                     </button>
                 ) : !event && !reply && !blog && id === null ? null : blog ? (
                     <div className="flex justify-start space-x-4">
@@ -189,7 +152,7 @@ export default function AddComment({
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className={`w-6 h-6  hover:text-blue-500/75 hover:animate-pulse ${
+                                    className={`w-6 h-6 hover:animate-pulse ${
                                         isPending && pendingComment
                                             ? "text-blue-700"
                                             : `text-${isCommented}-700`
@@ -220,7 +183,7 @@ export default function AddComment({
                                         showComment !== ""
                                             ? "text-blue-700"
                                             : null
-                                    } hover:text-blue-500/75 hover:animate-pulse ${
+                                    } hover:animate-pulse ${
                                         isPending && pendingComment
                                             ? "text-blue-700"
                                             : `text-${isCommented}-700`
@@ -247,7 +210,7 @@ export default function AddComment({
                                     viewBox="0 0 24 24"
                                     strokeWidth={1.5}
                                     stroke="currentColor"
-                                    className={`w-6 h-6  hover:text-blue-500/75 hover:animate-pulse ${
+                                    className={`w-6 h-6 hover:animate-pulse ${
                                         isPending && pendingComment
                                             ? "text-blue-700"
                                             : `text-${isCommented}-700`
@@ -318,51 +281,48 @@ export default function AddComment({
                     <div className="fixed  inset-0 z-30 overflow-x-auto ">
                         <div className="flex items-center min-h-screen px-4 py-4">
                             <div className="relative w-full max-w-md p-4  mx-auto bg-gray-900 rounded-xl shadow-lg">
-                                <div className="space-x-2 pr-2">
-                                    <button
-                                        className="flex justify-start self-start mb-3 text-gray-300 hover:text-yellow-800"
-                                        onClick={() =>
-                                            setOpenCommentInput(false)
-                                        }
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-6 h-6 "
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M6 18L18 6M6 6l12 12"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <div className=" text-center sm:ml-4 sm:text-left ">
-                                        <div className="grid grid-cols-7 ">
-                                            <Image
-                                                src={`${
-                                                    firstLogin(viperImage!)
-                                                        ? viperImage
-                                                        : `/vipers/${viperImage}`
-                                                }`}
-                                                // src={`/vipers/${viperImage}`}
-                                                // src={
-                                                // firstLogin(viperIdImage)
-                                                // ? viperIdImage
-                                                // : `/vipers/${viperIdImage}`
-                                                // }
-                                                alt={`/vipers/${viperImage}`}
-                                                width={50}
-                                                height={50}
-                                                className="rounded-full col-start-1 "
-                                            />
+                                <div className="space-x-2">
+                                    <div className=" text-center sm:ml-2 sm:text-left ">
+                                        <div className="grid grid-cols-9 space-y-2">
+                                            <button
+                                                className="absolute left-2 top-2 text-gray-300 hover:text-red-700"
+                                                onClick={() =>
+                                                    setOpenCommentInput(false)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-5 h-5 "
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M6 18L18 6M6 6l12 12"
+                                                    />
+                                                </svg>
+                                            </button>
+                                            <div className="col-start-1 col-span-2  self-center">
+                                                <Image
+                                                    src={`${
+                                                        firstLogin(viperImage!)
+                                                            ? viperImage
+                                                            : `/vipers/${viperImage}`
+                                                    }`}
+                                                    alt={`/vipers/${viperImage}`}
+                                                    width={50}
+                                                    height={50}
+                                                    className="rounded-full h-fit w-fit"
+                                                />
+                                                <span className="text-gray-300/90 text-xs flex justify-center ">
+                                                    {viperIdName}
+                                                </span>
+                                            </div>
                                             <textarea
-                                                // className="p-2 col-start-2 col-span-6 text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-
-                                                className="p-2 col-start-2 col-span-6 text-gray-300 bg-black/30 border-[2px] rounded-lg border-transparent sm:text-xs outline-none focus:border-yellow-700/80"
+                                                className="h-20 p-2 col-start-3 col-span-7 text-gray-300 bg-black/30 border-[2px] rounded-lg border-transparent sm:text-xs outline-none focus:border-yellow-700/80"
                                                 value={comment}
                                                 onChange={(e) =>
                                                     setComment(e.target.value)
@@ -376,11 +336,8 @@ export default function AddComment({
                                                 maxLength={160}
                                                 required
                                             ></textarea>
-                                        </div>
-
-                                        <div className="items-center gap-2 mt-3 grid grid-cols-6 ">
                                             <button
-                                                className="col-start-3 col-span-2 relative w-full items-center space-x-2 rounded-lg bg-gray-800 px-3 py-1  text-sm font-medium text-white hover:bg-yellow-900/80 disabled:text-white/70"
+                                                className="col-start-5 col-span-2 relative w-full items-center space-x-2 rounded-lg bg-gray-800 px-3 py-1  text-sm font-medium text-white hover:bg-yellow-900/80 disabled:text-white/70"
                                                 onClick={(e) =>
                                                     submitComment(e)
                                                 }
@@ -392,9 +349,9 @@ export default function AddComment({
                                                         role="status"
                                                     >
                                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                                        {/* <span className="sr-only">
-                                                        Loading...
-                                                    </span> */}
+                                                        <span className="sr-only">
+                                                            Loading...
+                                                        </span>
                                                     </div>
                                                 ) : null}
                                             </button>
@@ -409,40 +366,42 @@ export default function AddComment({
                     <div className="fixed  inset-0 z-30 overflow-x-auto ">
                         <div className="flex items-center min-h-screen px-4 py-4">
                             <div className="relative w-full max-w-md p-4  mx-auto bg-gray-900 rounded-xl shadow-lg">
-                                <div className="space-x-2 pr-2">
-                                    <button
-                                        className="flex justify-start self-start mb-3 text-gray-300 hover:text-yellow-800"
-                                        onClick={() =>
-                                            setIsDisplayComment(
-                                                !isDisplayComment
-                                            )
-                                        }
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-6 h-6 "
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M6 18L18 6M6 6l12 12"
-                                            />
-                                        </svg>
-                                    </button>
-                                    <div className=" text-center sm:ml-4 sm:text-left">
+                                <div className="space-x-2">
+                                    <div className=" text-center sm:ml-2 sm:text-left ">
                                         <div className="grid grid-cols-9 ">
-                                            <div className="col-start-1 col-span-2  mx-2">
+                                            <button
+                                                className="absolute left-2 top-2 mb-3 text-gray-300 hover:text-red-700"
+                                                onClick={() =>
+                                                    setIsDisplayComment(
+                                                        !isDisplayComment
+                                                    )
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-5 h-5 "
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M6 18L18 6M6 6l12 12"
+                                                    />
+                                                </svg>
+                                            </button>
+                                            <div className="col-start-1 col-span-2  self-center">
                                                 <Image
-                                                    src={`/vipers/${viperIdImage}`}
-                                                    //    src={
-                                                    //     firstLogin(viperIdImage)
-                                                    //         ? viperIdImage
-                                                    //         : `/vipers/${viperIdImage}`
-                                                    // }
+                                                    // src={`/vipers/${viperIdImage}`}
+                                                    src={`${
+                                                        firstLogin(
+                                                            viperIdImage!
+                                                        )
+                                                            ? viperIdImage
+                                                            : `/vipers/${viperIdImage}`
+                                                    }`}
                                                     alt={`/vipers/${viperIdImage}`}
                                                     width={50}
                                                     height={50}
@@ -460,12 +419,11 @@ export default function AddComment({
                                                         {bloggerIdName}
                                                     </span>
                                                 </span>
-                                                <span className=" flex justify-start text-gray-300 text-sm mx-2 mt-2 ">
+                                                <span className="h-16 flex justify-start text-gray-300 text-sm mx-2 mt-2 ">
                                                     {showComment}
                                                 </span>
                                             </div>
                                         </div>
-                                        {/* <div className="items-center gap-2 mt-3 grid grid-cols-6 "></div> */}
                                     </div>
                                 </div>
                             </div>

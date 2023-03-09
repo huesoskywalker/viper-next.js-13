@@ -1,7 +1,4 @@
-import runTest from "../graphql/query/node"
-
 export default async function HomePage() {
-    // const test = await runTest()
     return (
         <div className="  space-y-8 mt-7">
             <h1 className="flex justify-center text-xl font-medium text-gray-300">

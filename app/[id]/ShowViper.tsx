@@ -42,8 +42,6 @@ export default function ShowViper({
                         <span className="text-yellow-700/80 text-xs px-1  hover:text-yellow-600/80 hover:underline">
                             <button
                                 onMouseEnter={displayOrganizer}
-                                // onMouseMoveCapture={displayOrganizer}
-                                // href={`/vipers/${viperImage}`}
                                 className="max-h-fit max-w-fit"
                             >
                                 {viperName}
@@ -53,17 +51,13 @@ export default function ShowViper({
                 </div>
             ) : blog ? null : (
                 <div className="relative grid grid-flow-row z-0 w-full h-full">
-                    {/* <div className="flex justify-between"> */}
                     <button
                         onMouseEnter={displayOrganizer}
-                        // onMouseMoveCapture={displayOrganizer}
-                        // href={`/vipers/${viperImage}`}
                         className="max-h-fit max-w-fit flex justify-end text-yellow-800/90 text-xs  hover:text-yellow-600/90 "
                     >
                         {viperName}
                     </button>
                 </div>
-                // </div>
             )}
 
             {isDisplay ? (
@@ -79,12 +73,7 @@ export default function ShowViper({
                             className=" w-[14rem] h-[11rem]max-h-fit max-w-lg p-4 mx-auto bg-gray-800 border-[1px] border-gray-700 rounded-xl shadow-lg"
                             onMouseLeave={closeOrganizer}
                         >
-                            {/* <div className="mx-10 "> */}
-                            {/* <div className=" text-center sm:ml-4 sm:text-left"> */}
-                            {/* <div className="items-center gap-2 mt-3 grid grid-rows-2 grid-cols-4 "> */}
                             {children}
-                            {/* </div> */}
-                            {/* </div> */}
                             {/* </div> */}
                         </div>
                     </div>

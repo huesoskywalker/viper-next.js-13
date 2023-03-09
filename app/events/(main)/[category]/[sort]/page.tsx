@@ -3,7 +3,7 @@ import {
     sortEventByCategoryAndSlug,
 } from "../../../../../lib/events"
 import { PageProps } from "../../../../../lib/utils"
-import { EventCard } from "../../../../../components/EventCard"
+import { EventCard } from "../../EventCard"
 
 export default async function CategoryPage({ params }: PageProps) {
     const category: string = params.category

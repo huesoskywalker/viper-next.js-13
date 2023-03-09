@@ -9,8 +9,6 @@ export default async function handler(
 ) {
     const body = req.body
 
-    // const blogId = body.blogId.replace(/[\W]+/g, "")
-
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
     const isLiked = await db
@@ -64,7 +62,6 @@ export default async function handler(
                             bloggerId: new ObjectId(body.bloggerId),
                             blogId: new ObjectId(body.blogId),
                             viperId: new ObjectId(body.viperId),
-                            comment: "",
                             timestamp: Date.now(),
                         },
                     },

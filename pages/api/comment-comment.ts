@@ -37,25 +37,5 @@ export default async function handler(
         } catch (error) {
             return res.status(400).json(error)
         }
-
-        // .aggregate([
-        //     {
-        //         $match: { _id: new ObjectId(body.id) },
-        //     },
-        //     {
-        //         $project: {
-        //             _id: 0,
-        //             comments: 1,
-        //         },
-        //     },
-        //     {
-        //         $unwind: "$comments",
-        //     },
-        //     {
-        //         $unwind: "$comments.comments"
-        //     }
-
-        // ])
-        // .toArray()
     }
 }

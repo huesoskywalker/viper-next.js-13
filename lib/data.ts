@@ -10,11 +10,6 @@ export const data: Item[] = [
         slug: "events",
         description: "Show case of the events",
     },
-    // {
-    //     name: "Vipers",
-    //     slug: "vipers",
-    //     description: "Show case of the vipers",
-    // },
     {
         name: "Dashboard",
         slug: "dashboard",

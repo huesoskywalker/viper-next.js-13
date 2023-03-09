@@ -1,8 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
-import getViperFollowById, { getViperById } from "../../lib/vipers"
-import { Follow } from "../../components/Follow"
-import { PageProps, firstLogin } from "../../lib/utils"
+import getViperFollowById, { Viper, getViperById } from "../../lib/vipers"
+import { Follow } from "../profile/Follow"
+import { firstLogin } from "../../lib/utils"
 import { getCurrentViper } from "../../lib/session"
 
 export default async function OrganizerInfo({
@@ -12,7 +12,7 @@ export default async function OrganizerInfo({
     id: string
     event: boolean
 }) {
-    const viperId = id.replace(/["']+/g, "")
+    const viperId: string = id.replace(/["']+/g, "")
     const viper = await getViperById(viperId)
     const currentViper = await getCurrentViper()
     const isViperFollowed = await getViperFollowById(viperId, currentViper!.id)

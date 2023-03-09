@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { shopifyAdmin } from "../../lib/adminApi"
 import { STAGE_UPLOAD } from "../../graphql/mutation/stageUploadCreate"
-import { loadSession } from "../../lib/shopifySessionStorage"
+import { loadSession } from "../../lib/SHPPIFY-SESSION-STORAGE"
 
 const stageUploadCreate = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body

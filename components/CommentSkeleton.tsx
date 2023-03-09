@@ -9,7 +9,6 @@ export const CommentSkeleton = ({ isLoading }: { isLoading?: boolean }) => (
             })}
         >
             <div className="space-y-3">
-                {/* <div className="h-40 rounded-lg bg-gray-700" /> */}
                 <div className="grid grid-cols-6 ">
                     <span className="flex justify-start  h-8 w-8 rounded-full bg-gray-700 "></span>
                     <div className="flex items-center col-start-2 col-span-5">
@@ -22,7 +21,6 @@ export const CommentSkeleton = ({ isLoading }: { isLoading?: boolean }) => (
                         <span className="h-5 w-8 rounded-full bg-gray-700" />
                         <span className="h-5 w-8 rounded-full bg-gray-700" />
                     </div>
-                    {/* <div className="h-4 w-3/12 rounded-lg bg-gray-700" /> */}
                 </div>
             </div>
         </div>

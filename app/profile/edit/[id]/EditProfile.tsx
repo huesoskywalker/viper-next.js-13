@@ -249,7 +249,6 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                 onChange={(e) =>
                                                     setLocation(e.target.value)
                                                 }
-                                                // required
                                             >
                                                 <option value={"Nowhere"}>
                                                     Select an Option
@@ -294,9 +293,9 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                         role="status"
                                                     >
                                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                                        {/* <span className="sr-only">
-                                            Loading...
-                                        </span> */}
+                                                        <span className="sr-only">
+                                                            Loading...
+                                                        </span>
                                                     </div>
                                                 ) : null}
                                             </button>

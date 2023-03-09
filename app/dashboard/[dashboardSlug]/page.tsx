@@ -1,6 +1,6 @@
 import { getViperCreatedEvents, EventInterface } from "../../../lib/events"
 import { getCurrentViper } from "../../../lib/session"
-import { EventCard } from "../../../components/EventCard"
+import { EventCard } from "../../events/(main)/EventCard"
 import { EditEvent } from "./EditEvent"
 import { delay } from "../../../lib/delay"
 import { Suspense } from "react"

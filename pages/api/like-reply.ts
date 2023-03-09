@@ -48,17 +48,6 @@ export default async function handler(
             ])
             .toArray()
 
-        // .findOne({
-        //     _id: new ObjectId(body.eventId),
-        //     comments: {
-        //         $elemMatch: {
-        //             _id: new ObjectId(body.commentId),
-        //             "replies._id": new ObjectId(reply_id),
-        //             "replies.likes": new ObjectId(body.viperId),
-        //         },
-        //     },
-        // })
-
         if (isLiked.length === 0) {
             console.log(body.eventId)
             console.log(body.commentId)

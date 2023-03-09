@@ -1,8 +1,7 @@
 import { Suspense } from "react"
 import { getCurrentViper } from "../../lib/session"
 import { getViperById } from "../../lib/vipers"
-import { CommentCard } from "../[id]/[commentId]/[viperId]/CommentCard"
-import { CommentSkeleton } from "../../components/CommentSkeleton"
+import { CommentCard } from "./CommentCard"
 import Loading from "./loading"
 
 export default async function ProfilePage() {

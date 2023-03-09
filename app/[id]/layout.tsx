@@ -3,7 +3,7 @@ import GoBackArrow from "./GoBackArrow"
 import { Event } from "./Event"
 // export const dynamic = "auto"
 // export const dynamicParams = true
-export const revalidate = 10
+// export const revalidate = 30
 // export const fetchCache = "auto"
 // export const runtime = "nodejs"
 // export const preferredRegion = "auto"

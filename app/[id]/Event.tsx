@@ -1,6 +1,5 @@
 import Image from "next/image"
 import { Suspense } from "react"
-import { type EventInterface } from "../../lib/events"
 import { EventInfo, InfoSkeleton } from "./EventInfo"
 import { AddLike } from "./AddLike"
 import { cookies } from "next/headers"
@@ -67,9 +66,6 @@ export async function Event({ eventId }: { eventId: string }) {
                 <div className="truncate text-xl font-medium text-white lg:text-2xl">
                     {selectedEvent.title}
                 </div>
-
-                {/* <ProductRating rating={selectedEvent.rating} /> */}
-
                 <div className="space-y-4 text-sm text-gray-200">
                     {selectedEvent.content}
                 </div>
@@ -167,11 +163,16 @@ export async function Event({ eventId }: { eventId: string }) {
                 <AddComment
                     id={eventId}
                     commentId={JSON.stringify(selectedEvent._id)}
+                    viperIdImage={undefined}
+                    viperIdName={undefined}
+                    bloggerIdName={undefined}
                     commentReplies={selectedEvent.comments.length}
-                    // timestamp={0}
+                    timestamp={null}
+                    commentCookie={"none"}
                     event={true}
                     reply={false}
                     blog={false}
+                    showComment={undefined}
                 />
             </div>
         </div>

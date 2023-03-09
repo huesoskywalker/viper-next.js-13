@@ -24,24 +24,6 @@ export default async function handler(
             variables: PRODUCT_INPUT,
         },
     })
-    // const data = await client.query({
-    //     data: `query publications {
-    //       publications(first: 5) {
-    //         edges {
-    //           node {
-    //             id
-    //             name
-    //             app {
-    //               id
-    //               title
-    //               description
-    //               developerName
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }`,
-    // })
 
     return res.status(200).json(publishProduct)
 }

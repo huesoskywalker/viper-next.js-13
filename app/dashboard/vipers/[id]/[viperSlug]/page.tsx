@@ -4,7 +4,6 @@ import PostAndLikeCard from "../../../../profile/[profileSlug]/PostAndLikeCard"
 
 export default async function ViperSlugPage({ params }: PageProps) {
     const viperId: string = params.id
-    // const viper = await getCurrentViper()
     const blogLikesAndRePosts = await getBlogLikesAndRePosts(viperId)
     return (
         <div>

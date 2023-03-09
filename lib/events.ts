@@ -62,7 +62,6 @@ export interface EditEvent {
 
 export async function getAllEvents() {
     const client = await clientPromise
-    // try {
     const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
@@ -87,10 +86,6 @@ export async function getAllEvents() {
         .toArray()
 
     return events
-    // }
-    // finally {
-    //     await client.close()
-    // }
 }
 
 //leave me here
@@ -98,7 +93,6 @@ export async function getAllEvents() {
 
 export async function getEventById(id: string) {
     const client = await clientPromise
-    // try {
     const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
@@ -106,32 +100,8 @@ export async function getEventById(id: string) {
     const event = await db.findOne({
         _id: new ObjectId(id),
     })
-    // const event = await db.aggregate<EventInterface>([
-    //     {
-    //         $match: {
-    //             _id: new ObjectId(id),
-    //         },
-    //     },
-    //     {
-    //         $project: {
-    //             _id: 1,
-    //             organizer: 1,
-    //             title: 1,
-    //             content: 1,
-    //             location: 1,
-    //             address: 1,
-    //             date: 1,
-    //             category: 1,
-    //             image: 1,
-    //             price: 1,
-    //         },
-    //     },
-    // ])
 
     return event
-    // } finally {
-    //     await client.close()
-    // }
 }
 
 export async function getEventsByCategory(category: string) {
@@ -191,17 +161,6 @@ function sortBy(field: string) {
     }
 }
 
-// function sortBy(field: string) {
-//     return function (a: any, b: any) {
-//         if (a[field] > b[field]) {
-//             return 1
-//         } else if (a[field] < b[field]) {
-//             return -1
-//         }
-//         return 0
-//     }
-// }
-
 export async function getViperCreatedEvents(id: string) {
     const client = await clientPromise
 
@@ -240,34 +199,6 @@ export async function getViperCreatedEvents(id: string) {
     return events
 }
 
-// export async function getViperParticipatedEvents(id: string) {
-//     const client = await clientPromise
-//     const db = await client.db("viperDb").collection<EventInterface>("users")
-//     const events = await db
-//         .aggregate<EventInterface>([
-//             {
-//                 $match: { _id: new ObjectId(id) },
-//             },
-//             {
-//                 $unwind: "$participated",
-//             },
-//             {
-//                 $project: {
-//                     _id: 0,
-//                     participated: 1,
-//                 },
-//             },
-//         ])
-//         .toArray()
-//     // { _id: new Object(id) }
-//     // {
-//     //     $sort: { creationDate: -1 },
-//     // },
-
-//     // },
-//     return events
-// }
-
 export async function getEventComment(eventId: string, commentId: string) {
     const client = await clientPromise
     const db = client
@@ -295,13 +226,8 @@ export async function getEventComment(eventId: string, commentId: string) {
                 $project: {
                     _id: 0,
                     comments: 1,
-                    // viperId: "$comments.viperId",
-                    // text: "$comments.text",
                 },
             },
-            // {
-            //     $unwind: "$comments",
-            // },
         ])
         .toArray()
     return eventComment
@@ -342,12 +268,6 @@ export async function getEventReplies(
                     replies: "$comments.replies",
                 },
             },
-            // {
-            //     $unwind: "$replies",
-            // },
-            // {
-            //     $sort: { "replies.timestamp": -1 },
-            // },
         ])
         .toArray()
 
@@ -363,22 +283,7 @@ export async function isViperOnTheList(eventId: string, viperId: string) {
         _id: new ObjectId(eventId),
         "participants._id": new ObjectId(viperId),
     })
-    // .aggregate([
-    //     {
-    //         $match: {
-    //             _id: new ObjectId(eventId),
-    //         },
-    //     },
-    //     {
-    //         $unwind: "$participants",
-    //     },
-    //     {
-    //         $match: {
-    //             "participants._id": new ObjectId(viperId),
-    //         },
-    //     },
-    // ])
-    // .toArray()
+
     if (!isParticipant) return false
 
     return true

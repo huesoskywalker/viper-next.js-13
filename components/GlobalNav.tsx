@@ -34,7 +34,6 @@ export default function GlobalNav() {
                                 clipRule="evenodd"
                             />
                         </svg>
-                        {/* </div> */}
                         <h3 className="font-semibold tracking-wide text-gray-400 group-hover:text-gray-50">
                             <span className="Work in progress">Sign in</span>
                         </h3>
@@ -70,7 +69,6 @@ export default function GlobalNav() {
                             clipRule="evenodd"
                         />
                     </svg>
-                    {/* </div> */}
                     <h3 className="font-semibold tracking-wide text-gray-400 group-hover:text-gray-50">
                         <span className="Work in progress">
                             v

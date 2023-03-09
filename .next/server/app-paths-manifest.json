@@ -1,7 +1,3 @@
 {
-  "/dashboard/[dashboardSlug]/page": "app/dashboard/[dashboardSlug]/page.js",
-  "/dashboard/[dashboardSlug]/collection/page": "app/dashboard/[dashboardSlug]/collection/page.js",
-  "/events/(main)/page": "app/events/(main)/page.js",
-  "/events/(main)/[category]/page": "app/events/(main)/[category]/page.js",
-  "/[id]/page": "app/[id]/page.js"
+  "/events/(main)/page": "app/events/(main)/page.js"
 }

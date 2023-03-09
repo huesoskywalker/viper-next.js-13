@@ -12,7 +12,6 @@ export const EventDate = ({
             {typeof date === "object" ? (
                 <div className="grid">
                     <strong className="font-bold text-sm text-gray-100">
-                        {/* {format(date, "MMM d, yyyy \n h:m")} */}
                         {format(date, " MMM do, yyyy")}
                     </strong>
                     {!collection ? (

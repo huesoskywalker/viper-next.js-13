@@ -1,7 +1,5 @@
-import { Suspense } from "react"
 import { getBlog } from "../../../lib/vipers"
-import { CommentCard } from "../../[id]/[commentId]/[viperId]/CommentCard"
-import { CommentSkeleton } from "../../../components/CommentSkeleton"
+import { CommentCard } from "../CommentCard"
 
 export default async function PostAndLikeCard({
     bloggerId,

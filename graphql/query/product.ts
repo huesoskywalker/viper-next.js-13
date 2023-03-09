@@ -19,38 +19,11 @@ const PRODUCT_GET = gql`
                 edges {
                     node {
                         id
-                        # title
                         displayName
                         createdAt
                         price
-                        # compareAtPrice
                         inventoryQuantity
                         availableForSale
-                        # weight
-                        # weightUnit
-                        # selectedOptions {
-                        #     name
-                        #     value
-                        # }
-                        # media(first: 10) {
-                        #     edges {
-                        #         node {
-                        #             alt
-                        #             mediaContentType
-                        #             status
-                        #             __typename
-                        #             ... on MediaImage {
-                        #                 id
-                        #                 preview {
-                        #                     image {
-                        #                         originalSrc
-                        #                     }
-                        #                 }
-                        #                 __typename
-                        #             }
-                        #         }
-                        #     }
-                        # }
                     }
                 }
             }

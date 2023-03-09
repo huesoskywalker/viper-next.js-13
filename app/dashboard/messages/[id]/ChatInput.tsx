@@ -13,7 +13,6 @@ export default function ChatInput({
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState(false)
 
-    // Create inline loading UI
     const isMutating = isFetching || isPending
 
     const router = useRouter()
@@ -39,8 +38,6 @@ export default function ChatInput({
         setIsFetching(false)
         startTransition(() => {
             router.refresh()
-            // window.scrollTo({ top: 0, behavior: "smooth" })
-            // document.body.focus()
         })
     }
     return (

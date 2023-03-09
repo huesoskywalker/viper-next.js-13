@@ -83,10 +83,6 @@ export function CreateEvent() {
             const parameters = target.parameters
             const resourceUrl = target.resourceUrl
             const url = target.url
-            console.log(
-                `-----------------stageUploadCreate--------------------`
-            )
-            console.log(stageUploadCreate)
 
             parameters.forEach(({ name, value }: any) => {
                 file.append(name, value)
@@ -100,8 +96,6 @@ export function CreateEvent() {
                 method: "POST",
                 body: file,
             })
-            console.log(`-----------------uploadStagedUrl--------------------`)
-            console.log(uploadStagedUrl)
 
             // ------------------------------------------------------------------------------
             const createProduct = await fetch(`/api/create-product-shopify`, {
@@ -125,8 +119,6 @@ export function CreateEvent() {
                 }),
             })
             const newProduct = await createProduct.json()
-            console.log(`-----------------newProduct---------------------`)
-            console.log(newProduct)
             const productId = newProduct.body.data.productCreate.product.id
 
             // ------------------------------------------------------------------------------
@@ -144,8 +136,6 @@ export function CreateEvent() {
                 }
             )
             const productDone = await productCreateMedia.json()
-            console.log(`----------------productDone--------------------`)
-            console.log(productDone)
             // --------------------------------------------------------------------------
             const publishProduct = await fetch(`/api/publish-product-shopify`, {
                 method: "POST",
@@ -158,8 +148,6 @@ export function CreateEvent() {
                 }),
             })
             const productPublished = await publishProduct.json()
-            console.log(`----------------productPublished--------------------`)
-            console.log(productPublished)
             // ---------------------------------------------------------------------------------------------
 
             const createEvent = await fetch(`/api/create-event`, {
@@ -185,9 +173,6 @@ export function CreateEvent() {
             })
 
             const newEvent = await createEvent.json()
-
-            console.log(`---------------newEvent------------------`)
-            console.log(newEvent)
 
             setIsFetching(false)
 
@@ -223,29 +208,6 @@ export function CreateEvent() {
         console.log("Image settled")
     }, [image])
     return (
-        // <div className="fixed inset-0 z-10 overflow-y-auto">
-        //     <div className="flex items-center min-h-screen px-4 py-2 ">
-        //         <div className="relative left-24 w-full max-w-lg p-3 mx-auto bg-gray-800 rounded-xl shadow-lg">
-        //             <div className="m-1 ">
-        //                 <button
-        //                     onClick={() => router.back()}
-        //                     className="flex justify-start self-start w-fit text-gray-400 hover:text-red-600"
-        //                 >
-        //                     <svg
-        //                         xmlns="http://www.w3.org/2000/svg"
-        //                         fill="none"
-        //                         viewBox="0 0 24 24"
-        //                         strokeWidth={1.7}
-        //                         stroke="currentColor"
-        //                         className="w-5 h-5"
-        //                     >
-        //                         <path
-        //                             strokeLinecap="round"
-        //                             strokeLinejoin="round"
-        //                             d="M6 18L18 6M6 6l12 12"
-        //                         />
-        //                     </svg>
-        //                 </button>
         <div className="py-2 flex justify-center">
             <div className="w-4/5">
                 <div className="grid grid-cols-1 gap-6">
@@ -289,9 +251,6 @@ export function CreateEvent() {
                             >
                                 <option value={"All"}>Select an Option</option>
                                 <option value={"bars"}>Bars</option>
-                                {/* <option value={"restaurants"}>
-                                    Restaurants
-                                </option> */}
                                 <option value={"clubs"}>Clubs</option>
                                 <option value={"music"}>Music</option>
                                 <option value={"sports"}>Sports</option>
@@ -421,9 +380,9 @@ export function CreateEvent() {
                                         role="status"
                                     >
                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                        {/* <span className="sr-only">
+                                        <span className="sr-only">
                                             Loading...
-                                        </span> */}
+                                        </span>
                                     </div>
                                 ) : null}
                             </button>
@@ -432,9 +391,5 @@ export function CreateEvent() {
                 </div>
             </div>
         </div>
-        //              </div>
-        //         </div>
-        //     </div>
-        // </div>
     )
 }

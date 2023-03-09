@@ -8,30 +8,6 @@ export const CUSTOMER_CREATE = gql`
             }
             customer {
                 id
-                # email
-                # password
-                # phone
-
-                # taxExempt
-
-                # acceptsMarketing
-                # firstName
-                # lastName
-
-                # ordersCount
-                # totalSpent
-                # smsMarketingConsent {
-                #     marketingState
-                #     marketingOptInLevel
-                # }
-
-                # addresses {
-                #     address1
-                #     city
-                #     country
-                #     phone
-                #     zip
-                # }
             }
         }
     }

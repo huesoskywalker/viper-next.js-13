@@ -1,4 +1,3 @@
-import { SkeletonCard } from "../../../components/SkeletonCard"
 import { ViperSkeletonCard } from "../../../components/ViperSkeletonCard"
 
 export default function Loading() {
@@ -9,7 +8,6 @@ export default function Loading() {
                 <span className="sr-only">Loading...</span>
             </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 my-[1rem]">
-                {/* <SkeletonCard isLoading={true} /> */}
                 <ViperSkeletonCard isLoading={true} />
                 <ViperSkeletonCard isLoading={true} />
                 <ViperSkeletonCard isLoading={true} />

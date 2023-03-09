@@ -22,8 +22,6 @@ export default function CreateCustomer({
     const [phone, setPhone] = useState<string>("")
     const [firstName, setFirstName] = useState<string>(viperFirstName)
     const [lastName, setLastName] = useState<string>(viperLastName)
-    // const [emailMarketingConsent, setEmailMarketingConsent] =
-    //     useState<boolean>(false)
     const [address, setAddress] = useState<string>("")
     const [city, setCity] = useState<string>("")
     const [province, setProvince] = useState<string>("")
@@ -55,12 +53,9 @@ export default function CreateCustomer({
                 }),
             })
             const newCustomer = await customerCreate.json()
-            console.log(`-------------------newCustomer-----------------`)
-            console.log(newCustomer)
 
             const newCustomerId =
                 newCustomer.body.data.customerCreate.customer.id
-            console.log(newCustomerId)
 
             // ---------------------------------------------------------------------------------------
 
@@ -79,15 +74,9 @@ export default function CreateCustomer({
             )
 
             const customerAccessToken = await customerAccessTokenCreate.json()
-            console.log(
-                `--------------------customerAccessToken----------------------`
-            )
-            console.log(customerAccessToken.body.data.customerAccessTokenCreate)
             const accessToken =
                 customerAccessToken.body.data.customerAccessTokenCreate
                     .customerAccessToken.accessToken
-            console.log(`--------accessToken------------`)
-            console.log(accessToken)
             // ---------------------------------------------------------------------------------------
             const customerAddressCreate = await fetch(
                 `/api/create-customer-address`,
@@ -110,8 +99,6 @@ export default function CreateCustomer({
                 }
             )
             const newAddress = await customerAddressCreate.json()
-            console.log(`-------------------newAddress-----------------`)
-            console.log(newAddress)
             // ---------------------------------------------------------------------------------------
 
             const postAccessTokenToUser = await fetch(
@@ -136,10 +123,6 @@ export default function CreateCustomer({
             )
 
             const updatedUser = await postAccessTokenToUser.json()
-            console.log(
-                `---------------updatedUser----------------------------`
-            )
-            console.log(updatedUser)
 
             // ---------------------------------------------------------------------------------------
 
@@ -355,23 +338,6 @@ export default function CreateCustomer({
                                                 </option>
                                             </select>
                                         </label>
-                                        {/* <label className="flex justify-items-start py-1 text-gray-300 ">
-                                            Email Marketing Consent
-                                            <span className="text-gray-300 flex align-baseline ml-2">
-                                                <input
-                                                    className="block p-1 w-full checked:bg-yellow-400 hover:cursor-pointer border sm:text-xs "
-                                                    type={"checkbox"}
-                                                    checked={
-                                                        emailMarketingConsent
-                                                    }
-                                                    onChange={(e) =>
-                                                        setEmailMarketingConsent(
-                                                            e.target.checked
-                                                        )
-                                                    }
-                                                />
-                                            </span>
-                                        </label> */}
                                         <div className="flex justify-center">
                                             <button
                                                 className={`${

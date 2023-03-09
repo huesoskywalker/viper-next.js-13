@@ -1,6 +1,6 @@
 import { getViperById } from "../../../../lib/vipers"
 import { PageProps } from "../../../../lib/utils"
-import { CommentCard } from "../../../[id]/[commentId]/[viperId]/CommentCard"
+import { CommentCard } from "../../../profile/CommentCard"
 import { Suspense } from "react"
 import Loading from "./loading"
 

@@ -26,18 +26,7 @@ export default async function uploadViperFiles(
             form.on("file", (name: string, file: File) => {
                 const data = fs.readFileSync(file.filepath)
                 file.filepath = file.newFilename
-
-                // for (let i = 0; i < Array(file).length; i++) {
-                // url.push(file.filepath)
-                // }
-
                 fs.writeFileSync(`public/vipers/${file.newFilename}`, data)
-
-                // const url = Array.isArray(file)
-                //     ? file.map((f) => f.filepath)
-                //     : file.filepath
-
-                // console.log(url)
                 const url = file.filepath
 
                 res.status(200).json({

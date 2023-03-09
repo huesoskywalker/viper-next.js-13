@@ -15,7 +15,6 @@ export default async function handler(
                 phone: body.phone,
                 firstName: body.firstName,
                 lastName: body.lastName,
-                // emailMarketingConsent: body.emailMarketingConsent,
             },
         }
 

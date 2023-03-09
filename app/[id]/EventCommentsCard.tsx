@@ -1,4 +1,4 @@
-import { Comments, getEventById } from "../../lib/events"
+import { getEventById } from "../../lib/events"
 import { getViperById } from "../../lib/vipers"
 import Image from "next/image"
 import { cookies } from "next/headers"
@@ -50,7 +50,6 @@ export async function EventCommentsCard({
     return (
         <div className=" space-y-2 lg:border-b lg:border-gray-800 pb-3 ml-5">
             <div className="flex items-center w-full max-w-lg  mx-auto ">
-                {/* <div className="relative w-full max-w-lg p-4 mx-auto rounded-xl shadow-lg h-[9rem]"> */}
                 <div className=" text-center sm:ml-4 sm:text-left">
                     <div className="grid grid-cols-9 gap-3 space-x-4">
                         <div className="col-start-1 col-span-1 ">
@@ -69,7 +68,6 @@ export async function EventCommentsCard({
                             </Link>
                         </div>
                         <div className="col-start-2 col-span-7 border-[1px] border-slate-600 rounded-xl bg-gray-700/50 p-[6px] h-[7rem] w-[22rem]  space-y-2">
-                            {/* <Link href={`/dashboard/vipers/${viper_id}`}> */}
                             <div className="flex justify-between  max-h-auto">
                                 <ShowViper
                                     viperName={viper!.name}
@@ -129,12 +127,11 @@ export async function EventCommentsCard({
                                         </ShowFollows>
                                     </div>
                                 </ShowViper>
-                                <EventDate date={timestamp} />
+                                <EventDate
+                                    date={timestamp}
+                                    collection={false}
+                                />
                             </div>
-                            {/* <span className="text-gray-300 text-xs hover:text-gray-500-80 ">
-                                        {viper?.name}
-                                    </span> */}
-                            {/* </Link> */}
 
                             <Link
                                 href={`/${eventId}/${comment_id}/${viper_id}`}
@@ -163,7 +160,6 @@ export async function EventCommentsCard({
                         </div>
                     </div>
                 </div>
-                {/* </div> */}
             </div>
             <div className="flex justify-items-start space-x-4 space-y-1 ml-32">
                 <AddLike
@@ -181,12 +177,16 @@ export async function EventCommentsCard({
                     <AddComment
                         id={eventId}
                         commentId={comment_id}
+                        viperIdImage={undefined}
+                        viperIdName={undefined}
+                        bloggerIdName={undefined}
                         commentReplies={commentReplies}
-                        // viperComment={comment.text}
-                        // viperIdComment={comment.viperId}
+                        timestamp={null}
+                        commentCookie={"none"}
                         event={false}
                         reply={true}
                         blog={false}
+                        showComment={undefined}
                     />
                 ) : null}
             </div>

@@ -3,7 +3,6 @@ import { cache } from "react"
 export type Dashboard = {
     name: string
     slug: string
-    // count?: number
     items: Omit<Dashboard, "items">[]
 }
 
@@ -25,21 +24,8 @@ export const getDashboard = cache((): Dashboard[] => [
     {
         name: "Messages",
         slug: "messages",
-        items: [
-            // { name: "Tops", slug: "tops" },
-            // { name: "Shorts", slug: "shorts" },
-            // { name: "Shoes", slug: "shoes" },
-        ],
+        items: [],
     },
-    // {
-    //     name: "Analytics",
-    //     slug: "analytics",
-    //     items: [
-    //         { name: "Best Ones", slug: "best" },
-    //         // { name: "Biography", slug: "biography" },
-    //         // { name: "Education", slug: "education" },
-    //     ],
-    // },
 ])
 
 export async function fetchDashboardBySlug(slug: string | undefined) {

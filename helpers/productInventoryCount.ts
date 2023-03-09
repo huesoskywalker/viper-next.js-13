@@ -4,11 +4,6 @@ import { storefrontClient } from "../lib/storefrontApi"
 import PRODUCT_INVENTORY_GET from "../graphql/query/productInventory"
 
 export const productInventoryCount = async (productId: string) => {
-    // const session = shopifyAdmin.session.customAppSession(
-    //     "vipers-go.myshopify.com"
-    // )
-    // const client = new shopifyAdmin.clients.Graphql({ session })
-
     const PRODUCT_INPUT = {
         id: productId,
     }
@@ -23,7 +18,4 @@ export const productInventoryCount = async (productId: string) => {
     // if (!productInventory) return false
 
     return productInventory.body.data.product
-    // return NextResponse.json({
-    //     response: productInventory.body.data.product.totalInventory,
-    // })
 }

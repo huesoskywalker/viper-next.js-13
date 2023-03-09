@@ -1,9 +1,5 @@
 import { ObjectId } from "mongodb"
-import runTest from "../graphql/query/node"
-import { NODE_CHECKOUT_QUERY } from "../graphql/query/nodeCheckout"
-import { shopifyAdmin } from "./adminApi"
 import clientPromise from "./mongodb"
-import { storefrontClient } from "./storefrontApi"
 
 export interface Viper {
     readonly _id: ObjectId
@@ -106,7 +102,6 @@ export async function getViperParticipatedEvents(id: string) {
             {
                 $project: {
                     _id: "$collection._id",
-                    // participated: ,
                 },
             },
         ])
@@ -128,8 +123,6 @@ export async function getViperLikedEvents(id: string) {
             },
             {
                 $project: {
-                    // _id: 0,
-                    // likes: 1,
                     _id: "$likes._id",
                 },
             },
@@ -234,18 +227,6 @@ export async function getBlogLikesAndRePosts(id: string) {
             {
                 $sort: { timestamp: -1 },
             },
-            // {
-            //     $addFields: {
-            //         merged: {
-            //             $mergeObjects: ["$blogRePosts", "$blogLikes"],
-            //         },
-            //     },
-            // },
-            // {
-            //     $project: {
-            //         merged: 1,
-            //     },
-            // },
         ])
         .toArray()
     return viperBlog
@@ -265,19 +246,6 @@ export async function getBlog(bloggerId: string, blogId: string) {
                         "blog._id": new ObjectId(bId),
                     },
                 },
-                // {
-                //     $unwind: "$blog",
-                // },
-
-                // {
-                //     $project: {
-                //         _id: "$blog._id",
-                //         content: "$blog.content",
-                //         likes: "$blog.likes",
-                //         timestamp: "$blog.timestamp",
-                //         rePosts: "$blog.rePosts",
-                //     },
-                // },
                 {
                     $project: {
                         blog: {
@@ -315,6 +283,7 @@ export default async function getViperFollowById(
     viperId: string,
     currentViper: string
 ) {
+    if (viperId === currentViper) return false
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
 
@@ -322,7 +291,8 @@ export default async function getViperFollowById(
         _id: new ObjectId(viperId),
         followers: new ObjectId(currentViper),
     })
-    return viperFollower
+    if (!viperFollower) return false
+    return true
 }
 
 export async function requestEventParticipation(

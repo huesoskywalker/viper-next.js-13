@@ -48,7 +48,6 @@ export default async function handler(
                         comments: {
                             $elemMatch: {
                                 _id: new ObjectId(body.commentId),
-                                // text: body.comment,
                             },
                         },
                     },
@@ -70,7 +69,6 @@ export default async function handler(
                         comments: {
                             $elemMatch: {
                                 _id: new ObjectId(body.commentId),
-                                // text: body.comment,
                             },
                         },
                     },
