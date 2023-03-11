@@ -8,6 +8,9 @@ import { getCurrentViper } from "../../lib/session"
 import { getViperById, requestEventParticipation } from "../../lib/vipers"
 import isCheckoutFulFilled from "../../helpers/isCheckoutFulFilled"
 import { productInventoryCount } from "../../helpers/productInventoryCount"
+import { InventoryItem } from "@shopify/shopify-api/rest/admin/2023-01/inventory_item"
+import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfillment_order"
+import { Session, User } from "next-auth"
 
 export async function EventInfo({
     eventId,
@@ -27,14 +30,20 @@ export async function EventInfo({
     // // Normally you would fetch data here
     const viperSession = await getCurrentViper()
     if (!viperSession) return
-    const viperId = viperSession.id
-    const viperOnList = await isViperOnTheList(eventId, viperId)
-    const viperRequest = await requestEventParticipation(viperId, eventId)
+    const viperId: string = viperSession.id
+    const viperOnList: boolean = await isViperOnTheList(eventId, viperId)
+    const viperRequest: boolean = await requestEventParticipation(
+        viperId,
+        eventId
+    )
     const viper = await getViperById(viperId)
     if (!viper) return
 
-    const isCheckoutPaid = await isCheckoutFulFilled(viper, eventId)
-    const productInventory = await productInventoryCount(productId)
+    const checkoutFulfillment: FulfillmentOrder | undefined =
+        await isCheckoutFulFilled(viper, eventId)
+    const productInventory: InventoryItem = await productInventoryCount(
+        productId
+    )
 
     await delay(1000)
     return (
@@ -42,12 +51,13 @@ export async function EventInfo({
             <EventDate date={eventDate} collection={false} />
             <EventLocation location={eventLocation} />
             <EventPrice price={eventPrice} />
+            {/* @ts-expect-error Async Server Component */}
             <Participate
                 eventId={eventId}
                 productId={productId}
                 viperOnList={viperOnList}
                 viperRequest={viperRequest}
-                isCheckoutPaid={isCheckoutPaid}
+                isCheckoutPaid={checkoutFulfillment?.financialStatus}
                 eventEntries={eventEntries}
                 totalInventory={productInventory.totalInventory}
             />

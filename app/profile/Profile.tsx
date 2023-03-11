@@ -1,6 +1,6 @@
 import Image from "next/image"
-import getViperFollowById from "../../lib/vipers"
-import { Follow } from "./Follow"
+import getViperFollowById, { Follow, Viper } from "../../lib/vipers"
+import { AddFollow } from "./AddFollow"
 import ShowFollows from "./ShowFollows"
 import Link from "next/link"
 import ViperInfo from "./ViperInfo"
@@ -16,12 +16,12 @@ export const Profile = async ({
     currentViper: string
     profile: boolean
 }) => {
-    const fullViper = await getViperById(viperId)
+    const fullViper: Viper | undefined = await getViperById(viperId)
     if (!fullViper) return
-    const string_id: string = JSON.stringify(fullViper!._id)
+    const string_id: string = JSON.stringify(fullViper._id)
     const id: string = string_id.slice(1, -1)
 
-    const isViperFollowed = await getViperFollowById(id, currentViper)
+    const isViperFollowed: boolean = await getViperFollowById(id, currentViper)
 
     return (
         <div className="grid grid-cols-4">
@@ -78,7 +78,7 @@ export const Profile = async ({
                             </div>
                         ) : (
                             <div className="flex justify-start">
-                                <Follow
+                                <AddFollow
                                     id={id}
                                     isFollowed={isViperFollowed}
                                     event={true}
@@ -97,12 +97,12 @@ export const Profile = async ({
                             followers={false}
                             profile={true}
                         >
-                            {fullViper.follows?.map((followsId) => {
+                            {fullViper.follows?.map((follows: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo
-                                        key={JSON.stringify(followsId)}
-                                        id={JSON.stringify(followsId)}
+                                        key={JSON.stringify(follows._id)}
+                                        id={JSON.stringify(follows._id)}
                                     />
                                 )
                             })}
@@ -113,12 +113,12 @@ export const Profile = async ({
                             followers={true}
                             profile={true}
                         >
-                            {fullViper.followers?.map((followersId) => {
+                            {fullViper.followers.map((followers: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo
-                                        key={JSON.stringify(followersId)}
-                                        id={JSON.stringify(followersId)}
+                                        key={JSON.stringify(followers._id)}
+                                        id={JSON.stringify(followers._id)}
                                     />
                                 )
                             })}

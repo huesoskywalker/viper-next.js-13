@@ -7,15 +7,18 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const productId: string = body.productId
+    const viperApp: string = body.viperApp
+
     const session = shopifyAdmin.session.customAppSession(
         "vipers-go.myshopify.com"
     )
     const client = new shopifyAdmin.clients.Graphql({ session })
 
     const PRODUCT_INPUT = {
-        id: body.productId,
+        id: productId,
         input: {
-            publicationId: body.viperApp,
+            publicationId: viperApp,
         },
     }
     const publishProduct = await client.query({

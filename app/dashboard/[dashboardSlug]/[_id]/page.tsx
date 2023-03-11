@@ -1,10 +1,10 @@
-import { getEventById } from "../../../../lib/events"
+import { EventInterface, getEventById } from "../../../../lib/events"
 import { PageProps } from "../../../../lib/getCategories"
 import { EditForm } from "./EditForm"
 
 export default async function EventEditPage({ params }: PageProps) {
     const id: string = params._id
-    const toEditEvent = await getEventById(id)
+    const toEditEvent: EventInterface | null = await getEventById(id)
     return (
         <div>
             {/* @ts-expect-error Async Server Component */}

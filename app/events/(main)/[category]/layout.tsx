@@ -1,8 +1,14 @@
 import { TabGroup } from "../../../../components/TabGroup"
-import { fetchCategoryBySlug, PageProps } from "../../../../lib/getCategories"
+import {
+    Category,
+    fetchCategoryBySlug,
+    PageProps,
+} from "../../../../lib/getCategories"
 
 export default async function Layout({ children, params }: PageProps) {
-    const category = await fetchCategoryBySlug(params.category)
+    const category: Category | undefined = await fetchCategoryBySlug(
+        params.category
+    )
     if (!category) return null
 
     return (

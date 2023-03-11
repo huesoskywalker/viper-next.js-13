@@ -11,8 +11,8 @@ export default async function CreatePage() {
     if (!viper) return
     const events: EventInterface[] = await getViperCreatedEvents(viper.id)
     const lastEvent: EventInterface = events[0]
-    const stringId = JSON.stringify(lastEvent?._id)
-    const lastEventId = stringId?.slice(1, -1)
+    const stringId: string = JSON.stringify(lastEvent?._id)
+    const lastEventId: string = stringId?.slice(1, -1)
     return (
         <div className="flex justify-start">
             <Suspense fallback={<Loading />}>

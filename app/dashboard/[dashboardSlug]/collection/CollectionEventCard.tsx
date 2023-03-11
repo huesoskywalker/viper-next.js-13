@@ -1,10 +1,10 @@
 import Link from "next/link"
 import Image from "next/image"
-import { getEventById } from "../../../../lib/events"
+import { EventInterface, getEventById } from "../../../../lib/events"
 import { EventDate } from "../../../[id]/EventDate"
 import { isEventCardAvailable } from "../../../../helpers/isEventCardAvailable"
 
-export const ParticipatedEventsCard = async ({
+export const CollectionEventCard = async ({
     viperId,
     eventId,
     href,
@@ -15,9 +15,9 @@ export const ParticipatedEventsCard = async ({
     href: string
     collection: boolean
 }) => {
-    const event_id = eventId.slice(1, -1)
-    const link = href.slice(1, -1)
-    const event = await getEventById(event_id)
+    const event_id: string = eventId.slice(1, -1)
+    const link: string = href.slice(1, -1)
+    const event: EventInterface | null = await getEventById(event_id)
 
     const eventCardAvailable: boolean = await isEventCardAvailable(
         event_id,

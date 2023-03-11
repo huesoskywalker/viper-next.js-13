@@ -1,7 +1,7 @@
 "use client"
 
 // useTransition error after installing @shopify/shopify-api
-import { useState, useTransition, Suspense, useEffect } from "react"
+import { useState, useTransition, Suspense, useEffect, FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -24,19 +24,21 @@ export function CreateEvent() {
     const [isFetching, setIsFetching] = useState<boolean>(false)
 
     const isMutating = isFetching || isPending
+    const router = useRouter()
 
     const { data: session } = useSession()
     const viper = session?.user
+    if (!viper) return
     const organizer = {
-        id: viper?.id,
-        name: viper?.name,
-        email: viper?.email,
-        image: viper?.image,
+        id: viper.id,
+        name: viper.name,
+        email: viper.email,
+        image: viper.image,
     }
 
-    const router = useRouter()
-
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (
+        e: FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         e.preventDefault()
         setIsFetching(true)
 
@@ -48,6 +50,7 @@ export function CreateEvent() {
                 method: "POST",
                 body: file,
             })
+
             const {
                 data,
                 error,
@@ -62,7 +65,7 @@ export function CreateEvent() {
                 error: string | null
             } = await uploadImage.json()
 
-            const imageUrl = data?.url
+            const imageUrl: string | string[] | undefined = data?.url
 
             // ----------------------------------------------------------------------------------
             const stageUpload = await fetch(`/api/stage-upload-shopify`, {
@@ -81,8 +84,8 @@ export function CreateEvent() {
             const target =
                 stageUploadCreate.body.data.stagedUploadsCreate.stagedTargets[0]
             const parameters = target.parameters
-            const resourceUrl = target.resourceUrl
-            const url = target.url
+            const resourceUrl: string = target.resourceUrl
+            const url: string = target.url
 
             parameters.forEach(({ name, value }: any) => {
                 file.append(name, value)
@@ -96,7 +99,7 @@ export function CreateEvent() {
                 method: "POST",
                 body: file,
             })
-
+            await uploadStagedUrl.json()
             // ------------------------------------------------------------------------------
             const createProduct = await fetch(`/api/create-product-shopify`, {
                 headers: {
@@ -105,9 +108,7 @@ export function CreateEvent() {
                 method: "POST",
 
                 body: JSON.stringify({
-                    // the resources like title and all those stuff yo
-                    // eventId: newEvent.insertedId,
-                    organizer: organizer?.name,
+                    organizer: organizer.name,
                     resourceUrl: resourceUrl,
                     title: title,
                     description: content,
@@ -118,8 +119,15 @@ export function CreateEvent() {
                     entries: entries,
                 }),
             })
-            const newProduct = await createProduct.json()
-            const productId = newProduct.body.data.productCreate.product.id
+            // IF this does not work get back to the previous one
+            //
+            //
+            //
+            const { product }: { product: { id: string } } =
+                await createProduct.json()
+            const productId: string = product.id
+            // const newProduct = await createProduct.json()
+            // const productId = newProduct.body.data.productCreate.product.id
 
             // ------------------------------------------------------------------------------
             const productCreateMedia = await fetch(
@@ -135,7 +143,7 @@ export function CreateEvent() {
                     }),
                 }
             )
-            const productDone = await productCreateMedia.json()
+            await productCreateMedia.json()
             // --------------------------------------------------------------------------
             const publishProduct = await fetch(`/api/publish-product-shopify`, {
                 method: "POST",
@@ -147,7 +155,7 @@ export function CreateEvent() {
                     viperApp: "gid://shopify/Publication/121066586402",
                 }),
             })
-            const productPublished = await publishProduct.json()
+            await publishProduct.json()
             // ---------------------------------------------------------------------------------------------
 
             const createEvent = await fetch(`/api/create-event`, {
@@ -159,12 +167,11 @@ export function CreateEvent() {
                     organizer,
                     title,
                     content,
-                    date,
                     time,
                     location,
                     address,
+                    date,
                     category,
-                    creationDate: new Date(),
                     price,
                     entries,
                     imageUrl,
@@ -172,7 +179,7 @@ export function CreateEvent() {
                 }),
             })
 
-            const newEvent = await createEvent.json()
+            await createEvent.json()
 
             setIsFetching(false)
 
@@ -196,7 +203,7 @@ export function CreateEvent() {
         }
     }
 
-    const uploadToClient = (event: any) => {
+    const uploadToClient = (event: any): void => {
         if (event.target.files && event.target.files[0]) {
             const i = event.target.files[0]
 
@@ -204,17 +211,12 @@ export function CreateEvent() {
             setCreateObjectURL(URL.createObjectURL(i))
         }
     }
-    useEffect(() => {
-        console.log("Image settled")
-    }, [image])
+    useEffect(() => {}, [image])
     return (
         <div className="py-2 flex justify-center">
             <div className="w-4/5">
                 <div className="grid grid-cols-1 gap-6">
-                    <form
-                        onSubmit={(e) => e.preventDefault()}
-                        className="text-sm"
-                    >
+                    <form onSubmit={(e) => handleSubmit(e)} className="text-sm">
                         <label className="block py-1">
                             <span className="text-gray-300 ml-1">
                                 Event name
@@ -371,7 +373,8 @@ export function CreateEvent() {
                                         : "bg-opacity-100"
                                 } relative w-full items-center space-x-2 rounded-lg bg-gray-700 my-3 mx-32 py-2 text-sm font-medium text-gray-100 hover:bg-yellow-600/80 hover:text-white disabled:text-white/70`}
                                 disabled={isPending}
-                                onClick={(e) => handleSubmit(e)}
+                                // onClick={handleSubmit}
+                                type={"submit"}
                             >
                                 {isMutating ? "Creating..." : "Create Event"}
                                 {isPending ? (

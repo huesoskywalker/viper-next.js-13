@@ -1,4 +1,4 @@
-import { getBlog } from "../../../lib/vipers"
+import { Blog, getBlog } from "../../../lib/vipers"
 import { CommentCard } from "../CommentCard"
 
 export default async function PostAndLikeCard({
@@ -14,16 +14,15 @@ export default async function PostAndLikeCard({
     timestamp: number
     showComment: string
 }) {
-    const allBlogs = await getBlog(bloggerId, blogId)
+    const allBlogs: Blog[] | undefined = await getBlog(bloggerId, blogId)
 
-    const viper_id = viperId.replace(/['"]+/g, "")
-    const blogger_id = bloggerId.replace(/['"]+/g, "")
-    const blog_id = blogId.replace(/['"]+/g, "")
-    // const viper_id = JSON.stringify(viperId)
+    const viper_id: string = viperId.replace(/['"]+/g, "")
+    const blogger_id: string = bloggerId.replace(/['"]+/g, "")
+    const blog_id: string = blogId.replace(/['"]+/g, "")
     return (
         <div>
             {/* <Suspense fallback={<CommentSkeleton />}> */}
-            {allBlogs?.map((blog) => {
+            {allBlogs?.map((blog: Blog) => {
                 return (
                     /* @ts-expect-error Server Component */
                     <CommentCard

@@ -1,13 +1,12 @@
 import Link from "next/link"
 import Image from "next/image"
-import { getViperById } from "../../lib/vipers"
+import { Viper, getViperById } from "../../lib/vipers"
+import { firstLogin } from "../../lib/utils"
 
 export default async function ViperInfo({ id }: { id: string }) {
-    const viperId = id.replace(/['"]+/g, "")
-    const viper = await getViperById(viperId)
-    const firstLogin = (string: string) => {
-        if (string.startsWith("https")) return true
-    }
+    const viperId: string = id.replace(/['"]+/g, "")
+    const viper: Viper | undefined = await getViperById(viperId)
+    if (!viper) return
 
     return (
         <div>
@@ -15,9 +14,9 @@ export default async function ViperInfo({ id }: { id: string }) {
                 <div className="space-y-4">
                     <Image
                         src={`${
-                            firstLogin(viper!.image)
-                                ? viper!.image
-                                : `/vipers/${viper!.image}`
+                            firstLogin(viper.image)
+                                ? viper.image
+                                : `/vipers/${viper.image}`
                         }`}
                         width={50}
                         height={50}

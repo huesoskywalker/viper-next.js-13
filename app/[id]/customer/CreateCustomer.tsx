@@ -1,8 +1,11 @@
 "use client"
 
 // this start happening after installing @shopify-api
-import { useState, useTransition } from "react"
+import { MouseEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
+import { CustomerAddress } from "@shopify/shopify-api/rest/admin/2023-01/customer_address"
+import { Viper } from "../../../lib/vipers"
 
 export default function CreateCustomer({
     viperId,
@@ -35,7 +38,9 @@ export default function CreateCustomer({
 
     const router = useRouter()
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (
+        e: MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
         e.preventDefault()
         setIsFetching(true)
         try {
@@ -52,9 +57,9 @@ export default function CreateCustomer({
                     lastName,
                 }),
             })
-            const newCustomer = await customerCreate.json()
+            const newCustomer: Customer = await customerCreate.json()
 
-            const newCustomerId =
+            const newCustomerId: string =
                 newCustomer.body.data.customerCreate.customer.id
 
             // ---------------------------------------------------------------------------------------
@@ -73,8 +78,9 @@ export default function CreateCustomer({
                 }
             )
 
-            const customerAccessToken = await customerAccessTokenCreate.json()
-            const accessToken =
+            const customerAccessToken: unknown =
+                await customerAccessTokenCreate.json()
+            const accessToken: string =
                 customerAccessToken.body.data.customerAccessTokenCreate
                     .customerAccessToken.accessToken
             // ---------------------------------------------------------------------------------------
@@ -87,18 +93,19 @@ export default function CreateCustomer({
                     },
                     body: JSON.stringify({
                         accessToken,
-                        firstName,
                         lastName,
+                        firstName,
                         phone,
                         address,
-                        city,
                         province,
-                        zip,
                         country,
+                        zip,
+                        city,
                     }),
                 }
             )
-            const newAddress = await customerAddressCreate.json()
+            const newAddress: CustomerAddress =
+                await customerAddressCreate.json()
             // ---------------------------------------------------------------------------------------
 
             const postAccessTokenToUser = await fetch(
@@ -122,7 +129,7 @@ export default function CreateCustomer({
                 }
             )
 
-            const updatedUser = await postAccessTokenToUser.json()
+            const updatedUser: Viper = await postAccessTokenToUser.json()
 
             // ---------------------------------------------------------------------------------------
 
@@ -346,7 +353,7 @@ export default function CreateCustomer({
                                                         : "opacity-100"
                                                 } relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-white hover:bg-black hover:text-yellow-600 disabled:text-white/70`}
                                                 disabled={isPending}
-                                                onClick={(e) => handleSubmit(e)}
+                                                onClick={(e) => handleSubmit}
                                             >
                                                 {isMutating
                                                     ? "Proceeding..."

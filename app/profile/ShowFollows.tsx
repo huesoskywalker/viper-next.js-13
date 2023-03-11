@@ -14,7 +14,7 @@ export default function ShowFollows({
     profile: boolean
 }) {
     const [openFollows, setOpenFollows] = useState<boolean>(false)
-    const showFollows = () => {
+    const showFollows = (): void => {
         setOpenFollows(!openFollows)
     }
     return (

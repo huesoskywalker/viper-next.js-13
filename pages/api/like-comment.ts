@@ -8,6 +8,9 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const id: string = body.id
+    const commentId: string = body.commentId
+    const viperId: string = body.viperId
 
     const client = await clientPromise
     const db = client
@@ -18,7 +21,7 @@ export default async function handler(
             .aggregate([
                 {
                     $match: {
-                        _id: new ObjectId(body.id),
+                        _id: new ObjectId(id),
                     },
                 },
                 {
@@ -26,14 +29,14 @@ export default async function handler(
                 },
                 {
                     $match: {
-                        "comments._id": new ObjectId(body.commentId),
+                        "comments._id": new ObjectId(commentId),
                     },
                 },
                 {
                     $unwind: "$comments.likes",
                 },
                 {
-                    $match: { "comments.likes": new ObjectId(body.viperId) },
+                    $match: { "comments.likes": new ObjectId(viperId) },
                 },
                 {
                     $project: { _id: 0, "comments.likes": 1 },
@@ -44,16 +47,16 @@ export default async function handler(
             try {
                 const likeComment = await db.findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.id),
+                        _id: new ObjectId(id),
                         comments: {
                             $elemMatch: {
-                                _id: new ObjectId(body.commentId),
+                                _id: new ObjectId(commentId),
                             },
                         },
                     },
                     {
                         $push: {
-                            "comments.$.likes": new ObjectId(body.viperId),
+                            "comments.$.likes": new ObjectId(viperId),
                         },
                     }
                 )
@@ -65,16 +68,16 @@ export default async function handler(
             try {
                 const disLikeComment = await db.findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.id),
+                        _id: new ObjectId(id),
                         comments: {
                             $elemMatch: {
-                                _id: new ObjectId(body.commentId),
+                                _id: new ObjectId(commentId),
                             },
                         },
                     },
                     {
                         $pull: {
-                            "comments.$.likes": new ObjectId(body.viperId),
+                            "comments.$.likes": new ObjectId(viperId),
                         },
                     }
                 )

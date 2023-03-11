@@ -1,16 +1,15 @@
 import { PageProps } from "../../../../lib/getCategories"
 import { getCurrentViper } from "../../../../lib/session"
-import { getViperById } from "../../../../lib/vipers"
-import { Profile } from "../../../profile/Profile"
-import { fetchProfile } from "../../../../lib/getProfile"
+import { Viper, getViperById } from "../../../../lib/vipers"
+import { Profile, fetchProfile } from "../../../../lib/getProfile"
 import { TabGroup } from "../../../../components/TabGroup"
-import AddComment from "../../../[id]/AddComment"
+import AddComment from "../../../../components/AddComment"
 
 export default async function Layout({ children, params }: PageProps) {
     const paramsId: string = params.id
-    const viper = await getViperById(paramsId)
+    const viper: Viper | undefined = await getViperById(paramsId)
     if (!viper) return null
-    const category = await fetchProfile()
+    const category: Profile[] = await fetchProfile()
     const currentViper = await getCurrentViper()
     if (!currentViper) return
 

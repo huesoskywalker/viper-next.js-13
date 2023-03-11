@@ -1,4 +1,4 @@
-import { getViperById } from "../../../../lib/vipers"
+import { Blog, Viper, getViperById } from "../../../../lib/vipers"
 import { PageProps } from "../../../../lib/utils"
 import { CommentCard } from "../../../profile/CommentCard"
 import { Suspense } from "react"
@@ -6,16 +6,17 @@ import Loading from "./loading"
 
 export default async function ViperPage({ params }: PageProps) {
     const id: string = params.id
-    const viper = await getViperById(id)
-    const stringifyFullViperId = JSON.stringify(viper?._id)
-    const viperId = stringifyFullViperId.replace(/['"]+/g, "")
+    const viper: Viper | undefined = await getViperById(id)
+    if (!viper) return
+    const stringifyFullViperId: string = JSON.stringify(viper?._id)
+    const viperId: string = stringifyFullViperId.replace(/['"]+/g, "")
 
     return (
         <div>
             <Suspense fallback={<Loading />}>
-                {viper?.blog
+                {viper.blog
                     ?.sort((a, b) => b.timestamp - a.timestamp)
-                    .map((blog) => {
+                    .map((blog: Blog) => {
                         return (
                             /* @ts-expect-error Server Component */
                             <CommentCard

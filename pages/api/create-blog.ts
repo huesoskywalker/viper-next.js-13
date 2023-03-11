@@ -8,6 +8,8 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const viperId: string = body.viperId
+    const comment: string = body.comment
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
 
@@ -15,13 +17,13 @@ export default async function handler(
         try {
             const blogContent = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(viperId),
                 },
                 {
                     $push: {
                         blog: {
                             _id: new ObjectId(),
-                            content: body.comment,
+                            content: comment,
                             likes: [],
                             comments: [],
                             rePosts: [],

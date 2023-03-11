@@ -19,14 +19,14 @@ export default function ShowViper({
 }) {
     const [isDisplay, setIsDisplay] = useState<boolean>(false)
 
-    const displayOrganizer = async () => {
+    const displayOrganizer = async (): Promise<void> => {
         await delay(300)
         setIsDisplay(!isDisplay)
         await delay(100)
         setIsDisplay(true)
     }
 
-    const closeOrganizer = async () => {
+    const closeOrganizer = async (): Promise<void> => {
         await delay(100)
         setIsDisplay(false)
     }
@@ -68,7 +68,7 @@ export default function ShowViper({
                             : "absolute bottom-[0.7rem] left-[-1rem] z-20  overflow-y-hidden  max-h-[14rem]"
                     }
                 >
-                    <div className="flex items-centerpx-2 py-2">
+                    <div className="flex items-center px-2 py-2">
                         <div
                             className=" w-[14rem] h-[11rem]max-h-fit max-w-lg p-4 mx-auto bg-gray-800 border-[1px] border-gray-700 rounded-xl shadow-lg"
                             onMouseLeave={closeOrganizer}

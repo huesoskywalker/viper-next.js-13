@@ -1,4 +1,3 @@
-import errors from "formidable/FormidableError"
 import { ObjectId } from "mongodb"
 import { NextApiRequest, NextApiResponse } from "next"
 import { EventInterface } from "../../lib/events"
@@ -9,17 +8,20 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const eventId: string = body.eventId
+    const commentId: string = body.commentId
+    const viperId: string = body.viperId
     const client = await clientPromise
     const db = client
         .db("viperDb")
         .collection<EventInterface>("organized_events")
     if (req.method === "POST") {
-        const reply_id = body.replyId.replace(/["']+/g, "")
+        const reply_id: string = body.replyId.replace(/["']+/g, "")
         const isLiked = await db
             .aggregate([
                 {
                     $match: {
-                        _id: new ObjectId(body.eventId),
+                        _id: new ObjectId(eventId),
                     },
                 },
                 {
@@ -27,7 +29,7 @@ export default async function handler(
                 },
                 {
                     $match: {
-                        "comments._id": new ObjectId(body.commentId),
+                        "comments._id": new ObjectId(commentId),
                     },
                 },
                 {
@@ -36,7 +38,7 @@ export default async function handler(
                 {
                     $match: {
                         "comments.replies._id": new ObjectId(reply_id),
-                        "comments.replies.likes": new ObjectId(body.viperId),
+                        "comments.replies.likes": new ObjectId(viperId),
                     },
                 },
                 {
@@ -49,27 +51,24 @@ export default async function handler(
             .toArray()
 
         if (isLiked.length === 0) {
-            console.log(body.eventId)
-            console.log(body.commentId)
-            console.log(reply_id)
             try {
                 const likeReply = await db.findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.eventId),
-                        "comments._id": new ObjectId(body.commentId),
+                        _id: new ObjectId(eventId),
+                        "comments._id": new ObjectId(commentId),
                         "comments.replies._id": new ObjectId(reply_id),
                     },
                     {
                         $push: {
                             "comments.$[i].replies.$[j].likes": new ObjectId(
-                                body.viperId
+                                viperId
                             ),
                         },
                     },
                     {
                         arrayFilters: [
                             {
-                                "i._id": new ObjectId(body.commentId),
+                                "i._id": new ObjectId(commentId),
                             },
                             {
                                 "j._id": new ObjectId(reply_id),
@@ -86,21 +85,21 @@ export default async function handler(
             try {
                 const disLikeReply = await db.findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.eventId),
-                        "comments._id": new ObjectId(body.commentId),
+                        _id: new ObjectId(eventId),
+                        "comments._id": new ObjectId(commentId),
                         "comments.replies._id": new ObjectId(reply_id),
                     },
                     {
                         $pull: {
                             "comments.$[i].replies.$[j].likes": new ObjectId(
-                                body.viperId
+                                viperId
                             ),
                         },
                     },
                     {
                         arrayFilters: [
                             {
-                                "i._id": new ObjectId(body.commentId),
+                                "i._id": new ObjectId(commentId),
                             },
                             {
                                 "j._id": new ObjectId(reply_id),

@@ -1,12 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { shopifyAdmin } from "../../lib/adminApi"
 import { MEDIA_CREATE } from "../../graphql/mutation/productCreateMedia"
+import { RequestReturn } from "@shopify/shopify-api"
+import { Product } from "@shopify/shopify-api/rest/admin/2023-01/product"
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
     const body = req.body
+    const resourceUrl: string = body.resourceUrl
+    const productId: string = body.productId
     const session = shopifyAdmin.session.customAppSession(
         "vipers-go.myshopify.com"
     )
@@ -14,14 +18,14 @@ export default async function handler(
 
     const MEDIA_INPUT = {
         media: {
-            alt: "imagen cule",
+            alt: "product image",
             mediaContentType: "IMAGE",
-            originalSource: body.resourceUrl,
+            originalSource: resourceUrl,
         },
-        productId: body.productId,
+        productId: productId,
     }
 
-    const updatedProduct = await client.query({
+    const updatedProduct: RequestReturn<Product> = await client.query({
         data: {
             query: MEDIA_CREATE,
             variables: MEDIA_INPUT,

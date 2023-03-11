@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition, ChangeEvent } from "react"
+import { useState, useTransition, FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { EventInterface } from "../../../../lib/events"
 
@@ -22,7 +22,9 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
 
     const router = useRouter()
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (
+        e: FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         e.preventDefault()
         setIsFetching(true)
         setPendingEdit(!pendingEdit)
@@ -87,8 +89,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
         }
     }
 
-    const deleteEvent = async (e: any) => {
-        e.preventDefault()
+    const deleteEvent = async (): Promise<void> => {
         // setPendingDelete(!pendingDelete)
         try {
             const response = await fetch(`/api/create-event`, {
@@ -130,10 +131,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
         <div className="py-2">
             <div className="max-w-md">
                 <div className="grid grid-cols-1 gap-6">
-                    <form
-                        onSubmit={(e) => e.preventDefault()}
-                        className="text-sm"
-                    >
+                    <form onSubmit={(e) => handleSubmit(e)} className="text-sm">
                         <label className="block py-1">
                             <span className="text-gray-300">Event name</span>
                             <input
@@ -257,7 +255,8 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                         : "bg-opacity-100"
                                 } relative w-2/6 items-center space-x-2 rounded-lg bg-gray-700 my-3  py-2 text-sm font-medium text-gray-200 hover:bg-yellow-700 hover:text-white disabled:text-white/70`}
                                 disabled={isPending}
-                                onClick={(e) => handleSubmit(e)}
+                                // onClick={handleSubmit}
+                                type={"submit"}
                             >
                                 Submit Edition
                                 {isPending && pendingEdit ? (
@@ -275,7 +274,8 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                             <button
                                 className="relative w-2/6 items-center  space-x-2 rounded-lg bg-red-800 my-3  py-2 text-sm font-medium text-black hover:bg-red-600 hover:text-white disabled:text-white/70"
                                 disabled={isPending}
-                                onClick={(e) => deleteEvent(e)}
+                                onClick={deleteEvent}
+                                type={"button"}
                             >
                                 Delete
                                 {isPending && !pendingEdit ? (

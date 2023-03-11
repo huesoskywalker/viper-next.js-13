@@ -21,9 +21,7 @@ export default function RePostBlog({
     const [isRePosted, setIsRePosted] = useState<string>(rePostCookie)
     const router = useRouter()
 
-    const rePostBlog = async (e: any) => {
-        e.preventDefault()
-
+    const rePostBlog = async (): Promise<void> => {
         const response = await fetch(`/api/re-post-blog`, {
             method: "POST",
             headers: {

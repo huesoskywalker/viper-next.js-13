@@ -1,6 +1,6 @@
 // import CommentSkeleton from "../../../../components/CommentSkeleton"
 
-import { CommentSkeleton } from "../../../../components/CommentSkeleton"
+import { CommentSkeleton } from "../../../../ui/CommentSkeleton"
 
 export default function Loading() {
     return (

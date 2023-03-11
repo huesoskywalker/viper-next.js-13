@@ -8,6 +8,9 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const bloggerId: string = body.bloggerId
+    const blogId: string = body.blogId
+    const viperId: string = body.viperId
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
@@ -15,7 +18,7 @@ export default async function handler(
         .aggregate([
             {
                 $match: {
-                    _id: new ObjectId(body.bloggerId),
+                    _id: new ObjectId(bloggerId),
                 },
             },
             {
@@ -29,14 +32,14 @@ export default async function handler(
             },
             {
                 $match: {
-                    "blog._id": new ObjectId(body.blogId),
+                    "blog._id": new ObjectId(blogId),
                 },
             },
             {
                 $unwind: "$blog.likes",
             },
             {
-                $match: { "blog.likes": new ObjectId(body.viperId) },
+                $match: { "blog.likes": new ObjectId(viperId) },
             },
         ])
         .toArray()
@@ -45,23 +48,23 @@ export default async function handler(
         try {
             const like = await db.findOneAndUpdate(
                 {
-                    "blog._id": new ObjectId(body.blogId),
+                    "blog._id": new ObjectId(blogId),
                 },
                 {
-                    $push: { "blog.$.likes": new ObjectId(body.viperId) },
+                    $push: { "blog.$.likes": new ObjectId(viperId) },
                 }
             )
 
             const viperLike = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(viperId),
                 },
                 {
                     $push: {
                         blogLikes: {
-                            bloggerId: new ObjectId(body.bloggerId),
-                            blogId: new ObjectId(body.blogId),
-                            viperId: new ObjectId(body.viperId),
+                            bloggerId: new ObjectId(bloggerId),
+                            blogId: new ObjectId(blogId),
+                            viperId: new ObjectId(viperId),
                             timestamp: Date.now(),
                         },
                     },
@@ -75,24 +78,24 @@ export default async function handler(
         try {
             const disLike = await db.findOneAndUpdate(
                 {
-                    "blog._id": new ObjectId(body.blogId),
+                    "blog._id": new ObjectId(blogId),
                 },
                 {
                     $pull: {
-                        "blog.$.likes": new ObjectId(body.viperId),
+                        "blog.$.likes": new ObjectId(viperId),
                     },
                 }
             )
             const viperDisLike = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(viperId),
                 },
                 {
                     $pull: {
                         blogLikes: {
-                            bloggerId: new ObjectId(body.bloggerId),
-                            blogId: new ObjectId(body.blogId),
-                            viperId: new ObjectId(body.viperId),
+                            bloggerId: new ObjectId(bloggerId),
+                            blogId: new ObjectId(blogId),
+                            viperId: new ObjectId(viperId),
                         },
                     },
                 }

@@ -4,7 +4,7 @@ import { useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-export function Follow({
+export function AddFollow({
     id,
     isFollowed,
     event,
@@ -18,9 +18,9 @@ export function Follow({
     const router = useRouter()
 
     const { data: session } = useSession()
-    const viperId = session?.user.id
+    const viperId: string | undefined = session?.user.id
 
-    const follow = async () => {
+    const follow = async (): Promise<void> => {
         const response = await fetch(`/api/follow-viper`, {
             method: "PUT",
             headers: {

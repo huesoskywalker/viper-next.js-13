@@ -8,13 +8,14 @@ import Loading from "./loading"
 
 export default async function MyEventsPage() {
     const viper = await getCurrentViper()
-    const events: EventInterface[] = await getViperCreatedEvents(viper!.id)
+    if (!viper) return
+    const events: EventInterface[] = await getViperCreatedEvents(viper.id)
     await delay(1500)
     return (
         <div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <Suspense fallback={<Loading />}>
-                    {events?.map((event: EventInterface) => {
+                    {events.map((event: EventInterface) => {
                         return (
                             <div key={JSON.stringify(event._id)}>
                                 <EditEvent

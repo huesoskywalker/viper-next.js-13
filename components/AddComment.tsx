@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { firstLogin } from "../../lib/utils"
+import { firstLogin } from "../lib/utils"
 
 export default function AddComment({
     id,
@@ -47,7 +47,7 @@ export default function AddComment({
     const viperId = viper.data?.user.id
     const viperImage = viper.data?.user.image
 
-    const submitComment = async (e: any) => {
+    const submitComment = async (e: any): Promise<void> => {
         e.preventDefault()
         if (event && !reply && !blog) {
             const response = await fetch(`/api/comment`, {
@@ -114,12 +114,12 @@ export default function AddComment({
         })
     }
 
-    const writeComment = () => {
+    const writeComment = (): void => {
         setPendingComment(true)
         setOpenCommentInput(!openCommentInput)
     }
 
-    const displayComment = () => {
+    const displayComment = (): void => {
         setIsDisplayComment(!isDisplayComment)
     }
 

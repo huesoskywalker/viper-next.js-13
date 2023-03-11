@@ -1,9 +1,11 @@
-import { fetchDashboardBySlug } from "../../../lib/getDashboard"
+import { Dashboard, fetchDashboardBySlug } from "../../../lib/getDashboard"
 import { TabGroup } from "../../../components/TabGroup"
 import { PageProps } from "../../../lib/utils"
 
 export default async function Layout({ children, params }: PageProps) {
-    const category = await fetchDashboardBySlug(params.dashboardSlug)
+    const category: Dashboard | undefined = await fetchDashboardBySlug(
+        params.dashboardSlug
+    )
 
     if (!category) return null
 

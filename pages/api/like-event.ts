@@ -9,6 +9,8 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const id: string = body.id
+    const viperId: string = body.viperId
 
     const client = await clientPromise
     const db = client.db("viperDb")
@@ -16,8 +18,8 @@ export default async function handler(
     const isLiked = await db
         .collection<EventInterface>("organized_events")
         .findOne({
-            _id: new ObjectId(body.id),
-            "likes._id": new ObjectId(body.viperId),
+            _id: new ObjectId(id),
+            "likes._id": new ObjectId(viperId),
         })
 
     if (!isLiked) {
@@ -26,12 +28,12 @@ export default async function handler(
                 .collection<EventInterface>("organized_events")
                 .findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.id),
+                        _id: new ObjectId(id),
                     },
                     {
                         $push: {
                             likes: {
-                                _id: new ObjectId(body.viperId),
+                                _id: new ObjectId(viperId),
                             },
                         },
                     }
@@ -41,12 +43,12 @@ export default async function handler(
                 .collection<Viper>("users")
                 .findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.viperId),
+                        _id: new ObjectId(viperId),
                     },
                     {
                         $push: {
                             likes: {
-                                _id: new ObjectId(body.id),
+                                _id: new ObjectId(id),
                             },
                         },
                     }
@@ -61,12 +63,12 @@ export default async function handler(
                 .collection<EventInterface>("organized_events")
                 .findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.id),
+                        _id: new ObjectId(id),
                     },
                     {
                         $pull: {
                             likes: {
-                                _id: new ObjectId(body.viperId),
+                                _id: new ObjectId(viperId),
                             },
                         },
                     }
@@ -75,12 +77,12 @@ export default async function handler(
                 .collection<Viper>("users")
                 .findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.viperId),
+                        _id: new ObjectId(viperId),
                     },
                     {
                         $pull: {
                             likes: {
-                                _id: new ObjectId(body.id),
+                                _id: new ObjectId(id),
                             },
                         },
                     }

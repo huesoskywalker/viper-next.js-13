@@ -1,5 +1,5 @@
 "use client"
-import { useState, useTransition } from "react"
+import { FormEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
 export default function ChatInput({
@@ -17,7 +17,9 @@ export default function ChatInput({
 
     const router = useRouter()
 
-    const sendMessage = async (e: any) => {
+    const sendMessage = async (
+        e: FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         e.preventDefault()
         setIsFetching(true)
         setMessage("")
@@ -42,7 +44,7 @@ export default function ChatInput({
     }
     return (
         <div className="absolute bottom-0 w-11/12">
-            <form onSubmit={sendMessage}>
+            <form onSubmit={(e) => sendMessage(e)}>
                 <label className="flex items-stretch ">
                     <input
                         type="text"

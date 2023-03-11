@@ -17,7 +17,7 @@ export function AddLike({
 }: {
     eventId: string | null
     commentId: string
-    replyId: string
+    replyId: string | undefined
     likes: number
     timestamp: number | Date
     event: boolean
@@ -29,7 +29,7 @@ export function AddLike({
 
     const [isLiked, setIsLiked] = useState<string>(likedCookie)
 
-    const toggleLike = () => {
+    const toggleLike = (): void => {
         if (event || blog) {
             setIsLiked(isLiked === "none" ? "red" : "none")
         } else {
@@ -38,12 +38,12 @@ export function AddLike({
     }
 
     const viper = useSession()
+    if (!viper) return
     const viperId = viper.data?.user.id
 
     const router = useRouter()
 
-    const likeEvent = async (e: any) => {
-        e.preventDefault()
+    const likeEvent = async (): Promise<void> => {
         if (event && !reply && !blog) {
             const response = await fetch(`/api/like-event`, {
                 method: "POST",
@@ -129,7 +129,7 @@ export function AddLike({
     return (
         <div className="flex justify-start">
             <button
-                onClick={(e) => likeEvent(e)}
+                onClick={likeEvent}
                 className="grid grid-cols-2 ml-1 text-gray-400"
             >
                 {event ? (

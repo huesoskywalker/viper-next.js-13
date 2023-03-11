@@ -9,18 +9,20 @@ export default async function handler(
 ) {
     if (req.method === "PUT") {
         const body = req.body
-        const checkoutId = body.checkoutId
+        const viperId: string = body.viperId
+        const eventId: string = body.eventId
+        const checkoutId: string = body.checkoutId
         const client = await clientPromise
         const db = client.db("viperDb")
 
         const request = await db.collection<Viper>("users").findOneAndUpdate(
             {
-                _id: new ObjectId(body.viper),
+                _id: new ObjectId(viperId),
             },
             {
                 $push: {
                     collection: {
-                        _id: new ObjectId(body.eventId),
+                        _id: new ObjectId(eventId),
                         checkoutId: checkoutId,
                     },
                 },

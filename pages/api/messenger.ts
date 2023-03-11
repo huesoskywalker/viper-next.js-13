@@ -8,9 +8,12 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const viperId: string = body.viperId
+    const id: string = body.id
+    const message: string = body.message
 
     const client = await clientPromise
-    const db = await client.db("viperDb").collection<Chats>("chats")
+    const db = client.db("viperDb").collection<Chats>("chats")
 
     if (req.method === "POST") {
         try {
@@ -18,25 +21,16 @@ export default async function handler(
                 {
                     $or: [
                         {
-                            members: [
-                                new ObjectId(body.viperId),
-                                new ObjectId(body.id),
-                            ],
+                            members: [new ObjectId(viperId), new ObjectId(id)],
                         },
                         {
-                            members: [
-                                new ObjectId(body.id),
-                                new ObjectId(body.viperId),
-                            ],
+                            members: [new ObjectId(id), new ObjectId(viperId)],
                         },
                     ],
                 },
                 {
                     $setOnInsert: {
-                        members: [
-                            new ObjectId(body.viperId),
-                            new ObjectId(body.id),
-                        ],
+                        members: [new ObjectId(viperId), new ObjectId(id)],
                     },
                 },
                 { upsert: true }
@@ -46,16 +40,10 @@ export default async function handler(
                 {
                     $or: [
                         {
-                            members: [
-                                new ObjectId(body.viperId),
-                                new ObjectId(body.id),
-                            ],
+                            members: [new ObjectId(viperId), new ObjectId(id)],
                         },
                         {
-                            members: [
-                                new ObjectId(body.id),
-                                new ObjectId(body.viperId),
-                            ],
+                            members: [new ObjectId(id), new ObjectId(viperId)],
                         },
                     ],
                 },
@@ -63,8 +51,8 @@ export default async function handler(
                     $push: {
                         messages: {
                             _id: new ObjectId(),
-                            sender: new ObjectId(body.viperId),
-                            message: body.message,
+                            sender: new ObjectId(viperId),
+                            message: message,
                             timestamp: Date.now(),
                         },
                     },

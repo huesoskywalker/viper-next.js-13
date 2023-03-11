@@ -1,19 +1,29 @@
 "use client"
-
+// Use transition broke after installing shopify-api
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState, useTransition } from "react"
-import { Viper } from "../../../../lib/vipers"
+import { useState, useTransition, FormEvent } from "react"
+// import { Viper } from "../../../../lib/vipers"
 import Image from "next/image"
 
-export default function EditProfile({ viper }: { viper: Viper }) {
-    const [name, setName] = useState<string>(viper.name)
-    const [biography, setBiography] = useState<string>(viper.biography)
-    const [profileImage, setProfileImage] = useState<string>(viper.image)
-    const [backgroundImage, setBackgroundImage] = useState<string>(
-        viper.backgroundImage
-    )
-    const [location, setLocation] = useState<string>(viper.location)
+export default function EditProfile({
+    // viper,
+    viperId,
+    name,
+    biography,
+    location,
+}: {
+    // viper: Viper
+    viperId: string
+    name: string
+    biography: string
+    location: string
+}) {
+    const [newName, setNewName] = useState<string>(name)
+    const [newBiography, setNewBiography] = useState<string>(biography)
+    const [newLocation, setNewLocation] = useState<string>(location)
+    const [profileImage, setProfileImage] = useState<string>("")
+    const [backgroundImage, setBackgroundImage] = useState<string>("")
     const [createObjectURL, setCreateObjectURL] = useState<string>("")
     const [showProfileImg, setShowProfileImg] = useState<boolean>(false)
 
@@ -24,8 +34,11 @@ export default function EditProfile({ viper }: { viper: Viper }) {
 
     const isMutating = isFetching || isPending
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (
+        e: FormEvent<HTMLFormElement>
+    ): Promise<void> => {
         e.preventDefault()
+        setIsFetching(true)
         try {
             const image = new FormData()
             image.append("image", profileImage)
@@ -78,26 +91,26 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    viperId: viper._id,
-                    name,
-                    biography,
+                    viperId,
+                    newName,
+                    newBiography,
+                    newLocation,
                     imageUrl: imageUrl ?? profileImage,
                     bgImageUrl: bgImageUrl ?? backgroundImage,
-                    location,
                 }),
             })
             await response.json()
-
+            setIsFetching(false)
             startTransition(() => {
-                setName("")
-                setBiography("")
-                setLocation("")
+                setNewName("")
+                setNewBiography("")
+                setNewLocation("")
                 setProfileImage("")
                 setBackgroundImage("")
-                router.refresh()
+                // router.refresh()
+                router.prefetch("/profile")
             })
             // Same in EditForm, if works, DELETE
-            router.prefetch("/profile")
             router.push(`/profile`)
         } catch (error) {
             console.error(error)
@@ -122,7 +135,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
         }
     }
 
-    const likeProfileImg = () => {
+    const acceptProfileImg = (): void => {
         setShowProfileImg(!showProfileImg)
     }
 
@@ -155,7 +168,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                             <div className="w-full mx-6">
                                 <div className="grid grid-cols-1 gap-6">
                                     <form
-                                        onSubmit={(e) => e.preventDefault()}
+                                        onSubmit={(e) => handleSubmit(e)}
                                         className="text-sm"
                                     >
                                         <label className="block py-1">
@@ -165,9 +178,9 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             <input
                                                 type="text"
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
-                                                value={name}
+                                                value={newName}
                                                 onChange={(e) =>
-                                                    setName(e.target.value)
+                                                    setNewName(e.target.value)
                                                 }
                                             />
                                         </label>
@@ -177,9 +190,11 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             </span>
                                             <textarea
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                value={biography}
+                                                value={newBiography}
                                                 onChange={(e) =>
-                                                    setBiography(e.target.value)
+                                                    setNewBiography(
+                                                        e.target.value
+                                                    )
                                                 }
                                                 rows={2}
                                             ></textarea>
@@ -191,14 +206,18 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             <input
                                                 className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
-                                                onChange={uploadProfileImage}
+                                                onChange={(e) =>
+                                                    uploadProfileImage(e)
+                                                }
                                             ></input>
                                         </label>
                                         {showProfileImg ? (
                                             <div className="fixed inset-auto">
                                                 <div className="flex justify-end">
                                                     <button
-                                                        onClick={likeProfileImg}
+                                                        onClick={
+                                                            acceptProfileImg
+                                                        }
                                                         className="fixed j rounded-full bg-black z-10"
                                                     >
                                                         <svg
@@ -221,9 +240,7 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                                         width={100}
                                                         height={100}
                                                         placeholder="blur"
-                                                        blurDataURL={
-                                                            viper.image
-                                                        }
+                                                        blurDataURL={"image"}
                                                         loading="lazy"
                                                     />
                                                 </div>
@@ -245,9 +262,11 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             </span>
                                             <select
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                value={location}
+                                                value={newLocation}
                                                 onChange={(e) =>
-                                                    setLocation(e.target.value)
+                                                    setNewLocation(
+                                                        e.target.value
+                                                    )
                                                 }
                                             >
                                                 <option value={"Nowhere"}>
@@ -280,13 +299,16 @@ export default function EditProfile({ viper }: { viper: Viper }) {
                                             <button
                                                 className={`${
                                                     isMutating
-                                                        ? "bg-opacity-60"
+                                                        ? "bg-opacity-60 animate-pulse"
                                                         : "bg-opacity-100"
                                                 } relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-gray-200 hover:text-white hover:bg-yellow-600/80 disabled:text-white/70`}
                                                 disabled={isPending}
-                                                onClick={(e) => handleSubmit(e)}
+                                                // onClick={(e) => handleSubmit(e)}
+                                                type={"submit"}
                                             >
-                                                Edit Profile
+                                                {isMutating
+                                                    ? "Editing..."
+                                                    : "Edit Profile"}
                                                 {isPending ? (
                                                     <div
                                                         className="absolute right-2 top-1.5"

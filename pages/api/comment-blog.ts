@@ -8,21 +8,25 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const id: string = body.id
+    const commentId: string = body.commentId
+    const viperId: string = body.viperId
+    const comment: string = body.comment
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
     if (req.method === "POST") {
         try {
             const commentBlog = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.id),
-                    "blog._id": new ObjectId(body.commentId),
+                    _id: new ObjectId(id),
+                    "blog._id": new ObjectId(commentId),
                 },
                 {
                     $push: {
                         "blog.$.comments": {
                             _id: new ObjectId(),
-                            viperId: new ObjectId(body.viperId),
-                            comment: body.comment,
+                            viperId: new ObjectId(viperId),
+                            comment: comment,
                             timestamp: Date.now(),
                         },
                     },
@@ -30,15 +34,15 @@ export default async function handler(
             )
             const blogCommented = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(viperId),
                 },
                 {
                     $push: {
                         blogCommented: {
-                            bloggerId: new ObjectId(body.id),
-                            blogId: new ObjectId(body.commentId),
-                            viperId: new ObjectId(body.viperId),
-                            comment: body.comment,
+                            bloggerId: new ObjectId(id),
+                            blogId: new ObjectId(commentId),
+                            viperId: new ObjectId(viperId),
+                            comment: comment,
                             timestamp: Date.now(),
                         },
                     },

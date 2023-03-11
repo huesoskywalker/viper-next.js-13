@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import "./globals.css"
 import Providers from "../components/Providers"
 import GlobalNav from "../components/GlobalNav"
-import Auth from "../components/Auth"
+import Auth from "../components/AuthCHECKTHIS"
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (

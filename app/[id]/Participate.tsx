@@ -1,10 +1,14 @@
 "use client"
 
 // This Started happening when I installed @shopify/shopify-api
-import { useTransition, useState, useEffect } from "react"
+import { useTransition, useState, useEffect, MouseEvent } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { Checkout } from "@shopify/shopify-api/rest/admin/2023-01/checkout"
+import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
+import { Viper } from "../../lib/vipers"
+import { EventInterface } from "../../lib/events"
 
 export function Participate({
     eventId,
@@ -19,7 +23,7 @@ export function Participate({
     productId: string
     viperOnList: boolean
     viperRequest: boolean
-    isCheckoutPaid: false | string
+    isCheckoutPaid: string | undefined
     eventEntries: number
     totalInventory: number
 }) {
@@ -33,11 +37,11 @@ export function Participate({
 
     const { data: session } = useSession()
     const viper = session?.user
-    const viperAccessToken = session?.user.customerAccessToken
+    if (!viper) return
+    const viperAccessToken: string = session.user.customerAccessToken
 
     // --------------------------------------------------------------------------------
-    const addParticipant = async (e: any) => {
-        e.preventDefault()
+    const addParticipant = async (): Promise<void> => {
         setIsFetching(true)
         // --------------------------------------------------------------------------
         const checkoutCreate = await fetch(`/api/create-checkout-shopify`, {
@@ -51,9 +55,9 @@ export function Participate({
                 viperEmail: viper?.email,
             }),
         })
-        const checkout = await checkoutCreate.json()
+        const checkout: Checkout = await checkoutCreate.json()
 
-        const checkoutId = checkout.body.data.checkoutCreate.checkout.id
+        const checkoutId: string = checkout.body.data.checkoutCreate.checkout.id
 
         // --------------------------------------------------------------------------
         const checkoutCustomerAssociate = await fetch(
@@ -69,8 +73,9 @@ export function Participate({
                 }),
             }
         )
-        const association = await checkoutCustomerAssociate.json()
-        const webUrl =
+        const association: Checkout & Customer =
+            await checkoutCustomerAssociate.json()
+        const webUrl: string =
             association.body.data.checkoutCustomerAssociateV2.checkout.webUrl
         setIsCheckout(webUrl)
 
@@ -83,15 +88,13 @@ export function Participate({
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    viper: viper?.id,
+                    viperId: viper.id,
                     eventId,
                     checkoutId,
                 }),
             }
         )
-
-        const eventRequest = await requestParticipation.json()
-
+        const eventRequest: Viper = await requestParticipation.json()
         setIsFetching(false)
 
         startTransition(() => {
@@ -99,8 +102,7 @@ export function Participate({
         })
     }
     // ------------------------------------
-    const claimCard = async (e: any) => {
-        e.preventDefault()
+    const claimCard = async (): Promise<void> => {
         setIsFetching(true)
 
         const addCardToViper = await fetch(`/api/claim-event-card`, {
@@ -114,7 +116,7 @@ export function Participate({
             }),
         })
 
-        const eventCard = await addCardToViper.json()
+        const eventCard: EventInterface = await addCardToViper.json()
 
         setIsFetching(false)
         startTransition(() => {

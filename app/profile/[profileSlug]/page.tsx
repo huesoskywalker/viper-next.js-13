@@ -1,14 +1,19 @@
 import { getCurrentViper } from "../../../lib/session"
-import { getBlogLikesAndRePosts } from "../../../lib/vipers"
+import {
+    CommentBlog,
+    ExternalBlog,
+    getBlogLikesAndRePosts,
+} from "../../../lib/vipers"
 import PostAndLikeCard from "./PostAndLikeCard"
 
 export default async function ProfileSlugPage() {
     const viper = await getCurrentViper()
-    const blogLikesAndRePosts = await getBlogLikesAndRePosts(viper!.id)
+    const blogLikesAndRePosts: CommentBlog[] & ExternalBlog[] =
+        await getBlogLikesAndRePosts(viper!.id)
 
     return (
         <div className="space-y-4">
-            {blogLikesAndRePosts?.map((blog) => {
+            {blogLikesAndRePosts?.map((blog: CommentBlog) => {
                 return (
                     /* @ts-expect-error Server Component */
                     <PostAndLikeCard

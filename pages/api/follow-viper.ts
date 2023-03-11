@@ -10,12 +10,12 @@ export default async function handler(
     const body = req.body
 
     const client = await clientPromise
-    const db = await client.db("viperDb")
+    const db = client.db("viperDb")
 
     if (req.method === "PUT") {
         const follower = await db.collection<Viper>("users").findOne({
             _id: new ObjectId(body.id),
-            followers: new ObjectId(body.viperId),
+            "followers._id": new ObjectId(body.viperId),
         })
 
         if (!follower) {
@@ -27,7 +27,7 @@ export default async function handler(
                     },
                     {
                         $push: {
-                            followers: new ObjectId(body.viperId),
+                            followers: { _id: new ObjectId(body.viperId) },
                         },
                     }
                 )
@@ -40,7 +40,7 @@ export default async function handler(
                     },
                     {
                         $push: {
-                            follows: new ObjectId(body.id),
+                            follows: { _id: new ObjectId(body.id) },
                         },
                     }
                 )
@@ -54,7 +54,7 @@ export default async function handler(
                     },
                     {
                         $pull: {
-                            followers: new ObjectId(body.viperId),
+                            followers: { _id: new ObjectId(body.viperId) },
                         },
                     }
                 )
@@ -66,7 +66,7 @@ export default async function handler(
                     },
                     {
                         $pull: {
-                            follows: new ObjectId(body.id),
+                            follows: { _id: new ObjectId(body.id) },
                         },
                     }
                 )

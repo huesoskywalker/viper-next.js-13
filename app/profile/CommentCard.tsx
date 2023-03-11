@@ -1,8 +1,8 @@
-import { getViperById } from "../../lib/vipers"
+import { Follow, Viper, getViperById } from "../../lib/vipers"
 import Image from "next/image"
 import { cookies } from "next/headers"
-import AddComment from "../[id]/AddComment"
-import { AddLike } from "../[id]/AddLike"
+import AddComment from "../../components/AddComment"
+import { AddLike } from "../../components/AddLike"
 import Link from "next/link"
 import RePostBlog from "./RePostBlog"
 import ShowViper from "../[id]/ShowViper"
@@ -39,16 +39,19 @@ export async function CommentCard({
     reply: boolean
     showComment: string
 }) {
-    const blogger_id = eventId.replace(/['"]+/g, "")
-    const blogger = await getViperById(blogger_id)
-    const viper_id = viperId.replace(/['"]+/g, "")
-    const viper = await getViperById(viper_id)
-    const comment_id = commentId.replace(/[\W]+/g, "")
+    const blogger_id: string = eventId.replace(/['"]+/g, "")
+    const blogger: Viper | undefined = await getViperById(blogger_id)
+    if (!blogger) return
+    const viper_id: string = viperId.replace(/['"]+/g, "")
+    const viper: Viper | undefined = await getViperById(viper_id)
+    if (!viper) return
+    const comment_id: string = commentId.replace(/[\W]+/g, "")
 
-    const likedCookie = cookies().get(`_${timestamp}_is_liked`)?.value || "none"
+    const likedCookie: string =
+        cookies().get(`_${timestamp}_is_liked`)?.value || "none"
     const commentCookie =
         cookies().get(`_${timestamp}_is_commented`)?.value || "none"
-    const rePostCookie =
+    const rePostCookie: string =
         cookies().get(`_${timestamp}_is_rePosted`)?.value || "none"
 
     return (
@@ -60,11 +63,11 @@ export async function CommentCard({
                             <Link href={`/dashboard/vipers/${viper_id}`}>
                                 <Image
                                     src={`${
-                                        firstLogin(blogger!.image)
-                                            ? blogger?.image
-                                            : `/vipers/${blogger?.image}`
+                                        firstLogin(blogger.image)
+                                            ? blogger.image
+                                            : `/vipers/${blogger.image}`
                                     }`}
-                                    alt={`/vipers/${blogger?.image}`}
+                                    alt={`/vipers/${blogger.image}`}
                                     width={50}
                                     height={50}
                                     className="rounded-full "
@@ -74,33 +77,33 @@ export async function CommentCard({
                         <div className="col-start-2 col-span-7 border-[1px] border-yellow-600/60  rounded-xl bg-gray-700/50 p-1 h-[7rem] w-full space-y-2">
                             <div className=" col-start-1 col-span-2 max-h-auto">
                                 <ShowViper
-                                    viperName={blogger!.name}
+                                    viperName={blogger.name}
                                     event={false}
                                     blog={blog}
                                     // viperImage={viper!.image}
                                 >
                                     {/* @ts-expect-error Async Server Component */}
                                     <OrganizerInfo
-                                        key={JSON.stringify(blogger?._id)}
-                                        id={JSON.stringify(blogger?._id)}
+                                        key={JSON.stringify(blogger._id)}
+                                        id={JSON.stringify(blogger._id)}
                                         event={false}
                                     />
                                     <div className="mt-5 space-x-8 text-gray-300 text-xs">
                                         <ShowFollows
-                                            follows={blogger!.follows?.length}
+                                            follows={blogger.follows.length}
                                             followers={false}
                                             profile={false}
                                         >
-                                            {blogger!.follows?.map(
-                                                (followsId) => {
+                                            {blogger.follows.map(
+                                                (follows: Follow) => {
                                                     return (
                                                         /* @ts-expect-error Async Server Component */
                                                         <ViperInfo
                                                             key={JSON.stringify(
-                                                                followsId
+                                                                follows._id
                                                             )}
                                                             id={JSON.stringify(
-                                                                followsId
+                                                                follows._id
                                                             )}
                                                         />
                                                     )
@@ -109,20 +112,20 @@ export async function CommentCard({
                                         </ShowFollows>
 
                                         <ShowFollows
-                                            follows={blogger!.followers?.length}
+                                            follows={blogger.followers.length}
                                             followers={true}
                                             profile={false}
                                         >
-                                            {blogger!.followers?.map(
-                                                (followersId) => {
+                                            {blogger.followers.map(
+                                                (followers: Follow) => {
                                                     return (
                                                         /* @ts-expect-error Async Server Component */
                                                         <ViperInfo
                                                             key={JSON.stringify(
-                                                                followersId
+                                                                followers._id
                                                             )}
                                                             id={JSON.stringify(
-                                                                followersId
+                                                                followers._id
                                                             )}
                                                         />
                                                     )
@@ -170,6 +173,7 @@ export async function CommentCard({
             </div>
 
             <div className=" flex justify-items-start space-x-4 space-y-1 ml-24">
+                {/* @ts-expect-error Server Component */}
                 <AddLike
                     eventId={blogger_id}
                     commentId={comment_id}
@@ -185,9 +189,9 @@ export async function CommentCard({
                     id={eventId}
                     commentId={comment_id}
                     commentReplies={replies}
-                    viperIdImage={viper!.image}
-                    viperIdName={viper!.name}
-                    bloggerIdName={blogger!.name}
+                    viperIdImage={viper.image}
+                    viperIdName={viper.name}
+                    bloggerIdName={blogger.name}
                     timestamp={timestamp}
                     commentCookie={commentCookie}
                     event={event}

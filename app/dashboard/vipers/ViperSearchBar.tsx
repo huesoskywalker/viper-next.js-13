@@ -1,17 +1,17 @@
 "use client"
-import { useState } from "react"
+import { useState, FormEvent } from "react"
 
 export default function ViperSearchBar() {
     const [searchViper, setSearchViper] = useState<string>("")
 
-    const findViper = (e: any) => {
+    const findViper = (e: FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
 
         setSearchViper("")
     }
     return (
         <div className="flex justify-center">
-            <form className="flex items-center" onSubmit={findViper}>
+            <form className="flex items-center" onSubmit={(e) => findViper(e)}>
                 <label htmlFor="simple-search" className="sr-only">
                     Search
                 </label>

@@ -1,21 +1,23 @@
 import Image from "next/image"
 import { Suspense } from "react"
 import { EventInfo, InfoSkeleton } from "./EventInfo"
-import { AddLike } from "./AddLike"
+import { AddLike } from "../../components/AddLike"
 import { cookies } from "next/headers"
-import AddComment from "./AddComment"
-import { getViperById } from "../../lib/vipers"
+import AddComment from "../../components/AddComment"
+import { Follow, Viper, getViperById } from "../../lib/vipers"
 import ShowViper from "./ShowViper"
 import OrganizerInfo from "./OrganizerInfo"
 import ShowFollows from "../profile/ShowFollows"
 import ViperInfo from "../profile/ViperInfo"
-import { getEventById } from "../../lib/events"
+import { EventInterface, getEventById } from "../../lib/events"
 
 export async function Event({ eventId }: { eventId: string }) {
-    const likedCookie = cookies().get("_is_liked")?.value || "none"
-    const selectedEvent = await getEventById(eventId)
+    const likedCookie: string = cookies().get("_is_liked")?.value || "none"
+    const selectedEvent: EventInterface | null = await getEventById(eventId)
     if (!selectedEvent) return
-    const viper = await getViperById(selectedEvent.organizer.id)
+    const viper: Viper | undefined = await getViperById(
+        selectedEvent.organizer.id
+    )
     if (!viper) return
 
     return (
@@ -118,12 +120,12 @@ export async function Event({ eventId }: { eventId: string }) {
                             followers={false}
                             profile={false}
                         >
-                            {viper.follows.map((followsId) => {
+                            {viper.follows.map((follows: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo
-                                        key={JSON.stringify(followsId)}
-                                        id={JSON.stringify(followsId)}
+                                        key={JSON.stringify(follows._id)}
+                                        id={JSON.stringify(follows._id)}
                                     />
                                 )
                             })}
@@ -134,12 +136,12 @@ export async function Event({ eventId }: { eventId: string }) {
                             followers={true}
                             profile={false}
                         >
-                            {viper!.followers?.map((followsId) => {
+                            {viper.followers.map((followers: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo
-                                        key={JSON.stringify(followsId)}
-                                        id={JSON.stringify(followsId)}
+                                        key={JSON.stringify(followers._id)}
+                                        id={JSON.stringify(followers._id)}
                                     />
                                 )
                             })}
@@ -148,6 +150,7 @@ export async function Event({ eventId }: { eventId: string }) {
                 </ShowViper>
             </div>
             <div className="text-gray-300 col-start-4">
+                {/* @ts-expect-error Async Server Component */}
                 <AddLike
                     eventId={eventId}
                     commentId={JSON.stringify(selectedEvent._id)}

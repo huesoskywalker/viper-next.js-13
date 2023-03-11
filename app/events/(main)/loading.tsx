@@ -1,5 +1,5 @@
-import { TabGroupCard } from "../../../components/TabGroupCard"
-import { SkeletonCard } from "../../../components/SkeletonCard"
+import { TabGroupCard } from "../../../ui/TabGroupCard"
+import { SkeletonCard } from "../../../ui/SkeletonCard"
 
 export default function Loading() {
     return (

@@ -7,4 +7,5 @@ export interface PageProps {
 
 export const firstLogin = (string: string) => {
     if (string.startsWith("https")) return true
+    return false
 }

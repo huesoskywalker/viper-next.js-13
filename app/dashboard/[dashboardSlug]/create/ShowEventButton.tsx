@@ -6,7 +6,7 @@ import { PageProps } from "../../../../lib/utils"
 export default function ShowEventButton({ children }: PageProps) {
     const [newEventPreview, setNewEventPreview] = useState<boolean>(false)
     const [isPending, startTransition] = useTransition()
-    const showPreview = () => {
+    const showPreview = (): void => {
         startTransition(() => {
             setNewEventPreview(!newEventPreview)
         })

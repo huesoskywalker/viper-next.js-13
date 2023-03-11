@@ -1,4 +1,4 @@
-import { getViperById } from "../../../../lib/vipers"
+import { Viper, getViperById } from "../../../../lib/vipers"
 import { formatDistanceToNow } from "date-fns"
 
 export default async function Chat({
@@ -12,12 +12,13 @@ export default async function Chat({
     message: string
     timestamp: number
 }) {
-    const senderId = sender.replace(/['"]+/g, "")
+    const senderId: string = sender.replace(/['"]+/g, "")
 
-    const viper = await getViperById(senderId)
+    const viper: Viper | undefined = await getViperById(senderId)
+    if (!viper) return
     return (
         <div key={messageId} className="mr-20 my-2">
-            <h1>{viper?.name}</h1>
+            <h1>{viper.name}</h1>
             <div className="bg-blue-400/75 rounded-[14px]">
                 <p className="py-1.5 px-2 text-gray-50">{message}</p>
             </div>

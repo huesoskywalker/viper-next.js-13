@@ -1,5 +1,4 @@
-import { EventSkeletonCard } from "../../../components/EventSkeletonCard"
-import { SkeletonCard } from "../../../components/SkeletonCard"
+import { SkeletonCard } from "../../../ui/SkeletonCard"
 
 export default function Loading() {
     return (
@@ -9,7 +8,6 @@ export default function Loading() {
                 <span className="sr-only">Loading...</span>
             </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 my-[1rem]">
-                {/* <SkeletonCard isLoading={true} /> */}
                 <SkeletonCard isLoading={true} />
                 <SkeletonCard isLoading={true} />
                 <SkeletonCard isLoading={true} />

@@ -8,6 +8,8 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    const viperId: string = body.viperId
+    const eventId: string = body.eventId
     const client = await clientPromise
     const db = client.db("viperDb")
     if (req.method === "POST") {
@@ -16,12 +18,12 @@ export default async function handler(
                 .collection<EventInterface>("organized_events")
                 .findOneAndUpdate(
                     {
-                        _id: new ObjectId(body.eventId),
+                        _id: new ObjectId(eventId),
                     },
                     {
                         $push: {
                             participants: {
-                                _id: new ObjectId(body.viperId),
+                                _id: new ObjectId(viperId),
                             },
                         },
                     },

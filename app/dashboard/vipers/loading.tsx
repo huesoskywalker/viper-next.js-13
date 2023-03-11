@@ -1,4 +1,4 @@
-import { ViperSkeletonCard } from "../../../components/ViperSkeletonCard"
+import { ViperSkeletonCard } from "../../../ui/ViperSkeletonCard"
 
 export default function Loading() {
     return (

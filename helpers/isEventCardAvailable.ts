@@ -5,7 +5,7 @@ import clientPromise from "../lib/mongodb"
 export const isEventCardAvailable = async (
     eventId: string,
     viperId: string
-) => {
+): Promise<boolean> => {
     const client = await clientPromise
     const db = client.db("viperDb")
 
