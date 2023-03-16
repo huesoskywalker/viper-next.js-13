@@ -1,33 +1,25 @@
-import {
-    EventInterface,
-    sortEventByCategoryAndSlug,
-} from "../../../../../lib/events"
+import { Suspense } from "react"
+import { sortEventByCategoryAndSlug } from "../../../../../lib/events"
 import { PageProps } from "../../../../../lib/utils"
-import { EventCard } from "../../EventCard"
+import { EventInterface } from "../../../../../types/event"
+import { DisplayEvents } from "../../DisplayEvents"
+import Loading from "../../loading"
 
 export default async function CategoryPage({ params }: PageProps) {
     const category: string = params.category
     const property: string = params.sort
-    if (!category) return null
+    if (!category) throw new Error("No such category bro")
 
-    const events: EventInterface[] = await sortEventByCategoryAndSlug(
+    const events: Promise<EventInterface[]> = sortEventByCategoryAndSlug(
         category,
         property
     )
-
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                {events.map((event: EventInterface) => {
-                    return (
-                        <EventCard
-                            key={JSON.stringify(event._id)}
-                            event={event}
-                            href={`/${event._id}`}
-                        />
-                    )
-                })}
-            </div>
+            <Suspense fallback={<Loading />}>
+                {/* @ts-expect-error Async Server Component */}
+                <DisplayEvents eventsPromise={events} dashboard={false} />
+            </Suspense>
         </div>
     )
 }

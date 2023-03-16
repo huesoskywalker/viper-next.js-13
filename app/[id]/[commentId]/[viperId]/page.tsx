@@ -1,74 +1,63 @@
 import { PageProps } from "../../../../lib/getCategories"
 import {
-    Comments,
-    Reply,
-    getEventComment,
-    getEventReplies,
+    getEventCommentById,
+    getEventCommentReplies,
 } from "../../../../lib/events"
-import { EventCommentsCard } from "../../EventCommentsCard"
-import { delay } from "../../../../lib/delay"
+import { Comments, Reply } from "../../../../types/event"
+import { EventComments } from "../../EventComments"
+import { CommentReplies } from "./CommentReplies"
+import { Suspense } from "react"
 
-export default async function CommentIdPage({ params }: PageProps) {
-    const eventId: string = params.id
-    const commentId: string = params.commentId
-    const viperId: string = params.viperId
+export default async function CommentIdPage({
+    params: { id, commentId, viperId },
+}: PageProps) {
+    const eventId: string = id
 
-    // Added interface Comments but the comment.comments.[$winded]
-    const eventComment: Comments[] = await getEventComment(eventId, commentId)
-    // same here with <Reply> on the () =>
-    const eventReplies: Reply[] = await getEventReplies(
+    // To minimize client-server waterfalls, we recommend this pattern to fetch data in parallel
+    const eventCommentData: Promise<Comments[] | null> = getEventCommentById(
+        eventId,
+        commentId
+    )
+
+    const commentRepliesData: Promise<Reply[]> = getEventCommentReplies(
         eventId,
         commentId,
         viperId
     )
 
-    await delay(1500)
     return (
         <div className="mr-10 space-y-5">
             <div>
-                {eventComment?.map((comment: Comments) => {
-                    return (
-                        /* @ts-expect-error Async Server Component */
-                        <EventCommentsCard
-                            key={JSON.stringify(comment.viperId)}
-                            eventId={eventId}
-                            commentId={JSON.stringify(comment._id)}
-                            viperId={JSON.stringify(comment.viperId)}
-                            text={comment.text}
-                            commentLikes={comment.likes.length}
-                            commentReplies={comment.replies.length}
-                            replyId={undefined}
-                            timestamp={comment.timestamp}
-                            event={false}
-                            reply={false}
-                            blog={false}
-                        />
-                    )
-                })}
+                <Suspense
+                    fallback={
+                        <div className="text-yellow-400 text-lg">
+                            Comment Suspense
+                        </div>
+                    }
+                >
+                    {/* @ts-expect-error Async Server Component */}
+                    <EventComments
+                        commentsPromise={eventCommentData}
+                        eventId={eventId}
+                    />
+                </Suspense>
             </div>
             <div className="space-y-5">
-                {eventReplies?.map((reply: Reply) => {
-                    return (
-                        /* @ts-expect-error Async Server Component */
-                        <EventCommentsCard
-                            key={JSON.stringify(reply._id)}
-                            eventId={eventId}
-                            commentId={commentId}
-                            viperId={JSON.stringify(reply.viperId)}
-                            commentViperId={viperId}
-                            text={reply.reply}
-                            commentLikes={reply.likes.length}
-                            replyId={JSON.stringify(reply._id).replace(
-                                /["']+/g,
-                                ""
-                            )}
-                            timestamp={reply.timestamp}
-                            event={false}
-                            reply={true}
-                            blog={false}
-                        />
-                    )
-                })}
+                <Suspense
+                    fallback={
+                        <div className="text-yellow-400 text-lg">
+                            Reply Suspense
+                        </div>
+                    }
+                >
+                    {/* @ts-expect-error Async Server Component */}
+                    <CommentReplies
+                        repliesPromise={commentRepliesData}
+                        eventId={eventId}
+                        commentId={commentId}
+                        viperId={viperId}
+                    />
+                </Suspense>
             </div>
         </div>
     )

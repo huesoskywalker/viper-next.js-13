@@ -1,4 +1,46 @@
 "use client"
+
+// COMPONENT
+
+// import { useSearchParams } from 'next/navigation';
+
+// export default function SearchBar() {
+//   const searchParams = useSearchParams();
+
+//   const search = searchParams.get('search');
+
+//   // This will not be logged on the server when using static rendering
+//   console.log(search)
+
+//   return (
+//     <>Search: {search}</>
+//   );
+// }
+
+// PAGE
+
+// import { Suspense } from 'react'
+// import SearchBar from './search-bar'
+
+// // This component passed as fallback to the Suspense boundary
+// // will be rendered in place of the search bar in the initial HTML.
+// // When the value is available during React hydration the fallback
+// // will be replaced with the `<SearchBar>` component.
+// function SearchBarFallback() {
+//   return <>placeholder</>
+// }
+
+// export default function Page() {
+//   return <>
+//     <nav>
+//       <Suspense fallback={<SearchBarFallback />}>
+//         <SearchBar />
+//       </Suspense>
+//     </nav>
+//     <h1>Dashboard</h1>
+//   </>
+// }
+
 import { useState, FormEvent } from "react"
 
 export default function ViperSearchBar() {
@@ -52,9 +94,9 @@ export default function ViperSearchBar() {
                         xmlns="http://www.w3.org/2000/svg"
                     >
                         <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                         ></path>
                     </svg>

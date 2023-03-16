@@ -1,27 +1,24 @@
 import Image from "next/image"
-import getViperFollowById, { Follow, Viper } from "../../lib/vipers"
-import { AddFollow } from "./AddFollow"
+import getViperFollowById from "../../lib/vipers"
 import ShowFollows from "./ShowFollows"
-import Link from "next/link"
 import ViperInfo from "./ViperInfo"
 import { firstLogin } from "../../lib/utils"
-import { getViperById } from "../../lib/vipers"
+import { Follow, Viper } from "../../types/viper"
+import { EditProfileLink } from "./EditProfileLink"
+import { CheckFollow } from "../dashboard/vipers/[id]/CheckFollow"
 
 export const Profile = async ({
-    viperId,
-    currentViper,
+    viperPromise,
     profile,
 }: {
-    viperId: string
-    currentViper: string
+    viperPromise: Promise<Viper | null>
     profile: boolean
 }) => {
-    const fullViper: Viper | undefined = await getViperById(viperId)
+    const fullViper: Viper | null = await viperPromise
     if (!fullViper) return
-    const string_id: string = JSON.stringify(fullViper._id)
-    const id: string = string_id.slice(1, -1)
+    const viperId: string = JSON.stringify(fullViper._id).slice(1, -1)
 
-    const isViperFollowed: boolean = await getViperFollowById(id, currentViper)
+    const isViperFollowed: Promise<boolean> = getViperFollowById(viperId)
 
     return (
         <div className="grid grid-cols-4">
@@ -68,22 +65,15 @@ export const Profile = async ({
                             </p>
                         </h1>
                         {profile ? (
-                            <div className="relative left-10 ">
-                                <Link
-                                    href={`/profile/edit/${id}`}
-                                    className="block row-end-4 rounded-md  px-3 py-2 text-sm font-medium text-yellow-600 hover:text-gray-300"
-                                >
-                                    Edit profile
-                                </Link>
-                            </div>
+                            <EditProfileLink
+                                href={`/profile/edit/${viperId}`}
+                            />
                         ) : (
-                            <div className="flex justify-start">
-                                <AddFollow
-                                    id={id}
-                                    isFollowed={isViperFollowed}
-                                    event={true}
-                                />
-                            </div>
+                            /* @ts-expect-error Server Component */
+                            <CheckFollow
+                                followPromise={isViperFollowed}
+                                viperId={viperId}
+                            />
                         )}
                     </div>
                     <div className="break-after-column">

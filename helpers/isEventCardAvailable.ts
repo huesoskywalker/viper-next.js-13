@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb"
-import { EventInterface } from "../lib/events"
+import { EventInterface } from "../types/event"
 import clientPromise from "../lib/mongodb"
 
 export const isEventCardAvailable = async (

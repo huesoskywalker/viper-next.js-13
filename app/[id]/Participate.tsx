@@ -1,14 +1,14 @@
 "use client"
 
 // This Started happening when I installed @shopify/shopify-api
-import { useTransition, useState, useEffect, MouseEvent } from "react"
+import { useTransition, useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Checkout } from "@shopify/shopify-api/rest/admin/2023-01/checkout"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
-import { Viper } from "../../lib/vipers"
-import { EventInterface } from "../../lib/events"
+import { Viper } from "../../types/viper"
+import { EventInterface } from "../../types/event"
 
 export function Participate({
     eventId,
@@ -101,7 +101,7 @@ export function Participate({
             router.refresh()
         })
     }
-    // ------------------------------------
+    // --------------------------------------------------------------------------------
     const claimCard = async (): Promise<void> => {
         setIsFetching(true)
 
@@ -124,10 +124,10 @@ export function Participate({
         })
     }
 
-    useEffect(() => {
-        router.refresh()
-        console.log(isCheckoutPaid)
-    }, [viperOnList, isCheckoutPaid])
+    // useEffect(() => {
+    //     router.refresh()
+    //     console.log(isCheckoutPaid)
+    // }, [viperOnList, isCheckoutPaid])
 
     return (
         <div className="space-y-2">

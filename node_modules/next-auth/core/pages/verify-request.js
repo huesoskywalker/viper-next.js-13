@@ -22,13 +22,13 @@ function VerifyRequestPage(props) {
         }
       `
     }
-  }), theme.logo && (0, _preact.h)("img", {
+  }), (0, _preact.h)("div", {
+    className: "card"
+  }, theme.logo && (0, _preact.h)("img", {
     src: theme.logo,
     alt: "Logo",
     className: "logo"
-  }), (0, _preact.h)("div", {
-    className: "card"
-  }, (0, _preact.h)("h1", null, "Check your email"), (0, _preact.h)("p", null, "A sign in link has been sent to your email address."), (0, _preact.h)("p", null, (0, _preact.h)("a", {
+  }), (0, _preact.h)("h1", null, "Check your email"), (0, _preact.h)("p", null, "A sign in link has been sent to your email address."), (0, _preact.h)("p", null, (0, _preact.h)("a", {
     className: "site",
     href: url.origin
   }, url.host))));

@@ -1,4 +1,5 @@
-import { Blog, getBlog } from "../../../lib/vipers"
+import { getBlog } from "../../../lib/vipers"
+import { Blog } from "../../../types/viper"
 import { CommentCard } from "../CommentCard"
 
 export default async function PostAndLikeCard({
@@ -16,6 +17,7 @@ export default async function PostAndLikeCard({
 }) {
     const allBlogs: Blog[] | undefined = await getBlog(bloggerId, blogId)
 
+    // The best thing in here I guess is to make another Card,
     const viper_id: string = viperId.replace(/['"]+/g, "")
     const blogger_id: string = bloggerId.replace(/['"]+/g, "")
     const blog_id: string = blogId.replace(/['"]+/g, "")
@@ -27,7 +29,7 @@ export default async function PostAndLikeCard({
                     /* @ts-expect-error Server Component */
                     <CommentCard
                         key={JSON.stringify(blog._id)}
-                        eventId={blogger_id}
+                        bloggerId={blogger_id}
                         viperId={viper_id}
                         commentId={blog_id}
                         text={blog.content}

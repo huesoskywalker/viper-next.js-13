@@ -3,16 +3,14 @@ import { isViperOnTheList } from "../../lib/events"
 import { EventDate } from "./EventDate"
 import { EventLocation } from "./EventLocation"
 import { Participate } from "./Participate"
-import { delay } from "../../lib/delay"
-import { getCurrentViper } from "../../lib/session"
-import { getViperById, requestEventParticipation } from "../../lib/vipers"
+import { requestEventParticipation } from "../../lib/vipers"
 import isCheckoutFulFilled from "../../helpers/isCheckoutFulFilled"
 import { productInventoryCount } from "../../helpers/productInventoryCount"
 import { InventoryItem } from "@shopify/shopify-api/rest/admin/2023-01/inventory_item"
 import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfillment_order"
-import { Session, User } from "next-auth"
 
 export async function EventInfo({
+    currentViperId,
     eventId,
     eventDate,
     eventLocation,
@@ -20,6 +18,7 @@ export async function EventInfo({
     productId,
     eventEntries,
 }: {
+    currentViperId: string
     eventId: string
     eventDate: Date
     eventLocation: string
@@ -28,24 +27,28 @@ export async function EventInfo({
     eventEntries: number
 }) {
     // // Normally you would fetch data here
-    const viperSession = await getCurrentViper()
-    if (!viperSession) return
-    const viperId: string = viperSession.id
-    const viperOnList: boolean = await isViperOnTheList(eventId, viperId)
-    const viperRequest: boolean = await requestEventParticipation(
-        viperId,
+    const productInventoryData: Promise<InventoryItem> =
+        productInventoryCount(productId)
+
+    const viperOnListData: Promise<boolean> = isViperOnTheList(
+        eventId,
+        currentViperId
+    )
+    const viperRequestData: Promise<boolean> = requestEventParticipation(
+        currentViperId,
         eventId
     )
-    const viper = await getViperById(viperId)
-    if (!viper) return
+    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> =
+        isCheckoutFulFilled(currentViperId, eventId)
 
-    const checkoutFulfillment: FulfillmentOrder | undefined =
-        await isCheckoutFulFilled(viper, eventId)
-    const productInventory: InventoryItem = await productInventoryCount(
-        productId
-    )
+    const [productInventory, viperOnList, viperRequest, checkoutFulfillment] =
+        await Promise.all([
+            productInventoryData,
+            viperOnListData,
+            viperRequestData,
+            checkoutFulfillmentData,
+        ])
 
-    await delay(1000)
     return (
         <div className="space-y-1 rounded-lg bg-gray-900 p-3">
             <EventDate date={eventDate} collection={false} />

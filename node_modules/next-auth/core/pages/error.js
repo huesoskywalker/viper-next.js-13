@@ -66,13 +66,13 @@ function ErrorPage(props) {
         }
       `
       }
-    }), (theme === null || theme === void 0 ? void 0 : theme.logo) && (0, _preact.h)("img", {
+    }), (0, _preact.h)("div", {
+      className: "card"
+    }, (theme === null || theme === void 0 ? void 0 : theme.logo) && (0, _preact.h)("img", {
       src: theme.logo,
       alt: "Logo",
       className: "logo"
-    }), (0, _preact.h)("div", {
-      className: "card"
-    }, (0, _preact.h)("h1", null, heading), (0, _preact.h)("div", {
+    }), (0, _preact.h)("h1", null, heading), (0, _preact.h)("div", {
       className: "message"
     }, message), signin))
   };

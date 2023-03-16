@@ -1,53 +1,43 @@
-import { EventInterface, getEventById } from "../../lib/events"
-import { Viper, getViperById } from "../../lib/vipers"
+import { ViperBasics, getViperBasicsProps } from "../../lib/vipers"
 import Image from "next/image"
 import { cookies } from "next/headers"
 import AddComment from "../../components/AddComment"
 import { AddLike } from "../../components/AddLike"
 import Link from "next/link"
 import { firstLogin } from "../../lib/utils"
-import ShowFollows from "../profile/ShowFollows"
 import OrganizerInfo from "./OrganizerInfo"
 import ShowViper from "./ShowViper"
-import ViperInfo from "../profile/ViperInfo"
 import { EventDate } from "./EventDate"
 import { delay } from "../../lib/delay"
 
 export async function EventCommentsCard({
     eventId,
+    replyTo,
     commentId,
     viperId,
-    commentViperId,
     text,
     commentLikes,
     commentReplies,
     replyId,
     timestamp,
-    event,
     reply,
-    blog,
 }: {
     eventId: string
+    replyTo: string | undefined
     commentId: string
     viperId: string
-    commentViperId: string
     text: string
     commentLikes: number
     commentReplies: number
     replyId: string | undefined
     timestamp: number
-    event: boolean
     reply: boolean
-    blog: boolean
 }) {
     const viper_id: string = viperId.replace(/['"]+/g, "")
     const comment_id: string = commentId.replace(/['"]+/g, "")
+    const viper: ViperBasics | null = await getViperBasicsProps(viper_id)
 
-    const commentViper: Viper | undefined = await getViperById(commentViperId)
-    const viper: Viper | undefined = await getViperById(viper_id)
-    if (!viper) return
-    const fullEvent: EventInterface | null = await getEventById(eventId)
-    if (!fullEvent) return
+    if (!viper) throw new Error("No viper bro")
     const likedCookie =
         cookies().get(`_${reply ? replyId : comment_id}_is_liked`)?.value ||
         "none"
@@ -78,58 +68,14 @@ export async function EventCommentsCard({
                                 <ShowViper
                                     viperName={viper.name}
                                     event={false}
-                                    blog={blog}
-                                    // viperImage={viper!.image}
+                                    blog={false}
                                 >
                                     {/* @ts-expect-error Async Server Component */}
                                     <OrganizerInfo
                                         key={JSON.stringify(viper._id)}
-                                        id={JSON.stringify(viper._id)}
+                                        organizerId={JSON.stringify(viper._id)}
                                         event={true}
                                     />
-                                    <div className="mt-5 space-x-8 text-gray-300 text-xs">
-                                        <ShowFollows
-                                            follows={viper.follows.length}
-                                            followers={false}
-                                            profile={false}
-                                        >
-                                            {viper.follows.map((follows) => {
-                                                return (
-                                                    /* @ts-expect-error Async Server Component */
-                                                    <ViperInfo
-                                                        key={JSON.stringify(
-                                                            follows._id
-                                                        )}
-                                                        id={JSON.stringify(
-                                                            follows._id
-                                                        )}
-                                                    />
-                                                )
-                                            })}
-                                        </ShowFollows>
-
-                                        <ShowFollows
-                                            follows={viper.followers.length}
-                                            followers={true}
-                                            profile={false}
-                                        >
-                                            {viper.followers.map(
-                                                (followers) => {
-                                                    return (
-                                                        /* @ts-expect-error Async Server Component */
-                                                        <ViperInfo
-                                                            key={JSON.stringify(
-                                                                followers._id
-                                                            )}
-                                                            id={JSON.stringify(
-                                                                followers._id
-                                                            )}
-                                                        />
-                                                    )
-                                                }
-                                            )}
-                                        </ShowFollows>
-                                    </div>
                                 </ShowViper>
                                 <EventDate
                                     date={timestamp}
@@ -146,14 +92,14 @@ export async function EventCommentsCard({
                                         Commenting on{" "}
                                         <span className="text-blue-500/80 text-xs ml-[5px]">
                                             {" "}
-                                            {fullEvent.title}
+                                            {replyTo}
                                         </span>
                                     </span>
                                 ) : (
                                     <span className="text-gray-400/70 text-xs flex align-top">
                                         Replying to{" "}
                                         <span className="text-blue-500/80 text-xs ml-[5px]">
-                                            {commentViper?.name}
+                                            {replyTo}
                                         </span>
                                     </span>
                                 )}
@@ -165,7 +111,7 @@ export async function EventCommentsCard({
                     </div>
                 </div>
             </div>
-            <div className="flex justify-items-start space-x-4 space-y-1 ml-32">
+            <div className="flex justify-center -ml-44 space-x-4 space-y-1 ">
                 {/* @ts-expect-error Async Server Component */}
                 <AddLike
                     eventId={eventId}
@@ -173,25 +119,22 @@ export async function EventCommentsCard({
                     replyId={replyId}
                     likes={commentLikes}
                     timestamp={0}
-                    event={event}
+                    event={false}
                     reply={reply}
-                    blog={blog}
+                    blog={false}
                     likedCookie={likedCookie}
                 />
                 {!reply ? (
                     <AddComment
                         id={eventId}
                         commentId={comment_id}
-                        viperIdImage={undefined}
                         viperIdName={undefined}
-                        bloggerIdName={undefined}
                         commentReplies={commentReplies}
                         timestamp={null}
                         commentCookie={"none"}
                         event={false}
-                        reply={true}
+                        reply={reply}
                         blog={false}
-                        showComment={undefined}
                     />
                 ) : null}
             </div>

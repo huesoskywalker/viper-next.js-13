@@ -23,13 +23,21 @@ function SignoutPage(props) {
         }
       `
     }
-  }), theme.logo && (0, _preact.h)("img", {
+  }), theme.buttonText && (0, _preact.h)("style", {
+    dangerouslySetInnerHTML: {
+      __html: `
+        :root {
+          --button-text-color: ${theme.buttonText}
+        }
+      `
+    }
+  }), (0, _preact.h)("div", {
+    className: "card"
+  }, theme.logo && (0, _preact.h)("img", {
     src: theme.logo,
     alt: "Logo",
     className: "logo"
-  }), (0, _preact.h)("div", {
-    className: "card"
-  }, (0, _preact.h)("h1", null, "Signout"), (0, _preact.h)("p", null, "Are you sure you want to sign out?"), (0, _preact.h)("form", {
+  }), (0, _preact.h)("h1", null, "Signout"), (0, _preact.h)("p", null, "Are you sure you want to sign out?"), (0, _preact.h)("form", {
     action: `${url}/signout`,
     method: "POST"
   }, (0, _preact.h)("input", {
@@ -37,6 +45,7 @@ function SignoutPage(props) {
     name: "csrfToken",
     value: csrfToken
   }), (0, _preact.h)("button", {
+    id: "submitButton",
     type: "submit"
   }, "Sign out"))));
 }

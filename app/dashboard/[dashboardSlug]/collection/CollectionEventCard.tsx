@@ -1,31 +1,38 @@
 import Link from "next/link"
 import Image from "next/image"
-import { EventInterface, getEventById } from "../../../../lib/events"
+import { getEventById } from "../../../../lib/events"
 import { EventDate } from "../../../[id]/EventDate"
 import { isEventCardAvailable } from "../../../../helpers/isEventCardAvailable"
+import { EventInterface } from "../../../../types/event"
 
 export const CollectionEventCard = async ({
     viperId,
     eventId,
     href,
-    collection,
+    isCollection,
 }: {
     viperId: string
     eventId: string
     href: string
-    collection: boolean
+    isCollection: boolean
 }) => {
     const event_id: string = eventId.slice(1, -1)
     const link: string = href.slice(1, -1)
-    const event: EventInterface | null = await getEventById(event_id)
+    const eventData: Promise<EventInterface | null> = getEventById(event_id)
 
-    const eventCardAvailable: boolean = await isEventCardAvailable(
+    const eventCardAvailableData: Promise<boolean> = isEventCardAvailable(
         event_id,
         viperId
     )
+
+    const [event, eventCardAvailable] = await Promise.all([
+        eventData,
+        eventCardAvailableData,
+    ])
+
     return (
         <>
-            {eventCardAvailable || !collection ? (
+            {eventCardAvailable || !isCollection ? (
                 <Link href={link} className="group block">
                     <div className="space-y-1">
                         <Image

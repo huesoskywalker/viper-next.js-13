@@ -29,7 +29,15 @@ export function CreateEvent() {
     const { data: session } = useSession()
     const viper = session?.user
     if (!viper) return
-    const organizer = {
+
+    // Check this type I think it's already made
+    type Organizer = {
+        id: string
+        name: string
+        email: string
+        image: string
+    }
+    const organizer: Organizer = {
         id: viper.id,
         name: viper.name,
         email: viper.email,
@@ -211,7 +219,7 @@ export function CreateEvent() {
             setCreateObjectURL(URL.createObjectURL(i))
         }
     }
-    useEffect(() => {}, [image])
+    // useEffect(() => {}, [image])
     return (
         <div className="py-2 flex justify-center">
             <div className="w-4/5">

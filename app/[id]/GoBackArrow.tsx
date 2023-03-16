@@ -5,10 +5,10 @@ export default function GoBackArrow() {
     const router = useRouter()
 
     return (
-        <div>
+        <div className="relative top-0 left-0">
             <button
                 onClick={() => router.back()}
-                className="text-gray-300 hover:text-yellow-600/80"
+                className="text-gray-300 hover:text-yellow-500"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

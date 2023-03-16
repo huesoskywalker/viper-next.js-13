@@ -1,26 +1,18 @@
-import { EventInterface, getAllEvents } from "../../../lib/events"
+import { getAllEvents } from "../../../lib/events"
 import { Suspense } from "react"
 import Loading from "./loading"
-import { EventCard } from "./EventCard"
+import { EventInterface } from "../../../types/event"
+import { DisplayEvents } from "./DisplayEvents"
 
 export default async function EventsPage({}) {
-    const events: EventInterface[] = await getAllEvents()
+    const events: Promise<EventInterface[]> = getAllEvents()
 
     return (
         <div className="space-y-9">
             <div className="flex justify-between">
                 <Suspense fallback={<Loading />}>
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        {events?.map((event: EventInterface) => {
-                            return (
-                                <EventCard
-                                    key={JSON.stringify(event._id)}
-                                    event={event}
-                                    href={`/${event._id}`}
-                                />
-                            )
-                        })}
-                    </div>
+                    {/* @ts-expect-error Async Server Component */}
+                    <DisplayEvents eventsPromise={events} dashboard={false} />
                 </Suspense>
             </div>
         </div>

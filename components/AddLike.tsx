@@ -19,7 +19,7 @@ export function AddLike({
     commentId: string
     replyId: string | undefined
     likes: number
-    timestamp: number | Date
+    timestamp: number | Date | string
     event: boolean
     reply: boolean
     blog: boolean

@@ -14,22 +14,29 @@ export default async function handler(
     const session = shopifyAdmin.session.customAppSession(
         "vipers-go.myshopify.com"
     )
-    const client = new shopifyAdmin.clients.Graphql({ session })
 
-    const MEDIA_INPUT = {
-        media: {
-            alt: "product image",
-            mediaContentType: "IMAGE",
-            originalSource: resourceUrl,
-        },
-        productId: productId,
+    if (req.method === "POST") {
+        try {
+            const client = new shopifyAdmin.clients.Graphql({ session })
+
+            const MEDIA_INPUT = {
+                media: {
+                    alt: "product image",
+                    mediaContentType: "IMAGE",
+                    originalSource: resourceUrl,
+                },
+                productId: productId,
+            }
+
+            const updatedProduct: RequestReturn<Product> = await client.query({
+                data: {
+                    query: MEDIA_CREATE,
+                    variables: MEDIA_INPUT,
+                },
+            })
+            return res.status(200).json(updatedProduct)
+        } catch (error: any) {
+            return res.status(400).json(error)
+        }
     }
-
-    const updatedProduct: RequestReturn<Product> = await client.query({
-        data: {
-            query: MEDIA_CREATE,
-            variables: MEDIA_INPUT,
-        },
-    })
-    return res.status(200).json(updatedProduct)
 }

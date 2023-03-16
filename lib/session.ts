@@ -1,13 +1,13 @@
-import { unstable_getServerSession } from "next-auth/next"
-
 import { authOptions } from "./auth"
+import { Session, getServerSession } from "next-auth"
 
-export async function getSession() {
-    return await unstable_getServerSession(authOptions)
+export async function getSession(): Promise<Session | null> {
+    return await getServerSession(authOptions)
 }
 
+// Will have to make this properly at some point
 export async function getCurrentViper() {
-    const session = await getSession()
+    const session: Session | null = await getSession()
 
     return session?.user
 }

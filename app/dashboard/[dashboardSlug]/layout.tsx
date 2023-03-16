@@ -7,7 +7,7 @@ export default async function Layout({ children, params }: PageProps) {
         params.dashboardSlug
     )
 
-    if (!category) return null
+    if (!category) throw new Error("No such category bro")
 
     return (
         <div className="space-y-4">

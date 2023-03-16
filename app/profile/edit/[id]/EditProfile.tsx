@@ -3,17 +3,14 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition, FormEvent } from "react"
-// import { Viper } from "../../../../lib/vipers"
 import Image from "next/image"
 
 export default function EditProfile({
-    // viper,
     viperId,
     name,
     biography,
     location,
 }: {
-    // viper: Viper
     viperId: string
     name: string
     biography: string

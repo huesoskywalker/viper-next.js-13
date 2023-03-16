@@ -14,43 +14,50 @@ const checkoutCreate = async (req: NextApiRequest, res: NextApiResponse) => {
         "vipers-go.myshopify.com"
     )
 
-    const client = new shopifyAdmin.clients.Graphql({ session })
+    if (req.method === "POST") {
+        try {
+            const client = new shopifyAdmin.clients.Graphql({ session })
 
-    const PRODUCT_INPUT = {
-        id: body.productId,
-    }
+            const PRODUCT_INPUT = {
+                id: body.productId,
+            }
 
-    const product: RequestReturn<Product> = await client.query({
-        data: {
-            query: PRODUCT_GET,
-            variables: PRODUCT_INPUT,
-        },
-    })
-    const variantId: Variant =
-        product.body.data.product.variants.edges[0].node.id
-
-    const CHECKOUT_INPUT = {
-        input: {
-            allowPartialAddresses: true,
-            email: body.viperEmail,
-
-            lineItems: [
-                {
-                    variantId: variantId,
-                    quantity: 1,
+            const product: RequestReturn<Product> = await client.query({
+                data: {
+                    query: PRODUCT_GET,
+                    variables: PRODUCT_INPUT,
                 },
-            ],
-        },
+            })
+            const variantId: Variant =
+                product.body.data.product.variants.edges[0].node.id
+
+            const CHECKOUT_INPUT = {
+                input: {
+                    allowPartialAddresses: true,
+                    email: body.viperEmail,
+
+                    lineItems: [
+                        {
+                            variantId: variantId,
+                            quantity: 1,
+                        },
+                    ],
+                },
+            }
+
+            const checkout: RequestReturn<Checkout> =
+                await storefrontClient.query({
+                    data: {
+                        query: CHECKOUT_CREATE,
+                        variables: CHECKOUT_INPUT,
+                    },
+                })
+
+            return res.status(200).json(checkout)
+        } catch (error: any) {
+            return res.status(400).json(error)
+        }
     }
-
-    const checkout: RequestReturn<Checkout> = await storefrontClient.query({
-        data: {
-            query: CHECKOUT_CREATE,
-            variables: CHECKOUT_INPUT,
-        },
-    })
-
-    return res.status(200).json(checkout)
 }
 
 export default checkoutCreate

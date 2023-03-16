@@ -5,7 +5,7 @@ import { MouseEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
 import { CustomerAddress } from "@shopify/shopify-api/rest/admin/2023-01/customer_address"
-import { Viper } from "../../../lib/vipers"
+import { Viper } from "../../../types/viper"
 
 export default function CreateCustomer({
     viperId,

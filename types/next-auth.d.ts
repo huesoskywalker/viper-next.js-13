@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb"
 import NextAuth, { DefaultSession } from "next-auth"
+import { Viper } from "./viper"
 
 declare module "next-auth" {
     /**
@@ -26,12 +27,12 @@ declare module "next-auth" {
         address: Address
     }
 
-    type Shopify = {
+    interface Shopify {
         customerAccessToken: string
         customerId: string
     }
 
-    type Address = {
+    interface Address {
         phone: number
         address: string
         province: string

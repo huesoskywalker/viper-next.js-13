@@ -4,22 +4,31 @@ import { EventInfo, InfoSkeleton } from "./EventInfo"
 import { AddLike } from "../../components/AddLike"
 import { cookies } from "next/headers"
 import AddComment from "../../components/AddComment"
-import { Follow, Viper, getViperById } from "../../lib/vipers"
 import ShowViper from "./ShowViper"
 import OrganizerInfo from "./OrganizerInfo"
-import ShowFollows from "../profile/ShowFollows"
-import ViperInfo from "../profile/ViperInfo"
-import { EventInterface, getEventById } from "../../lib/events"
+import { EventInterface } from "../../types/event"
+import { getCurrentViper } from "../../lib/session"
 
-export async function Event({ eventId }: { eventId: string }) {
+export async function Event({
+    eventPromise,
+}: {
+    eventPromise: Promise<EventInterface | null>
+}) {
     const likedCookie: string = cookies().get("_is_liked")?.value || "none"
-    const selectedEvent: EventInterface | null = await getEventById(eventId)
-    if (!selectedEvent) return
-    const viper: Viper | undefined = await getViperById(
-        selectedEvent.organizer.id
-    )
-    if (!viper) return
+    const viperSession = getCurrentViper()
 
+    const [currentViper, selectedEvent] = await Promise.all([
+        viperSession,
+        eventPromise,
+    ])
+    // This will activate the closest `error.ts` Error Boundary
+    if (!currentViper) throw new Error("No Session bro")
+    if (!selectedEvent)
+        return (
+            <div className="text-yellow-400 text-sm">Build up, from Event</div>
+        )
+
+    const eventId = JSON.stringify(selectedEvent._id).replace(/["']+/g, "")
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">
@@ -31,36 +40,6 @@ export async function Event({ eventId }: { eventId: string }) {
                         width={400}
                         className="hidden rounded-lg  lg:block max-h-24  object-cover object-center"
                     />
-
-                    {/* <div className="flex space-x-2">
-                        <div className="w-1/3">
-                            <Image
-                                src={`/upload/${selectedEvent?.image}`}
-                                className="rounded-lg grayscale max-h-8  object-cover object-center"
-                                alt={selectedEvent?.title}
-                                height={180}
-                                width={180}
-                            />
-                        </div>
-                        <div className="w-1/3">
-                            <Image
-                                src={`/upload/${selectedEvent?.image}`}
-                                className="rounded-lg grayscale max-h-8  object-cover object-center"
-                                alt={selectedEvent?.title}
-                                height={180}
-                                width={180}
-                            />
-                        </div>
-                        <div className="w-1/3">
-                            <Image
-                                src={`/upload/${selectedEvent?.image}`}
-                                className="rounded-lg grayscale max-h-8  object-cover object-center"
-                                alt={selectedEvent?.title}
-                                height={180}
-                                width={180}
-                            />
-                        </div>
-                    </div> */}
                 </div>
             </div>
 
@@ -92,6 +71,7 @@ export async function Event({ eventId }: { eventId: string }) {
                 <Suspense fallback={<InfoSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
                     <EventInfo
+                        currentViperId={currentViper.id}
                         eventId={eventId}
                         eventDate={selectedEvent.date}
                         eventLocation={selectedEvent.location}
@@ -103,50 +83,24 @@ export async function Event({ eventId }: { eventId: string }) {
             </div>
             <div className="mt-2 col-start-1 col-span-2 max-h-auto">
                 <ShowViper
-                    viperName={viper.name}
+                    viperName={selectedEvent.organizer.name}
                     event={true}
                     blog={true}
-                    // viperImage={viper!.image}
                 >
-                    {/* @ts-expect-error Async Server Component */}
-                    <OrganizerInfo
-                        key={JSON.stringify(viper._id)}
-                        id={JSON.stringify(viper._id)}
-                        event={true}
-                    />
-                    <div className="mt-5 space-x-8 text-gray-300 text-xs">
-                        <ShowFollows
-                            follows={viper.follows.length}
-                            followers={false}
-                            profile={false}
-                        >
-                            {viper.follows.map((follows: Follow) => {
-                                return (
-                                    /* @ts-expect-error Async Server Component */
-                                    <ViperInfo
-                                        key={JSON.stringify(follows._id)}
-                                        id={JSON.stringify(follows._id)}
-                                    />
-                                )
-                            })}
-                        </ShowFollows>
-
-                        <ShowFollows
-                            follows={viper.followers.length}
-                            followers={true}
-                            profile={false}
-                        >
-                            {viper.followers.map((followers: Follow) => {
-                                return (
-                                    /* @ts-expect-error Async Server Component */
-                                    <ViperInfo
-                                        key={JSON.stringify(followers._id)}
-                                        id={JSON.stringify(followers._id)}
-                                    />
-                                )
-                            })}
-                        </ShowFollows>
-                    </div>
+                    <Suspense
+                        fallback={
+                            <div className="text-yellow-500 text-lg">
+                                suspense from event...
+                            </div>
+                        }
+                    >
+                        {/* @ts-expect-error Async Server Component */}
+                        <OrganizerInfo
+                            key={selectedEvent.organizer.id}
+                            organizerId={selectedEvent.organizer.id}
+                            event={true}
+                        />
+                    </Suspense>
                 </ShowViper>
             </div>
             <div className="text-gray-300 col-start-4">
@@ -156,7 +110,7 @@ export async function Event({ eventId }: { eventId: string }) {
                     commentId={JSON.stringify(selectedEvent._id)}
                     replyId={JSON.stringify(selectedEvent._id)}
                     likes={selectedEvent.likes.length}
-                    timestamp={selectedEvent.creationDate}
+                    timestamp={JSON.stringify(selectedEvent.creationDate)}
                     event={true}
                     reply={false}
                     blog={false}
@@ -166,16 +120,13 @@ export async function Event({ eventId }: { eventId: string }) {
                 <AddComment
                     id={eventId}
                     commentId={JSON.stringify(selectedEvent._id)}
-                    viperIdImage={undefined}
                     viperIdName={undefined}
-                    bloggerIdName={undefined}
                     commentReplies={selectedEvent.comments.length}
                     timestamp={null}
                     commentCookie={"none"}
                     event={true}
                     reply={false}
                     blog={false}
-                    showComment={undefined}
                 />
             </div>
         </div>

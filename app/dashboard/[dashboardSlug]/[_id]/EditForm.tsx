@@ -2,17 +2,34 @@
 
 import { useState, useTransition, FormEvent } from "react"
 import { useRouter } from "next/navigation"
-import { EventInterface } from "../../../../lib/events"
 
-export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
-    const [title, setTitle] = useState<string>(toEditEvent.title)
-    const [content, setContent] = useState<string>(toEditEvent.content)
-    const [location, setLocation] = useState<string>(toEditEvent.location)
-    const [date, setDate] = useState<string>(toEditEvent.date.toString())
-    const [category, setCategory] = useState<string>(toEditEvent.category)
-    const [image, setImage] = useState<string>(toEditEvent.image)
+export function EditForm({
+    eventId,
+    eventTitle,
+    eventContent,
+    eventLocation,
+    eventDate,
+    eventCategory,
+    eventImage,
+    eventPrice,
+}: {
+    eventId: string
+    eventTitle: string
+    eventContent: string
+    eventLocation: string
+    eventDate: string
+    eventCategory: string
+    eventImage: string
+    eventPrice: number
+}) {
+    const [title, setTitle] = useState<string>(eventTitle)
+    const [content, setContent] = useState<string>(eventContent)
+    const [location, setLocation] = useState<string>(eventLocation)
+    const [date, setDate] = useState<string>(eventDate)
+    const [category, setCategory] = useState<string>(eventCategory)
+    const [image, setImage] = useState<string>(eventImage)
     const [createObjectURL, setCreateObjectURL] = useState<string>()
-    const [price, setPrice] = useState<string>(toEditEvent.price.toString())
+    const [price, setPrice] = useState<string>(eventPrice.toString())
     const [pendingEdit, setPendingEdit] = useState<boolean>(false)
 
     const [isPending, startTransition] = useTransition()
@@ -51,13 +68,13 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
 
             // const imageUrl = data?.url
 
-            const response = await fetch(`/api/form`, {
+            const response = await fetch(`/api/create-event`, {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    _id: toEditEvent._id,
+                    _id: eventId,
                     title,
                     content,
                     location,
@@ -80,10 +97,10 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                 setCreateObjectURL("")
                 setPrice("")
                 // router.refresh()
-                router.prefetch(`/${toEditEvent._id}`)
+                router.prefetch(`/${eventId}`)
             })
             // same in EditProfile, Want to try prefetch inside transition and push outside.
-            router.push(`/${toEditEvent._id}`)
+            router.push(`/${eventId}`)
         } catch (error) {
             console.error(error)
         }
@@ -98,8 +115,8 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    _id: toEditEvent._id,
-                    image: toEditEvent.image,
+                    _id: eventId,
+                    image: eventImage,
                 }),
             })
             await response.json()
@@ -128,15 +145,15 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
     // }
 
     return (
-        <div className="py-2">
-            <div className="max-w-md">
+        <div className="py-2 flex justify-center">
+            <div className="w-4/5">
                 <div className="grid grid-cols-1 gap-6">
                     <form onSubmit={(e) => handleSubmit(e)} className="text-sm">
                         <label className="block py-1">
                             <span className="text-gray-300">Event name</span>
                             <input
                                 type="text"
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                className="block p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                             />
@@ -146,10 +163,10 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 Additional details
                             </span>
                             <textarea
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                className="block p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                rows={2}
+                                rows={3}
                             ></textarea>
                         </label>
                         <label className="block py-1">
@@ -157,7 +174,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 What type of event is it?
                             </span>
                             <select
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                className="block p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                                 required
@@ -176,7 +193,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                             </span>
                             <input
                                 type="date"
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                className="block p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
                             />
@@ -186,7 +203,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                                 Where is it happening?
                             </span>
                             <select
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
+                                className="block p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                                 required
@@ -242,7 +259,7 @@ export function EditForm({ toEditEvent }: { toEditEvent: EventInterface }) {
                             Price
                             <input
                                 type="number"
-                                className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                className="block p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                             />

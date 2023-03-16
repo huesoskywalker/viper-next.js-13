@@ -1,40 +1,21 @@
-import { Blog, Viper, getViperById } from "../../../../lib/vipers"
+import { getViperBlogs } from "../../../../lib/vipers"
 import { PageProps } from "../../../../lib/utils"
-import { CommentCard } from "../../../profile/CommentCard"
 import { Suspense } from "react"
 import Loading from "./loading"
+import { Blog } from "../../../../types/viper"
+import { ViperBlogs } from "../../../profile/ViperBlogs"
 
 export default async function ViperPage({ params }: PageProps) {
-    const id: string = params.id
-    const viper: Viper | undefined = await getViperById(id)
-    if (!viper) return
-    const stringifyFullViperId: string = JSON.stringify(viper?._id)
-    const viperId: string = stringifyFullViperId.replace(/['"]+/g, "")
+    const viperId: string = params.id
+
+    const viperBlogs: Promise<Blog[]> = getViperBlogs(viperId)
+    if (!viperBlogs) throw new Error("No viper bro")
 
     return (
-        <div>
+        <div className="flex justify-center">
             <Suspense fallback={<Loading />}>
-                {viper.blog
-                    ?.sort((a, b) => b.timestamp - a.timestamp)
-                    .map((blog: Blog) => {
-                        return (
-                            /* @ts-expect-error Server Component */
-                            <CommentCard
-                                key={JSON.stringify(blog._id)}
-                                eventId={viperId}
-                                viperId={viperId}
-                                commentId={JSON.stringify(blog._id)}
-                                text={blog.content}
-                                timestamp={blog.timestamp}
-                                likes={blog.likes.length}
-                                replies={blog.comments?.length}
-                                rePosts={blog.rePosts.length}
-                                event={false}
-                                reply={true}
-                                blog={true}
-                            />
-                        )
-                    })}
+                {/* @ts-expect-error Server Component */}
+                <ViperBlogs blogsPromise={viperBlogs} viperId={viperId} />
             </Suspense>
         </div>
     )

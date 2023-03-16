@@ -1,17 +1,13 @@
 "use client"
-import Image from "next/image"
 import { ReactNode, useState } from "react"
 import { delay } from "../../lib/delay"
-import { EventDate } from "./EventDate"
 
 export default function ShowViper({
-    // viperImage,
     viperName,
     event,
     blog,
     children,
 }: {
-    // viperImage: string
     viperName: string
     event: boolean
     blog: boolean
@@ -39,7 +35,7 @@ export default function ShowViper({
                 <div className="relative grid grid-flow-row z-0 w-full h-full ">
                     <h1 className="text-gray-300 text-xs ">
                         Organized by:
-                        <span className="text-yellow-700/80 text-xs px-1  hover:text-yellow-600/80 hover:underline">
+                        <span className="text-yellow-700/80 text-xs px-1  hover:text-yellow-400 hover:underline">
                             <button
                                 onMouseEnter={displayOrganizer}
                                 className="max-h-fit max-w-fit"
@@ -50,10 +46,10 @@ export default function ShowViper({
                     </h1>
                 </div>
             ) : blog ? null : (
-                <div className="relative grid grid-flow-row z-0 w-full h-full">
+                <div className="relative grid grid-flow-row z-0 w-full h-full p-0.5">
                     <button
                         onMouseEnter={displayOrganizer}
-                        className="max-h-fit max-w-fit flex justify-end text-yellow-800/90 text-xs  hover:text-yellow-600/90 "
+                        className="max-h-fit max-w-fit font-normal flex justify-end text-yellow-800/90 text-xs  hover:text-yellow-400 "
                     >
                         {viperName}
                     </button>
@@ -70,7 +66,7 @@ export default function ShowViper({
                 >
                     <div className="flex items-center px-2 py-2">
                         <div
-                            className=" w-[14rem] h-[11rem]max-h-fit max-w-lg p-4 mx-auto bg-gray-800 border-[1px] border-gray-700 rounded-xl shadow-lg"
+                            className=" w-[14rem] max-h-fit max-w-lg p-4 mx-auto bg-gray-800 border-[1px] border-gray-700 rounded-xl shadow-lg"
                             onMouseLeave={closeOrganizer}
                         >
                             {children}

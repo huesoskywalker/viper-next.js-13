@@ -1,72 +1,21 @@
-import { ObjectId, Timestamp } from "mongodb"
+import { ObjectId } from "mongodb"
 import clientPromise from "./mongodb"
+import {
+    EventInterface,
+    Organizer,
+    Participants,
+    Likes,
+    Comments,
+    Reply,
+} from "../types/event"
 
-export interface EventInterface {
-    readonly _id: ObjectId
-    organizer: Organizer
-    title: string
-    content: string
-    location: string
-    address: string
-    date: Date
-    category: string
-    creationDate: number
-    image: string
-    price: number
-    entries: number
-    participants: Participants[]
-    editionDate: number
-    likes: Likes[]
-    comments: Comments[]
-    productId: string
-}
-
-export type Organizer = {
-    readonly id: string
-    name: string
-    email: string
-    image: string
-}
-export interface Participants {
-    readonly _id: ObjectId
-}
-export interface Likes {
-    readonly _id: ObjectId
-}
-export interface Comments {
-    readonly _id: ObjectId
-    viperId: ObjectId
-    text: string
-    likes: string[]
-    replies: Reply[]
-    timestamp: number
-}
-
-export interface Reply {
-    readonly _id: Object
-    viperId: string
-    reply: string
-    likes: string[]
-    timestamp: number
-}
-
-export interface EditEvent {
-    title: string
-    content: string
-    location: string
-    date: string
-    category: string
-    price: string
-    image: string
-}
+const client = await clientPromise
+const eventCollection = client
+    .db("viperDb")
+    .collection<EventInterface>("organized_events")
 
 export async function getAllEvents(): Promise<EventInterface[]> {
-    const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-
-    const events = await db
+    const events = await eventCollection
         .aggregate<EventInterface>([
             {
                 $sort: { date: 1 },
@@ -89,12 +38,7 @@ export async function getAllEvents(): Promise<EventInterface[]> {
 }
 
 export async function getEventById(id: string): Promise<EventInterface | null> {
-    const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-
-    const event = await db.findOne<EventInterface>({
+    const event = await eventCollection.findOne<EventInterface>({
         _id: new ObjectId(id),
     })
     if (!event) return null
@@ -104,13 +48,7 @@ export async function getEventById(id: string): Promise<EventInterface | null> {
 export async function getEventsByCategory(
     category: string
 ): Promise<EventInterface[]> {
-    const client = await clientPromise
-
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-
-    const event = await db
+    const event = await eventCollection
         .aggregate<EventInterface>([
             {
                 $match: { category: category },
@@ -163,13 +101,7 @@ function sortBy(field: string) {
 export async function getViperCreatedEvents(
     id: string
 ): Promise<EventInterface[]> {
-    const client = await clientPromise
-
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-
-    const events = await db
+    const events = await eventCollection
         .aggregate<EventInterface>([
             {
                 $match: { "organizer.id": id },
@@ -180,19 +112,19 @@ export async function getViperCreatedEvents(
             {
                 $project: {
                     _id: 1,
-                    organizer: 1,
+                    // organizer: 1,
                     title: 1,
                     content: 1,
                     location: 1,
-                    address: 1,
+                    // address: 1,
                     date: 1,
                     category: 1,
-                    creationDate: 1,
-                    price: 1,
+                    // creationDate: 1,
+                    // price: 1,
                     image: 1,
-                    participants: 1,
-                    likes: 1,
-                    comments: 1,
+                    // participants: 1,
+                    // likes: 1,
+                    // comments: 1,
                 },
             },
         ])
@@ -200,16 +132,47 @@ export async function getViperCreatedEvents(
     return events
 }
 
-export async function getEventComment(
+export async function getViperLatestCreatedEvent(
+    viperId: string
+): Promise<EventInterface> {
+    const events: EventInterface[] = await getViperCreatedEvents(viperId)
+    const lastEvent: EventInterface = events[0]
+    return lastEvent
+}
+
+export async function getEventComments(
+    eventId: string
+): Promise<Comments[] | null> {
+    const eventComments = await eventCollection
+        .aggregate<Comments>([
+            {
+                $match: { _id: new ObjectId(eventId) },
+            },
+            {
+                $unwind: "$comments",
+            },
+            {
+                $project: {
+                    _id: "$comments._id",
+                    eventTitle: "$title",
+                    viperId: "$comments.viperId",
+                    text: "$comments.text",
+                    likes: "$comments.likes",
+                    replies: "$comments.replies",
+                    timestamp: "$comments.timestamp",
+                },
+            },
+        ])
+        .toArray()
+
+    return eventComments
+}
+
+export async function getEventCommentById(
     eventId: string,
     commentId: string
-): Promise<Comments[]> {
-    const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-
-    const eventComment = await db
+): Promise<Comments[] | null> {
+    const eventComment = await eventCollection
         .aggregate<Comments>([
             {
                 $match: {
@@ -229,6 +192,7 @@ export async function getEventComment(
             {
                 $project: {
                     _id: "$comments._id",
+                    eventTitle: "$title",
                     viperId: "$comments.viperId",
                     text: "$comments.text",
                     likes: "$comments.likes",
@@ -238,20 +202,16 @@ export async function getEventComment(
             },
         ])
         .toArray()
+    if (!eventComment) return null
     return eventComment
 }
 
-export async function getEventReplies(
+export async function getEventCommentReplies(
     eventId: string,
     commentId: string,
     viperId: string
 ): Promise<Reply[]> {
-    const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-
-    const eventReplies = await db
+    const eventReplies = await eventCollection
         .aggregate<Reply>([
             {
                 $match: {
@@ -291,11 +251,7 @@ export async function isViperOnTheList(
     eventId: string,
     viperId: string
 ): Promise<boolean> {
-    const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
-    const isParticipant = await db.findOne({
+    const isParticipant = await eventCollection.findOne({
         _id: new ObjectId(eventId),
         "participants._id": new ObjectId(viperId),
     })

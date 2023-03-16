@@ -10,22 +10,23 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+    if (req.method === "POST") {
+        try {
+            const CHECKOUT_CUSTOMER_INPUT = {
+                checkoutId: body.checkoutId,
+                customerAccessToken: body.customerAccessToken,
+            }
 
-    try {
-        const CHECKOUT_CUSTOMER_INPUT = {
-            checkoutId: body.checkoutId,
-            customerAccessToken: body.customerAccessToken,
+            const association: RequestReturn<Checkout & Customer> =
+                await storefrontClient.query({
+                    data: {
+                        query: CHECKOUT_CUSTOMER_ASSOCIATE,
+                        variables: CHECKOUT_CUSTOMER_INPUT,
+                    },
+                })
+            return res.status(200).json(association)
+        } catch (error) {
+            return res.status(400).json(error)
         }
-
-        const association: RequestReturn<Checkout & Customer> =
-            await storefrontClient.query({
-                data: {
-                    query: CHECKOUT_CUSTOMER_ASSOCIATE,
-                    variables: CHECKOUT_CUSTOMER_INPUT,
-                },
-            })
-        return res.status(200).json(association)
-    } catch (error) {
-        return res.status(400).json(error)
     }
 }

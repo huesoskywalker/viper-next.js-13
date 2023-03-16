@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.oAuth1Client = oAuth1Client;
+exports.oAuth1TokenStore = void 0;
 
 var _oauth = require("oauth");
 
@@ -63,3 +64,6 @@ function oAuth1Client(options) {
 
   return oauth1Client;
 }
+
+const oAuth1TokenStore = new Map();
+exports.oAuth1TokenStore = oAuth1TokenStore;

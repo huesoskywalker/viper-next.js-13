@@ -12,29 +12,34 @@ const stageUploadCreate = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = shopifyAdmin.session.customAppSession(
         "vipers-go.myshopify.com"
     )
-    const client = new shopifyAdmin.clients.Graphql({ session })
+    if (req.method === "POST") {
+        const client = new shopifyAdmin.clients.Graphql({ session })
+        try {
+            const STAGE_INPUT = {
+                input: [
+                    {
+                        // here we should use the file.name and file.type from the uploaded image from the Event.
+                        filename: filename,
+                        fileSize: size,
+                        mimeType: type,
+                        httpMethod: "POST",
+                        resource: "FILE", //2021 someone recommended "FILE"
+                    },
+                ],
+            }
+            // const stageUpload: RequestReturn<Image>
+            const stageUpload = await client.query({
+                data: {
+                    query: STAGE_UPLOAD,
+                    variables: STAGE_INPUT,
+                },
+            })
 
-    const STAGE_INPUT = {
-        input: [
-            {
-                // here we should use the file.name and file.type from the uploaded image from the Event.
-                filename: filename,
-                fileSize: size,
-                mimeType: type,
-                httpMethod: "POST",
-                resource: "FILE", //2021 someone recommended "FILE"
-            },
-        ],
+            return res.status(200).json(stageUpload)
+        } catch (error) {
+            return res.status(400).json(error)
+        }
     }
-    // const stageUpload: RequestReturn<Image>
-    const stageUpload = await client.query({
-        data: {
-            query: STAGE_UPLOAD,
-            variables: STAGE_INPUT,
-        },
-    })
-
-    return res.status(200).json(stageUpload)
 }
 
 export default stageUploadCreate

@@ -1,34 +1,37 @@
 import Link from "next/link"
 import Image from "next/image"
-import getViperFollowById, { Viper, getViperById } from "../../lib/vipers"
+import getViperFollowById, { getViperById } from "../../lib/vipers"
 import { AddFollow } from "../profile/AddFollow"
 import { firstLogin } from "../../lib/utils"
-import { getCurrentViper } from "../../lib/session"
+import { Follow, Viper } from "../../types/viper"
+import ShowFollows from "../profile/ShowFollows"
+import ViperInfo from "../profile/ViperInfo"
 
 export default async function OrganizerInfo({
-    id,
+    organizerId,
     event,
 }: {
-    id: string
+    organizerId: string
     event: boolean
 }) {
-    const viperId: string = id.replace(/["']+/g, "")
-    const viper: Viper | undefined = await getViperById(viperId)
-    if (!viper) return
-    const currentViper = await getCurrentViper()
-    if (!currentViper) return
-    const isViperFollowed: boolean = await getViperFollowById(
-        viperId,
-        currentViper.id
-    )
+    const viperId: string = organizerId.replace(/["']+/g, "")
+    const viperData: Promise<Viper | null> = getViperById(viperId)
+    const isViperFollowedData: Promise<boolean> = getViperFollowById(viperId)
+
+    const [viper, isViperFollowed] = await Promise.all([
+        viperData,
+        isViperFollowedData,
+    ])
+    if (!viper) throw new Error("No viper from OrganizerInfo")
+
     return (
         <div className="grid grid-cols-3 ">
-            <div className="space-y-2 col-span-3 text-xs text-gray-300">
+            <div className="space-y-3 col-span-3 text-xs text-gray-300">
                 <div className="flex justify-between ">
                     <Image
                         src={`${
                             firstLogin(viper.image)
-                                ? viper?.image
+                                ? viper.image
                                 : `/vipers/${viper.image}`
                         }`}
                         width={50}
@@ -53,6 +56,39 @@ export default async function OrganizerInfo({
                 </div>
                 <p className="text-gray-200">{viper.location}</p>
                 <p className="text-white">{viper.biography}</p>
+                <div className="mt-5 space-x-8 text-gray-300 text-xs">
+                    <ShowFollows
+                        follows={viper.follows.length}
+                        followers={false}
+                        profile={false}
+                    >
+                        {viper.follows.map((follows: Follow) => {
+                            return (
+                                /* @ts-expect-error Async Server Component */
+                                <ViperInfo
+                                    key={JSON.stringify(follows._id)}
+                                    id={JSON.stringify(follows._id)}
+                                />
+                            )
+                        })}
+                    </ShowFollows>
+
+                    <ShowFollows
+                        follows={viper.followers.length}
+                        followers={true}
+                        profile={false}
+                    >
+                        {viper.followers.map((followers: Follow) => {
+                            return (
+                                /* @ts-expect-error Async Server Component */
+                                <ViperInfo
+                                    key={JSON.stringify(followers._id)}
+                                    id={JSON.stringify(followers._id)}
+                                />
+                            )
+                        })}
+                    </ShowFollows>
+                </div>
             </div>
         </div>
     )

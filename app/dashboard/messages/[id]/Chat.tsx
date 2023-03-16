@@ -1,5 +1,6 @@
-import { Viper, getViperById } from "../../../../lib/vipers"
+import { getViperById } from "../../../../lib/vipers"
 import { formatDistanceToNow } from "date-fns"
+import { Viper } from "../../../../types/viper"
 
 export default async function Chat({
     messageId,
@@ -15,7 +16,7 @@ export default async function Chat({
     const senderId: string = sender.replace(/['"]+/g, "")
 
     const viper: Viper | undefined = await getViperById(senderId)
-    if (!viper) return
+    if (!viper) throw new Error("No Viper bro")
     return (
         <div key={messageId} className="mr-20 my-2">
             <h1>{viper.name}</h1>

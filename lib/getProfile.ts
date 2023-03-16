@@ -1,11 +1,11 @@
 import { cache } from "react"
 
-export type Profile = {
+export type ProfileMenu = {
     name: string
     slug: string
 }
 
-export const getProfile = cache((): Profile[] => [
+export const getProfile = cache((): ProfileMenu[] => [
     {
         name: "Likes & replies",
         slug: "replies",
@@ -17,6 +17,6 @@ export async function fetchProfileBySlug(slug: string | undefined) {
     return getProfile().find((profile) => profile.slug === slug)
 }
 
-export async function fetchProfile(): Promise<Profile[]> {
+export async function fetchProfile(): Promise<ProfileMenu[]> {
     return getProfile()
 }

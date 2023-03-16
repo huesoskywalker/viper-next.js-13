@@ -7,28 +7,34 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    const body = req.body
+    const viperId: string = body.viperId
+    const eventId: string = body.eventId
+    const checkoutId: string = body.checkoutId
     if (req.method === "PUT") {
-        const body = req.body
-        const viperId: string = body.viperId
-        const eventId: string = body.eventId
-        const checkoutId: string = body.checkoutId
-        const client = await clientPromise
-        const db = client.db("viperDb")
+        try {
+            const client = await clientPromise
+            const db = client.db("viperDb")
 
-        const request = await db.collection<Viper>("users").findOneAndUpdate(
-            {
-                _id: new ObjectId(viperId),
-            },
-            {
-                $push: {
-                    collection: {
-                        _id: new ObjectId(eventId),
-                        checkoutId: checkoutId,
+            const request = await db
+                .collection<Viper>("users")
+                .findOneAndUpdate(
+                    {
+                        _id: new ObjectId(viperId),
                     },
-                },
-            },
-            { upsert: true }
-        )
-        return res.status(200).json(request)
+                    {
+                        $push: {
+                            collection: {
+                                _id: new ObjectId(eventId),
+                                checkoutId: checkoutId,
+                            },
+                        },
+                    },
+                    { upsert: true }
+                )
+            return res.status(200).json(request)
+        } catch (error: any) {
+            return res.status(400).json(error)
+        }
     }
 }
