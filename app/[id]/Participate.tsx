@@ -124,11 +124,6 @@ export function Participate({
         })
     }
 
-    // useEffect(() => {
-    //     router.refresh()
-    //     console.log(isCheckoutPaid)
-    // }, [viperOnList, isCheckoutPaid])
-
     return (
         <div className="space-y-2">
             <div className="flex justify-start items-center text-[16px] text-gray-300">
@@ -136,7 +131,7 @@ export function Participate({
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
-                    className="w-4 h-4 mr-2 text-yellow-600"
+                    className="w-4 h-4 mr-2 text-yellow-500"
                 >
                     <path
                         fillRule="evenodd"
@@ -147,94 +142,99 @@ export function Participate({
                 {totalInventory} of {eventEntries}
             </div>
 
-            {totalInventory > 0 ? (
-                !viperOnList ? (
-                    !viperAccessToken ? (
-                        <Link
-                            href={`/${eventId}/customer`}
-                            className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
-                        >
-                            Participate
-                        </Link>
-                    ) : !viperRequest ? (
-                        <button
-                            className={`${
-                                isMutating
-                                    ? "bg-opacity-60 animate-pulse"
-                                    : "bg-opacity-100"
-                            }  relative w-full items-center space-x-2 rounded-lg bg-gray-700 px-3 py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
-                            onClick={addParticipant}
-                            disabled={isPending}
-                        >
-                            {isMutating ? "Preparing..." : "Participate"}
-                            {isPending ? (
-                                <div
-                                    className="absolute right-2 top-1.5"
-                                    role="status"
-                                >
+            {
+                totalInventory > 0 ? (
+                    !viperOnList ? (
+                        !viperAccessToken ? (
+                            <Link
+                                href={`/${eventId}/customer`}
+                                className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
+                            >
+                                Participate
+                            </Link>
+                        ) : !viperRequest ? (
+                            <button
+                                className={`${
+                                    isMutating
+                                        ? "bg-opacity-60 animate-pulse"
+                                        : "bg-opacity-100"
+                                }  relative w-full items-center space-x-2 rounded-lg bg-gray-700 px-3 py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
+                                onClick={addParticipant}
+                                disabled={isPending}
+                            >
+                                {isMutating ? "Preparing..." : "Participate"}
+                                {isPending ? (
                                     <div
-                                        className="
+                                        className="absolute right-2 top-1.5"
+                                        role="status"
+                                    >
+                                        <div
+                                            className="
         h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent"
-                                    />
-                                    <span className="sr-only">Loading...</span>
-                                </div>
-                            ) : null}
-                        </button>
-                    ) : !isCheckoutPaid ? (
-                        <a
-                            href={isCheckout}
-                            target="_blank"
-                            className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
-                        >
-                            <span>VIPER GO</span>
-                        </a>
-                    ) : isCheckoutPaid !== "PAID" ? (
-                        <button
-                            disabled={true}
-                            className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-gray-300 hover:animate-pulse disabled:text-white/70"
-                        >
-                            PENDING
-                        </button>
+                                        />
+                                        <span className="sr-only">
+                                            Loading...
+                                        </span>
+                                    </div>
+                                ) : null}
+                            </button>
+                        ) : !isCheckoutPaid ? (
+                            <a
+                                href={isCheckout}
+                                target="_blank"
+                                className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
+                            >
+                                <span>VIPER GO</span>
+                            </a>
+                        ) : isCheckoutPaid !== "PAID" ? (
+                            <button
+                                disabled={true}
+                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-gray-300 hover:animate-pulse disabled:text-white/70"
+                            >
+                                PENDING
+                            </button>
+                        ) : (
+                            <button
+                                onClick={claimCard}
+                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-green-600 hover:animate-pulse hover:cursor-grab disabled:text-white/70"
+                            >
+                                {isMutating ? "Sending..." : "CLAIM CARD"}
+                                {isPending ? (
+                                    <div
+                                        className="absolute right-2 top-1.5"
+                                        role="status"
+                                    >
+                                        <div
+                                            className="
+        h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent"
+                                        />
+                                        <span className="sr-only">
+                                            Loading...
+                                        </span>
+                                    </div>
+                                ) : null}
+                            </button>
+                        )
                     ) : (
                         <button
-                            onClick={claimCard}
-                            className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-green-600 hover:animate-pulse hover:cursor-grab disabled:text-white/70"
+                            disabled={true}
+                            className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
                         >
-                            {isMutating ? "Sending..." : "CLAIM CARD"}
-                            {isPending ? (
-                                <div
-                                    className="absolute right-2 top-1.5"
-                                    role="status"
-                                >
-                                    <div
-                                        className="
-        h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent"
-                                    />
-                                    <span className="sr-only">Loading...</span>
-                                </div>
-                            ) : null}
+                            V
+                            <span className="text-yellow-400 hover:animate-none">
+                                i
+                            </span>
+                            PER
                         </button>
                     )
-                ) : (
-                    <button
-                        disabled={true}
-                        className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
-                    >
-                        V
-                        <span className="text-yellow-400 hover:animate-none">
-                            i
-                        </span>
-                        PER
-                    </button>
-                )
-            ) : (
-                <button
-                    disabled={true}
-                    className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-yellow-400"
-                >
-                    full ViPERS
-                </button>
-            )}
+                ) : null
+                // <button
+                //     disabled={true}
+                //     className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-yellow-400"
+                // >
+                //     full ViPERS
+                // </button>
+            }
         </div>
     )
 }

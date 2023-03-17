@@ -3,7 +3,6 @@ import { shopifyAdmin } from "../../lib/adminApi"
 import { PRODUCT_CREATE } from "../../graphql/mutation/productCreate"
 import { RequestReturn } from "@shopify/shopify-api"
 import { Product } from "@shopify/shopify-api/rest/admin/2023-01/product"
-import { ErrorInfo } from "react"
 
 const productCreate = async (
     req: NextApiRequest,

@@ -1,10 +1,9 @@
-import "server-only"
 import { storefrontClient } from "../lib/storefrontApi"
 import PRODUCT_INVENTORY_GET from "../graphql/query/productInventory"
 import { InventoryItem } from "@shopify/shopify-api/rest/admin/2023-01/inventory_item"
 import { RequestReturn } from "@shopify/shopify-api"
 
-export const productInventoryCount = async (
+export const getProductInventoryCount = async (
     productId: string
 ): Promise<InventoryItem> => {
     const PRODUCT_INPUT = {
@@ -18,7 +17,6 @@ export const productInventoryCount = async (
                 variables: PRODUCT_INPUT,
             },
         })
-    // if (!productInventory) return false
 
-    return productInventory.body.data.product
+    return productInventory.body.data.product.totalInventory
 }

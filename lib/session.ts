@@ -1,5 +1,3 @@
-import "server-only"
-
 import { authOptions } from "./auth"
 import { Session, getServerSession } from "next-auth"
 import { cache } from "react"

@@ -1,5 +1,3 @@
-import "server-only"
-
 import { ObjectId } from "mongodb"
 import clientPromise from "./mongodb"
 import {

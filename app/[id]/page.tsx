@@ -8,6 +8,7 @@ import { EventComments } from "./EventComments"
 export default async function EventPage({ params }: PageProps) {
     const eventId: string = params.id
     const eventComments: Promise<Comments[] | null> = getEventComments(eventId)
+
     return (
         <div className="space-y-8 lg:space-y-6 ">
             <div className="text-xl font-medium text-gray-400/80  w-full ">

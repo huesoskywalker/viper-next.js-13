@@ -1,7 +1,7 @@
 const gql = String.raw
 
 export const NODE_CHECKOUT_QUERY = gql`
-    query node($id: ID!) {
+    query getProductVariantsFromNode($id: ID!) {
         node(id: $id) {
             id
             ... on Checkout {

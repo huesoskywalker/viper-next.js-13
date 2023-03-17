@@ -1,7 +1,6 @@
 import { Suspense } from "react"
 import { PageProps } from "../../../../lib/getCategories"
 import { getCurrentViper } from "../../../../lib/session"
-import { getVipersMessenger } from "../../../../lib/vipers"
 import { Chats } from "../../../../types/viper"
 import { DisplayChat } from "./DisplayChat"
 import { Session } from "next-auth"
@@ -11,7 +10,21 @@ export default async function chatIdPage({ params }: PageProps) {
     if (!viperSession) throw new Error("No Viper bro")
     const viper = viperSession?.user
     const id: string = params.id
-    const messenger: Promise<Chats[]> = getVipersMessenger(id, viper.id)
+    const messengerData = await fetch(
+        `http://localhost:3000/api/messages/${id}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id,
+                viperId: viper.id,
+            }),
+            next: { revalidate: 10 },
+        }
+    )
+    const messenger: Promise<Chats[]> = messengerData.json()
 
     return (
         <div className="flex h-[20.5rem]">

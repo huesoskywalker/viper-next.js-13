@@ -1,7 +1,7 @@
 const gql = String.raw
 
 const PRODUCT_INVENTORY_GET = gql`
-    query product($id: ID!) {
+    query getProductById($id: ID!) {
         product(id: $id) {
             totalInventory
         }

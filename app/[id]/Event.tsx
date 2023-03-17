@@ -20,6 +20,7 @@ export async function Event({ eventId }: { eventId: string }) {
         viperSession,
         event,
     ])
+
     // This will activate the closest `error.ts` Error Boundary
     if (!currentViper) throw new Error("No Session bro")
     if (!selectedEvent)
