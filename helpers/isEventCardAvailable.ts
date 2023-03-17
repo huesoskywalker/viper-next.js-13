@@ -1,3 +1,5 @@
+import "server-only"
+
 import { ObjectId } from "mongodb"
 import { EventInterface } from "../types/event"
 import clientPromise from "../lib/mongodb"

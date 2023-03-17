@@ -1,14 +1,10 @@
+import { getViperBlogs } from "../../lib/vipers"
 import { Blog } from "../../types/viper"
 import { CommentCard } from "./CommentCard"
 
-export async function ViperBlogs({
-    blogsPromise,
-    viperId,
-}: {
-    blogsPromise: Promise<Blog[]>
-    viperId: string
-}) {
-    const viperBlogs: Blog[] = await blogsPromise
+export async function ViperBlogs({ viperId }: { viperId: string }) {
+    // Using cache pattern built on top of parallel fetching
+    const viperBlogs: Blog[] = await getViperBlogs(viperId)
 
     return (
         <>

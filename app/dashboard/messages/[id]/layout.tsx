@@ -1,11 +1,13 @@
+import { Session } from "next-auth"
 import { PageProps } from "../../../../lib/getCategories"
 import { getCurrentViper } from "../../../../lib/session"
 import ChatInput from "./ChatInput"
 
 export default async function Layout({ children, params }: PageProps) {
     const id: string = params.id
-    const viper = await getCurrentViper()
-    if (!viper) return
+    const viperSession: Session | null = await getCurrentViper()
+    if (!viperSession) throw new Error("No Viper bro")
+    const viper = viperSession?.user
 
     return (
         <div>

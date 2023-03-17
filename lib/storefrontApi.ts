@@ -1,3 +1,5 @@
+import "server-only"
+
 import { shopifyAdmin } from "./adminApi"
 import { ApiVersion } from "@shopify/shopify-api"
 

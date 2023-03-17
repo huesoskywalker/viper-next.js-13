@@ -1,13 +1,14 @@
-import Contacts from "./Contacts"
 import { getCurrentViper } from "../../../lib/session"
 import { getViperFollows } from "../../../lib/vipers"
 import { ReactNode, Suspense } from "react"
 import { Follow } from "../../../types/viper"
 import { ViperContacts } from "./ViperContatcs"
+import { Session } from "next-auth"
 
 export default async function Layout({ children }: { children: ReactNode }) {
-    const viper = await getCurrentViper()
-    if (!viper) return
+    const viperSession: Session | null = await getCurrentViper()
+    if (!viperSession) throw new Error("No Viper bro")
+    const viper = viperSession?.user
     const viperFollows: Promise<Follow[]> = getViperFollows(viper.id)
     return (
         <div>

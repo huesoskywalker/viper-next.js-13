@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import getViperFollowById, { getViperById } from "../../lib/vipers"
+import { getViperById, getViperFollowById } from "../../lib/vipers"
 import { AddFollow } from "../profile/AddFollow"
 import { firstLogin } from "../../lib/utils"
 import { Follow, Viper } from "../../types/viper"

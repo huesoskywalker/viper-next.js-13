@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import clientPromise from "../../lib/mongodb"
-import { Viper } from "../../lib/vipers"
 import { ObjectId } from "mongodb"
+import { Viper } from "../../types/viper"
 
 export default async function handler(
     req: NextApiRequest,

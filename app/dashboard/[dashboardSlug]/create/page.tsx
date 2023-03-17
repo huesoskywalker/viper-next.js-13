@@ -5,10 +5,12 @@ import Loading from "./loading"
 import ShowEventButton from "./ShowEventButton"
 import { EventInterface } from "../../../../types/event"
 import { Event } from "../../../[id]/Event"
+import { Session } from "next-auth"
 
 export default async function CreatePage() {
-    const viper = await getCurrentViper()
-    if (!viper) throw new Error("No viper bro")
+    const viperSession: Session | null = await getCurrentViper()
+    if (!viperSession) throw new Error("No Viper bro")
+    const viper = viperSession?.user
     const lastEvent: Promise<EventInterface> = getViperLatestCreatedEvent(
         viper.id
     )

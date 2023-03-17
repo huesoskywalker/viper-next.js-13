@@ -1,5 +1,5 @@
 import Image from "next/image"
-import getViperFollowById from "../../lib/vipers"
+import { getViperById, preloadViperFollowed } from "../../lib/vipers"
 import ShowFollows from "./ShowFollows"
 import ViperInfo from "./ViperInfo"
 import { firstLogin } from "../../lib/utils"
@@ -8,17 +8,17 @@ import { EditProfileLink } from "./EditProfileLink"
 import { CheckFollow } from "../dashboard/vipers/[id]/CheckFollow"
 
 export const Profile = async ({
-    viperPromise,
+    viperId,
     profile,
 }: {
-    viperPromise: Promise<Viper | null>
+    viperId: string
     profile: boolean
 }) => {
-    const fullViper: Viper | null = await viperPromise
-    if (!fullViper) return
-    const viperId: string = JSON.stringify(fullViper._id).slice(1, -1)
-
-    const isViperFollowed: Promise<boolean> = getViperFollowById(viperId)
+    const fullViper: Viper | null = await getViperById(viperId)
+    if (!fullViper) throw new Error("No viper bro")
+    // cache pattern
+    // super interesting to see how far is worth to cache everything or not. Let's leave it like this for now
+    preloadViperFollowed(viperId)
 
     return (
         <div className="grid grid-cols-4">
@@ -70,10 +70,7 @@ export const Profile = async ({
                             />
                         ) : (
                             /* @ts-expect-error Server Component */
-                            <CheckFollow
-                                followPromise={isViperFollowed}
-                                viperId={viperId}
-                            />
+                            <CheckFollow viperId={viperId} />
                         )}
                     </div>
                     <div className="break-after-column">

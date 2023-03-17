@@ -7,6 +7,7 @@ import { Comments, Reply } from "../../../../types/event"
 import { EventComments } from "../../EventComments"
 import { CommentReplies } from "./CommentReplies"
 import { Suspense } from "react"
+import { preloadViperBasicProps } from "../../../../lib/vipers"
 
 export default async function CommentIdPage({
     params: { id, commentId, viperId },
@@ -24,7 +25,7 @@ export default async function CommentIdPage({
         commentId,
         viperId
     )
-
+    preloadViperBasicProps(viperId)
     return (
         <div className="mr-10 space-y-5">
             <div>

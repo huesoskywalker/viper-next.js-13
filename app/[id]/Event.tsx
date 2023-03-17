@@ -8,18 +8,17 @@ import ShowViper from "./ShowViper"
 import OrganizerInfo from "./OrganizerInfo"
 import { EventInterface } from "../../types/event"
 import { getCurrentViper } from "../../lib/session"
+import { Session } from "next-auth"
+import { getEventById } from "../../lib/events"
 
-export async function Event({
-    eventPromise,
-}: {
-    eventPromise: Promise<EventInterface | null>
-}) {
+export async function Event({ eventId }: { eventId: string }) {
     const likedCookie: string = cookies().get("_is_liked")?.value || "none"
-    const viperSession = getCurrentViper()
+    const viperSession: Promise<Session | null> = getCurrentViper()
+    const event: Promise<EventInterface | null> = getEventById(eventId)
 
     const [currentViper, selectedEvent] = await Promise.all([
         viperSession,
-        eventPromise,
+        event,
     ])
     // This will activate the closest `error.ts` Error Boundary
     if (!currentViper) throw new Error("No Session bro")
@@ -28,7 +27,6 @@ export async function Event({
             <div className="text-yellow-400 text-sm">Build up, from Event</div>
         )
 
-    const eventId = JSON.stringify(selectedEvent._id).replace(/["']+/g, "")
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">
@@ -71,7 +69,7 @@ export async function Event({
                 <Suspense fallback={<InfoSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
                     <EventInfo
-                        currentViperId={currentViper.id}
+                        currentViperId={currentViper.user.id}
                         eventId={eventId}
                         eventDate={selectedEvent.date}
                         eventLocation={selectedEvent.location}

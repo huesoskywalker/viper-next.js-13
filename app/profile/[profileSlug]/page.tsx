@@ -1,10 +1,13 @@
+import { Session } from "next-auth"
 import { getCurrentViper } from "../../../lib/session"
 import { getBlogLikesAndRePosts } from "../../../lib/vipers"
 import { CommentBlog, ExternalBlog } from "../../../types/viper"
 import PostAndLikeCard from "./PostAndLikeCard"
 
 export default async function ProfileSlugPage() {
-    const viper = await getCurrentViper()
+    const viperSession: Session | null = await getCurrentViper()
+    if (!viperSession) throw new Error("No Viper bro")
+    const viper = viperSession?.user
     // const blogLikesAndRePosts: CommentBlog[] & ExternalBlog[] =
     //     await getBlogLikesAndRePosts(viper!.id)
 

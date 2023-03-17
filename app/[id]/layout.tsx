@@ -1,9 +1,10 @@
 import { PageProps } from "../../lib/getCategories"
 import GoBackArrow from "./GoBackArrow"
 import { Event } from "./Event"
-import { getEventById } from "../../lib/events"
+import { getEventById, preloadEventById } from "../../lib/events"
 import { EventInterface } from "../../types/event"
 import { Suspense } from "react"
+import { preloadViperSession } from "../../lib/session"
 // export const dynamic = "auto"
 // export const dynamicParams = true
 // export const revalidate = 30
@@ -13,7 +14,8 @@ import { Suspense } from "react"
 
 export default async function Layout({ children, params }: PageProps) {
     const eventId: string = params.id
-    const event: Promise<EventInterface | null> = getEventById(eventId)
+    preloadEventById(eventId)
+    preloadViperSession()
     return (
         <div className="flex justify-center space-x-2 mr-5">
             <GoBackArrow />
@@ -27,7 +29,7 @@ export default async function Layout({ children, params }: PageProps) {
                         }
                     >
                         {/* @ts-expect-error Server Component */}
-                        <Event eventPromise={event} />
+                        <Event eventId={eventId} />
                     </Suspense>
                 </div>
                 {children}

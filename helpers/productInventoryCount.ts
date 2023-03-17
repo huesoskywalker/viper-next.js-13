@@ -1,3 +1,4 @@
+import "server-only"
 import { storefrontClient } from "../lib/storefrontApi"
 import PRODUCT_INVENTORY_GET from "../graphql/query/productInventory"
 import { InventoryItem } from "@shopify/shopify-api/rest/admin/2023-01/inventory_item"

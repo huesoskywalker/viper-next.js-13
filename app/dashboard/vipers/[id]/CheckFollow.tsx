@@ -1,13 +1,9 @@
+import { getViperFollowById } from "../../../../lib/vipers"
 import { AddFollow } from "../../../profile/AddFollow"
 
-export async function CheckFollow({
-    followPromise,
-    viperId,
-}: {
-    followPromise: Promise<boolean>
-    viperId: string
-}) {
-    const isViperFollowed: boolean = await followPromise
+export async function CheckFollow({ viperId }: { viperId: string }) {
+    const isViperFollowed: boolean = await getViperFollowById(viperId)
+
     return (
         <>
             <div className="flex justify-start">

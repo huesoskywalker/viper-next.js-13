@@ -1,4 +1,4 @@
-import { getViperBlogs } from "../../../../lib/vipers"
+import { getViperBlogs, preloadViperBlogs } from "../../../../lib/vipers"
 import { PageProps } from "../../../../lib/utils"
 import { Suspense } from "react"
 import Loading from "./loading"
@@ -8,14 +8,14 @@ import { ViperBlogs } from "../../../profile/ViperBlogs"
 export default async function ViperPage({ params }: PageProps) {
     const viperId: string = params.id
 
-    const viperBlogs: Promise<Blog[]> = getViperBlogs(viperId)
-    if (!viperBlogs) throw new Error("No viper bro")
+    // Using cache pattern built on top of parallel fetching
+    preloadViperBlogs(viperId)
 
     return (
         <div className="flex justify-center">
             <Suspense fallback={<Loading />}>
                 {/* @ts-expect-error Server Component */}
-                <ViperBlogs blogsPromise={viperBlogs} viperId={viperId} />
+                <ViperBlogs viperId={viperId} />
             </Suspense>
         </div>
     )

@@ -107,71 +107,68 @@ export default function AddComment({
     }, [isCommented])
 
     return (
-        <div>
-            <div className="flex justify-start">
-                {blog ? (
-                    <div className="flex justify-start space-x-4">
-                        {blog && !reply ? (
-                            <button
-                                onClick={writeComment}
-                                className="grid grid-cols-2 ml-1 text-gray-400 hover:text-blue-500/75"
+        <div className="flex justify-start">
+            {blog ? (
+                <button
+                    onClick={writeComment}
+                    className=" text-gray-400 hover:text-blue-500/75"
+                >
+                    {blog && !reply ? (
+                        <div className="flex justify-center space-x-1">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className={`w-6 h-6 hover:animate-pulse ${
+                                    isPending && pendingComment
+                                        ? "text-blue-700"
+                                        : `text-${isCommented}-700`
+                                }`}
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className={`w-6 h-6 hover:animate-pulse ${
-                                        isPending && pendingComment
-                                            ? "text-blue-700"
-                                            : `text-${isCommented}-700`
-                                    }`}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
-                                    />
-                                </svg>
-                                <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
-                                    {commentReplies}
-                                </span>
-                            </button>
-                        ) : (
-                            <button
-                                onClick={writeComment}
-                                className="grid grid-cols-2 ml-1 text-gray-400 hover:text-blue-500/75"
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+                                />
+                            </svg>
+                            <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                                {commentReplies}
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="flex justify-center space-x-1">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className={`w-6 h-6 hover:animate-pulse ${
+                                    isPending && pendingComment
+                                        ? "text-blue-700"
+                                        : `text-${isCommented}-700`
+                                }`}
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={1.5}
-                                    stroke="currentColor"
-                                    className={`w-6 h-6 hover:animate-pulse ${
-                                        isPending && pendingComment
-                                            ? "text-blue-700"
-                                            : `text-${isCommented}-700`
-                                    }`}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
-                                    />
-                                </svg>
-                                <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
-                                    {commentReplies ?? "0"}
-                                </span>
-                            </button>
-                        )}
-                    </div>
-                ) : event ? (
-                    <button
-                        onClick={writeComment}
-                        className="grid grid-cols-2 ml-1 text-gray-400 hover:text-blue-700"
-                    >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"
+                                />
+                            </svg>
+                            <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                                {commentReplies ?? "0"}
+                            </span>
+                        </div>
+                    )}
+                </button>
+            ) : event ? (
+                <button
+                    onClick={writeComment}
+                    className=" text-gray-400 hover:text-blue-700"
+                >
+                    <div className="flex justify-center space-x-1">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -189,12 +186,14 @@ export default function AddComment({
                         <span className=" text-xs text-gray-400 flex justify-start self-end ml-2">
                             {commentReplies ?? "0"}
                         </span>
-                    </button>
-                ) : (
-                    <button
-                        onClick={writeComment}
-                        className="grid grid-cols-2 ml-1 text-gray-400 hover:text-blue-700"
-                    >
+                    </div>
+                </button>
+            ) : (
+                <button
+                    onClick={writeComment}
+                    className=" text-gray-400 hover:text-blue-700"
+                >
+                    <div className="flex justify-center space-x-1">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -212,9 +211,9 @@ export default function AddComment({
                         <span className=" text-xs text-gray-400 flex justify-start self-end ml-2">
                             {commentReplies ?? "0"}
                         </span>
-                    </button>
-                )}
-            </div>
+                    </div>
+                </button>
+            )}
             <div>
                 {openCommentInput ? (
                     <div className="fixed  inset-0 z-30 overflow-x-auto ">

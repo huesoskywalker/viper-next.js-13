@@ -1,3 +1,5 @@
+import "server-only"
+
 import "@shopify/shopify-api/adapters/node"
 import {
     shopifyApi,

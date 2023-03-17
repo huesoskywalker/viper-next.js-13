@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import { NextApiRequest, NextApiResponse } from "next"
-import { EventInterface } from "../../lib/events"
 import clientPromise from "../../lib/mongodb"
+import { EventInterface } from "../../types/event"
 
 export default async function handler(
     req: NextApiRequest,

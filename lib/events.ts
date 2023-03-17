@@ -1,13 +1,9 @@
+import "server-only"
+
 import { ObjectId } from "mongodb"
 import clientPromise from "./mongodb"
-import {
-    EventInterface,
-    Organizer,
-    Participants,
-    Likes,
-    Comments,
-    Reply,
-} from "../types/event"
+import { EventInterface, Comments, Reply } from "../types/event"
+import { cache } from "react"
 
 const client = await clientPromise
 const eventCollection = client
@@ -36,14 +32,18 @@ export async function getAllEvents(): Promise<EventInterface[]> {
 
     return events
 }
-
-export async function getEventById(id: string): Promise<EventInterface | null> {
-    const event = await eventCollection.findOne<EventInterface>({
-        _id: new ObjectId(id),
-    })
-    if (!event) return null
-    return event
+export const preloadEventById = (eventId: string): void => {
+    void getEventById(eventId)
 }
+export const getEventById = cache(
+    async (eventId: string): Promise<EventInterface | null> => {
+        const event = await eventCollection.findOne<EventInterface>({
+            _id: new ObjectId(eventId),
+        })
+        if (!event) return null
+        return event
+    }
+)
 
 export async function getEventsByCategory(
     category: string
@@ -98,39 +98,42 @@ function sortBy(field: string) {
     }
 }
 
-export async function getViperCreatedEvents(
-    id: string
-): Promise<EventInterface[]> {
-    const events = await eventCollection
-        .aggregate<EventInterface>([
-            {
-                $match: { "organizer.id": id },
-            },
-            {
-                $sort: { creationDate: -1 },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    // organizer: 1,
-                    title: 1,
-                    content: 1,
-                    location: 1,
-                    // address: 1,
-                    date: 1,
-                    category: 1,
-                    // creationDate: 1,
-                    // price: 1,
-                    image: 1,
-                    // participants: 1,
-                    // likes: 1,
-                    // comments: 1,
-                },
-            },
-        ])
-        .toArray()
-    return events
+export const preloadViperCreatedEvents = (viperId: string): void => {
+    void getViperCreatedEvents(viperId)
 }
+export const getViperCreatedEvents = cache(
+    async (viperId: string): Promise<EventInterface[]> => {
+        const events = await eventCollection
+            .aggregate<EventInterface>([
+                {
+                    $match: { "organizer.id": viperId },
+                },
+                {
+                    $sort: { creationDate: -1 },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        // organizer: 1,
+                        title: 1,
+                        content: 1,
+                        location: 1,
+                        // address: 1,
+                        date: 1,
+                        category: 1,
+                        // creationDate: 1,
+                        // price: 1,
+                        image: 1,
+                        // participants: 1,
+                        // likes: 1,
+                        // comments: 1,
+                    },
+                },
+            ])
+            .toArray()
+        return events
+    }
+)
 
 export async function getViperLatestCreatedEvent(
     viperId: string
@@ -247,16 +250,15 @@ export async function getEventCommentReplies(
     return eventReplies
 }
 
-export async function isViperOnTheList(
-    eventId: string,
-    viperId: string
-): Promise<boolean> {
-    const isParticipant = await eventCollection.findOne({
-        _id: new ObjectId(eventId),
-        "participants._id": new ObjectId(viperId),
-    })
+export const isViperOnTheList = cache(
+    async (eventId: string, viperId: string): Promise<boolean> => {
+        const isParticipant = await eventCollection.findOne({
+            _id: new ObjectId(eventId),
+            "participants._id": new ObjectId(viperId),
+        })
 
-    if (!isParticipant) return false
+        if (!isParticipant) return false
 
-    return true
-}
+        return true
+    }
+)

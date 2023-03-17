@@ -4,10 +4,12 @@ import { getCurrentViper } from "../../../../lib/session"
 import { getVipersMessenger } from "../../../../lib/vipers"
 import { Chats } from "../../../../types/viper"
 import { DisplayChat } from "./DisplayChat"
+import { Session } from "next-auth"
 
 export default async function chatIdPage({ params }: PageProps) {
-    const viper = await getCurrentViper()
-    if (!viper) throw new Error("No Viper bro")
+    const viperSession: Session | null = await getCurrentViper()
+    if (!viperSession) throw new Error("No Viper bro")
+    const viper = viperSession?.user
     const id: string = params.id
     const messenger: Promise<Chats[]> = getVipersMessenger(id, viper.id)
 

@@ -300,7 +300,6 @@ export default function EditProfile({
                                                         : "bg-opacity-100"
                                                 } relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-gray-200 hover:text-white hover:bg-yellow-600/80 disabled:text-white/70`}
                                                 disabled={isPending}
-                                                // onClick={(e) => handleSubmit(e)}
                                                 type={"submit"}
                                             >
                                                 {isMutating

@@ -1,12 +1,11 @@
+import { getEventById } from "../../../../lib/events"
 import { EventInterface } from "../../../../types/event"
 import { EditForm } from "./EditForm"
 
-export default async function EventToEdit({
-    eventPromise,
-}: {
-    eventPromise: Promise<EventInterface>
-}) {
-    const toEditEvent: EventInterface = await eventPromise
+export default async function EventToEdit({ eventId }: { eventId: string }) {
+    // const toEditEvent: EventInterface = await eventPromise
+    const toEditEvent: EventInterface | null = await getEventById(eventId)
+    if (!toEditEvent) throw new Error("No event to edit bro")
 
     const event_id = JSON.stringify(toEditEvent._id).replace(/['"]+/g, "")
 

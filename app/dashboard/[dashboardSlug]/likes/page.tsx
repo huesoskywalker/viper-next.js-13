@@ -6,8 +6,9 @@ import { Likes } from "../../../../types/event"
 import ViperCollection from "../collection/ViperCollection"
 
 export default async function LikedPage() {
-    const viper = await getCurrentViper()
-    if (!viper) throw new Error("No Viper bro")
+    const viperSession = await getCurrentViper()
+    if (!viperSession) throw new Error("No Viper bro")
+    const viper = viperSession?.user
 
     const likes: Promise<Likes[]> = getViperLikedEvents(viper.id)
 

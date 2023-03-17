@@ -98,11 +98,9 @@ export default function GlobalNav() {
                                 onClick={() => signIn()}
                                 className="block rounded-md px-3 py-2 text-sm font-medium text-gray-400 hover:text-gray-300 hover:bg-gray-800"
                             >
-                                Sign{" "}
-                                <span
-                                    className="static spinner-border animate-spin inline-block w-3 h-3 border-2 rounded-full border-yellow-500/70 border-r-transparent"
-                                    role="status"
-                                ></span>
+                                <span className="opacity-80 animate-pulse">
+                                    Sign out
+                                </span>
                             </Link>
                         </li>
                     ) : session ? (

@@ -1,11 +1,12 @@
 import { Follow } from "../../../types/viper"
+import Contacts from "./Contacts"
 
 export async function ViperContacts({
     contactsPromise,
 }: {
     contactsPromise: Promise<Follow[]>
 }) {
-    const viperFollows = await contactsPromise
+    const viperFollows: Follow[] = await contactsPromise
     return (
         <div className="space-y-2">
             {viperFollows?.map((follow: Follow) => {

@@ -1,3 +1,5 @@
+import "server-only"
+
 import { ObjectId } from "mongodb"
 import clientPromise from "./mongodb"
 import {
@@ -11,24 +13,31 @@ import {
     Chats,
 } from "../types/viper"
 import { getCurrentViper } from "./session"
+import { Session } from "next-auth"
+import { cache } from "react"
 
 const client = await clientPromise
 const viperCollection = client.db("viperDb").collection<Viper>("users")
 const chatCollection = client.db("viperDb").collection<Chats>("chats")
 
-export async function getViperById(id: string): Promise<Viper | null> {
-    // if (id === undefined) return undefined
-
-    try {
-        const viper = await viperCollection.findOne<Viper>({
-            _id: new ObjectId(id),
-        })
-        // if (!viper) return undefined
-        return viper
-    } catch (error) {
-        throw new Error(`${error}`)
-    }
+export const preloadViperById = (viperId: string): void => {
+    void getViperById(viperId)
 }
+export const getViperById = cache(
+    async (viperId: string): Promise<Viper | null> => {
+        // if (id === undefined) return undefined
+
+        try {
+            const viper = await viperCollection.findOne<Viper>({
+                _id: new ObjectId(viperId),
+            })
+            // if (!viper) return undefined
+            return viper
+        } catch (error) {
+            throw new Error(`${error}`)
+        }
+    }
+)
 
 export type ViperBasics = {
     readonly _id: ObjectId
@@ -36,29 +45,33 @@ export type ViperBasics = {
     image: string
     email: string
 }
-export async function getViperBasicsProps(
-    viperId: string | null
-): Promise<ViperBasics | null> {
-    if (viperId === null) return null
-    try {
-        const viper = await viperCollection.findOne<Viper>(
-            {
-                _id: new ObjectId(viperId),
-            },
-            {
-                projection: {
-                    _id: 1,
-                    name: 1,
-                    image: 1,
-                    email: 1,
-                },
-            }
-        )
-        return viper
-    } catch (error) {
-        throw new Error(`${error}`)
-    }
+
+export const preloadViperBasicProps = (viperId: string | null): void => {
+    void getViperBasicsProps(viperId)
 }
+export const getViperBasicsProps = cache(
+    async (viperId: string | null): Promise<ViperBasics | null> => {
+        if (viperId === null) return null
+        try {
+            const viper = await viperCollection.findOne<Viper>(
+                {
+                    _id: new ObjectId(viperId),
+                },
+                {
+                    projection: {
+                        _id: 1,
+                        name: 1,
+                        image: 1,
+                        email: 1,
+                    },
+                }
+            )
+            return viper
+        } catch (error) {
+            throw new Error(`${error}`)
+        }
+    }
+)
 
 export async function getVipers(): Promise<Viper[]> {
     const vipers = await viperCollection.find<Viper>({}).toArray()
@@ -66,26 +79,28 @@ export async function getVipers(): Promise<Viper[]> {
     return vipers
 }
 
-export async function getViperCollection(id: string): Promise<Collection[]> {
-    const events = await viperCollection
-        .aggregate<Collection>([
-            {
-                $match: { _id: new ObjectId(id) },
-            },
-            {
-                $unwind: "$collection",
-            },
-            {
-                $project: {
-                    _id: "$collection._id",
-                    checkoutId: "$collection.checkoutId",
+export const getViperCollection = cache(
+    async (id: string): Promise<Collection[]> => {
+        const events = await viperCollection
+            .aggregate<Collection>([
+                {
+                    $match: { _id: new ObjectId(id) },
                 },
-            },
-        ])
-        .toArray()
+                {
+                    $unwind: "$collection",
+                },
+                {
+                    $project: {
+                        _id: "$collection._id",
+                        checkoutId: "$collection.checkoutId",
+                    },
+                },
+            ])
+            .toArray()
 
-    return events
-}
+        return events
+    }
+)
 
 export async function getViperLikedEvents(id: string): Promise<Likes[]> {
     const events = await viperCollection
@@ -203,69 +218,72 @@ export async function getBlogLikesAndRePosts(
     return viperBlog
 }
 
-export async function getBlog(
-    bloggerId: string,
-    blogId: string
-): Promise<Blog[] | undefined> {
-    // this looks horrible
-    const vId = bloggerId.slice(1, -1)
-    const bId = blogId.slice(1, -1)
-    try {
-        const viperBlog = await viperCollection
-            .aggregate<Blog>([
-                {
-                    $match: {
-                        _id: new ObjectId(vId),
-                        "blog._id": new ObjectId(bId),
+export const getBlog = cache(
+    async (bloggerId: string, blogId: string): Promise<Blog[] | undefined> => {
+        // this looks horrible
+        const vId = bloggerId.slice(1, -1)
+        const bId = blogId.slice(1, -1)
+        try {
+            const viperBlog = await viperCollection
+                .aggregate<Blog>([
+                    {
+                        $match: {
+                            _id: new ObjectId(vId),
+                            "blog._id": new ObjectId(bId),
+                        },
                     },
-                },
-                {
-                    $project: {
-                        blog: {
-                            $filter: {
-                                input: "$blog",
-                                as: "b",
-                                cond: { $eq: ["$$b._id", new ObjectId(bId)] },
+                    {
+                        $project: {
+                            blog: {
+                                $filter: {
+                                    input: "$blog",
+                                    as: "b",
+                                    cond: {
+                                        $eq: ["$$b._id", new ObjectId(bId)],
+                                    },
+                                },
                             },
                         },
                     },
-                },
-                {
-                    $unwind: "$blog",
-                },
-                {
-                    $project: {
-                        _id: "$blog._id",
-                        content: "$blog.content",
-                        likes: "$blog.likes",
-                        comments: "$blog.comments",
-                        timestamp: "$blog.timestamp",
-                        rePosts: "$blog.rePosts",
+                    {
+                        $unwind: "$blog",
                     },
-                },
-            ])
-            .toArray()
+                    {
+                        $project: {
+                            _id: "$blog._id",
+                            content: "$blog.content",
+                            likes: "$blog.likes",
+                            comments: "$blog.comments",
+                            timestamp: "$blog.timestamp",
+                            rePosts: "$blog.rePosts",
+                        },
+                    },
+                ])
+                .toArray()
 
-        return viperBlog
-    } catch (error) {
-        console.error(error)
+            return viperBlog
+        } catch (error) {
+            console.error(error)
+        }
     }
+)
+export const preloadViperFollowed = (viperId: string): void => {
+    void getViperFollowById(viperId)
 }
+export const getViperFollowById = cache(
+    async (viperId: string): Promise<boolean> => {
+        const viperSession: Session | null = await getCurrentViper()
+        if (!viperSession) throw new Error("No Viper bro")
+        // if (viperId === currentViper?.id) return false
 
-export default async function getViperFollowById(
-    viperId: string
-): Promise<boolean> {
-    const currentViper = await getCurrentViper()
-    if (!currentViper) return false
-    // if (viperId === currentViper?.id) return false
-
-    const viperFollower = await viperCollection.findOne({
-        _id: new ObjectId(viperId),
-        "followers._id": new ObjectId(currentViper.id),
-    })
-    if (!viperFollower) return false
-    return true
-}
+        const viperFollower = await viperCollection.findOne({
+            _id: new ObjectId(viperId),
+            "followers._id": new ObjectId(viperSession.user.id),
+        })
+        if (!viperFollower) return false
+        return true
+    }
+)
 
 export async function requestEventParticipation(
     viperId: string,
@@ -284,7 +302,11 @@ export async function requestEventParticipation(
     }
 }
 
-export async function getViperBlogs(viperId: string): Promise<Blog[]> {
+export const preloadViperBlogs = (viperId: string): void => {
+    void getViperBlogs(viperId)
+}
+
+export const getViperBlogs = cache(async (viperId: string): Promise<Blog[]> => {
     try {
         const viperBlogs: Blog[] = await viperCollection
             .aggregate<Blog>([
@@ -313,4 +335,4 @@ export async function getViperBlogs(viperId: string): Promise<Blog[]> {
     } catch (error) {
         throw new Error(`Error getViperBlogs`)
     }
-}
+})
