@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
+        "paths": {
+            "@/*": ["./src/*"]
+        },
         "target": "ES2022",
         "lib": ["dom", "dom.iterable", "esnext"],
-        "types": ["cypress", "node"],
+        "types": ["cypress", "node", "next"],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": true,
