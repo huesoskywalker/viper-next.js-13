@@ -32,6 +32,7 @@ export default async function handler(
                     },
                 }
             )
+            console.log(blogContent)
             return res.status(200).json(blogContent)
         } catch (error) {
             return res.status(400)

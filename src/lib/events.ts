@@ -28,6 +28,7 @@ export async function getAllEvents(): Promise<EventInterface[]> {
                 },
             },
         ])
+        .limit(20)
         .toArray()
 
     return events

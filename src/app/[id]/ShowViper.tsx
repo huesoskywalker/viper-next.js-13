@@ -51,7 +51,7 @@ export default function ShowViper({
                         onMouseEnter={displayOrganizer}
                         className="max-h-fit max-w-fit font-normal flex justify-end text-yellow-800/90 text-xs  hover:text-yellow-400 "
                     >
-                        {viperName}
+                        <span data-test="blog-viperName">{viperName}</span>
                     </button>
                 </div>
             )}

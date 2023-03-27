@@ -18,6 +18,24 @@ const client = await clientPromise
 const viperCollection = client.db("viperDb").collection<Viper>("users")
 const chatCollection = client.db("viperDb").collection<Chats>("chats")
 
+{
+    /**
+     * Using this to Test with Cypress, sign in Credentials
+     */
+}
+export const getViperByUsername = cache(
+    async (username: string, password: string) => {
+        try {
+            const viper = await viperCollection.findOne<Viper>({
+                name: username,
+            })
+            return viper
+        } catch (error) {
+            throw new Error(`${error}`)
+        }
+    }
+)
+
 export const preloadViperById = (viperId: string): void => {
     void getViperById(viperId)
 }

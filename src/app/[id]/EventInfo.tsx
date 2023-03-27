@@ -1,4 +1,3 @@
-import { EventPrice } from "./EventPrice"
 import { isViperOnTheList } from "@/lib/events"
 import { EventDate } from "./EventDate"
 import { EventLocation } from "./EventLocation"
@@ -7,6 +6,7 @@ import { requestEventParticipation } from "@/lib/vipers"
 import isCheckoutFulFilled from "@/helpers/isCheckoutFulFilled"
 import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfillment_order"
 import { InventoryItem } from "@shopify/shopify-api/rest/admin/2023-01/inventory_item"
+import { EventPrice } from "./EventPrice"
 
 export async function EventInfo({
     currentViperId,

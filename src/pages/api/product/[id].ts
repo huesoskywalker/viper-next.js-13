@@ -7,6 +7,15 @@ export default async function handler(
     res: NextApiResponse
 ) {
     const body = req.body
+
+    {
+        /**
+         * Let's build it properly, as GET request with the req.query
+         * As well , figure out the return type of query
+         */
+    }
+    // const query = req.query
+    // console.log(req.query)
     try {
         const productInventory: InventoryItem = await getProductInventoryCount(
             body.productId

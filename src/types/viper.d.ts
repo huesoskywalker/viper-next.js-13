@@ -10,7 +10,8 @@ export interface Viper {
     biography: string
     location: string
     address: Address
-    customerAccessToken: string
+    // customerAccessToken: string
+    shopify: Shopify
     collection: Collection[]
     followers: Follow[]
     follows: Follow[]
@@ -66,4 +67,9 @@ export interface Chats {
     sender: string
     message: string
     timestamp: number
+}
+
+export interface Shopify {
+    customerAccessToken: string
+    customerId: string
 }

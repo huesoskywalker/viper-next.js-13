@@ -23,7 +23,6 @@ export default async function OrganizerInfo({
         isViperFollowedData,
     ])
     if (!viper) throw new Error("No viper from OrganizerInfo")
-
     return (
         <div className="grid grid-cols-3 ">
             <div className="space-y-3 col-span-3 text-xs text-gray-300">
@@ -58,11 +57,11 @@ export default async function OrganizerInfo({
                 <p className="text-white">{viper.biography}</p>
                 <div className="mt-5 space-x-8 text-gray-300 text-xs">
                     <ShowFollows
-                        follows={viper.follows.length}
+                        follows={viper.follows?.length}
                         followers={false}
                         profile={false}
                     >
-                        {viper.follows.map((follows: Follow) => {
+                        {viper.follows?.map((follows: Follow) => {
                             return (
                                 /* @ts-expect-error Async Server Component */
                                 <ViperInfo
@@ -74,11 +73,11 @@ export default async function OrganizerInfo({
                     </ShowFollows>
 
                     <ShowFollows
-                        follows={viper.followers.length}
+                        follows={viper.followers?.length}
                         followers={true}
                         profile={false}
                     >
-                        {viper.followers.map((followers: Follow) => {
+                        {viper.followers?.map((followers: Follow) => {
                             return (
                                 /* @ts-expect-error Async Server Component */
                                 <ViperInfo

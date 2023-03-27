@@ -47,13 +47,17 @@ export function BlogButton({
         <div className="flex justify-start">
             {" "}
             <button
+                data-test="blog-button"
                 onClick={commentInput}
                 className="relative right-16 text-sm text-gray-300 bg-yellow-800/70 rounded-3xl py-2 px-3 hover:bg-yellow-600/70"
             >
                 Let's Blog
             </button>
             {openCommentInput ? (
-                <div className="fixed  inset-0 z-30 overflow-x-auto ">
+                <div
+                    data-test="commentInput"
+                    className="fixed  inset-0 z-30 overflow-x-auto "
+                >
                     <div className="flex items-center min-h-screen px-4 py-4">
                         <div className="relative w-full max-w-md p-4  mx-auto bg-gray-900 rounded-xl shadow-lg">
                             <div className="space-x-2">
@@ -97,6 +101,7 @@ export function BlogButton({
                                             </span>
                                         </div>
                                         <textarea
+                                            data-test="add-comment"
                                             className="h-20 p-2 col-start-3 col-span-7 text-gray-300 bg-black/30 border-[2px] rounded-lg border-transparent sm:text-xs outline-none focus:border-yellow-700/80"
                                             value={comment}
                                             onChange={(e) =>
@@ -108,6 +113,7 @@ export function BlogButton({
                                             required
                                         ></textarea>
                                         <button
+                                            data-test="post-blog"
                                             className="col-start-5 col-span-2 relative w-full items-center space-x-2 rounded-lg bg-gray-800 px-3 py-1  text-sm font-medium text-white hover:bg-yellow-900/80 disabled:text-white/70"
                                             onClick={writeBlog}
                                         >

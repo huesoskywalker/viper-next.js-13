@@ -5,7 +5,17 @@ import { EventInterface } from "@/types/event"
 import { DisplayEvents } from "./DisplayEvents"
 
 export default async function EventsPage({}) {
-    const events: Promise<EventInterface[]> = getAllEvents()
+    const fetchEvents = await fetch(`http:localhost:3000/api/event/all`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        cache: "force-cache",
+        next: {
+            revalidate: 900,
+        },
+    })
+    const events: Promise<EventInterface[]> = fetchEvents.json()
 
     return (
         <div className="space-y-9">

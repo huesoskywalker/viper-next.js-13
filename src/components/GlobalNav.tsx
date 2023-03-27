@@ -14,6 +14,7 @@ export default function GlobalNav() {
                 <div className="flex h-14 items-center py-4 px-4 lg:h-auto">
                     <Link
                         href="#"
+                        data-test="signIn"
                         onClick={() => signIn()}
                         className="group flex w-full items-center space-x-2.5"
                     >
@@ -42,6 +43,7 @@ export default function GlobalNav() {
             </div>
         )
     }
+    // if (!session) throw new Error("Something wrong bro")
     return (
         <div className="fixed top-0 z-10 flex w-full flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-auto lg:w-48 lg:border-r lg:border-gray-800">
             <div className="flex h-14 items-center py-4 px-4 lg:h-auto">
@@ -89,7 +91,11 @@ export default function GlobalNav() {
             >
                 <nav className="space-y-6 px-2 py-5">
                     {data.map((item) => (
-                        <GlobalNavItem key={item.slug} item={item} />
+                        <GlobalNavItem
+                            key={item.slug}
+                            item={item}
+                            viperName={session?.user.name}
+                        />
                     ))}
                     {status === "loading" ? (
                         <li>
@@ -130,12 +136,19 @@ export default function GlobalNav() {
     )
 }
 
-function GlobalNavItem({ item }: { item: Item }) {
+function GlobalNavItem({
+    item,
+    viperName,
+}: {
+    item: Item
+    viperName: string | undefined
+}) {
     const segment = useSelectedLayoutSegment()
     const isActive = item.slug === segment
 
     return (
         <Link
+            data-test="nav-item"
             href={`/${item.slug}`}
             className={clsx(
                 "block rounded-md px-3 py-2 text-sm font-medium hover:text-gray-300",
@@ -145,7 +158,7 @@ function GlobalNavItem({ item }: { item: Item }) {
                 }
             )}
         >
-            {item.name}
+            {item.name === "Profile" ? viperName : item.name}
         </Link>
     )
 }

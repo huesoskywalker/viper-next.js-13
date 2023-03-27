@@ -2,7 +2,6 @@
 const nextConfig = {
     experimental: {
         appDir: true,
-        typedRoutes: true,
     },
     webpack: (config) => {
         config.experiments = config.experiments || {}

@@ -80,7 +80,10 @@ export async function CommentCard({
                                 className="space-y-2"
                             >
                                 <div className="flex justify-between">
-                                    <span className="flex justify-start text-yellow-500/80 text-xs ml-[5px]">
+                                    <span
+                                        data-test="blog-viperName"
+                                        className="flex justify-start text-yellow-500/80 text-xs ml-[5px]"
+                                    >
                                         {viper.name}
                                     </span>
                                     <EventDate
@@ -88,7 +91,10 @@ export async function CommentCard({
                                         collection={false}
                                     />
                                 </div>
-                                <span className="flex justify-start text-gray-300 text-sm mx-2  ">
+                                <span
+                                    data-test="success-blog"
+                                    className="flex justify-start text-gray-300 text-sm mx-2  "
+                                >
                                     {text}
                                 </span>
                             </Link>

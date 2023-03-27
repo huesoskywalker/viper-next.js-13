@@ -34,23 +34,21 @@ export default function uploadFormFiles(
             const filename = file.originalFilename
             const type = file.mimetype
             const size = file.size.toString()
-            res.status(200).json({
-                data: {
-                    url,
-                    filename,
-                    type,
-                    size,
-                },
-                error: null,
-            })
+            resolve(
+                res.status(200).json({
+                    data: {
+                        url,
+                        filename,
+                        type,
+                        size,
+                    },
+                    error: null,
+                })
+            )
+        }).on("aborted", () => {
+            reject(res.status(500))
         })
-            .on("aborted", () => {
-                reject(res.status(500))
-            })
-            .on("end", () => {
-                resolve(res.status(200))
-            })
 
-        await form.parse(req)
+        form.parse(req)
     })
 }

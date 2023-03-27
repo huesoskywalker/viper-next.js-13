@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import { PageProps } from "@/lib/getCategories"
 import { getViperById } from "@/lib/vipers"
 import { Viper } from "@/types/viper"
+import { ProfileToEdit } from "./ProfileToEdit"
 
 export default async function Layout({ children, params }: PageProps) {
     const id: string = params.id

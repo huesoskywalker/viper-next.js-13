@@ -1,5 +1,4 @@
 "use client"
-// Use transition broke after installing shopify-api
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition, FormEvent } from "react"
@@ -39,11 +38,10 @@ export default function EditProfile({
         try {
             const image = new FormData()
             image.append("image", profileImage)
-            const uploadImage = await fetch(`/api/update-viper-image`, {
+            const uploadImage = await fetch(`/api/viper/update-profile-image`, {
                 method: "PUT",
                 body: image,
             })
-
             const {
                 data,
                 error,
@@ -53,21 +51,17 @@ export default function EditProfile({
                 } | null
                 error: string | null
             } = await uploadImage.json()
-
             const imageUrl = data?.url
-            console.log(`--------imageUrl-------------`)
-            console.log(imageUrl)
 
             const bgImage = new FormData()
             bgImage.append("backgroundImage", backgroundImage)
             const bgUploadImage = await fetch(
-                `/api/update-viper-background-image`,
+                `/api/viper/update-background-image`,
                 {
                     method: "PUT",
                     body: bgImage,
                 }
             )
-
             const {
                 bgData,
                 bgError,
@@ -77,12 +71,9 @@ export default function EditProfile({
                 } | null
                 bgError: string | null
             } = await bgUploadImage.json()
-
             const bgImageUrl = bgData?.url
-            console.log(`------bgImageUrl------------`)
-            console.log(bgImageUrl)
 
-            const response = await fetch(`/api/edit-viper`, {
+            const response = await fetch(`/api/viper/edit`, {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
@@ -92,19 +83,21 @@ export default function EditProfile({
                     newName,
                     newBiography,
                     newLocation,
-                    imageUrl: imageUrl ?? profileImage,
-                    bgImageUrl: bgImageUrl ?? backgroundImage,
+                    imageUrl: imageUrl,
+                    bgImageUrl: bgImageUrl,
                 }),
             })
             await response.json()
+
             setIsFetching(false)
+
             startTransition(() => {
                 setNewName("")
                 setNewBiography("")
                 setNewLocation("")
                 setProfileImage("")
                 setBackgroundImage("")
-                // router.refresh()
+                router.refresh()
                 router.prefetch("/profile")
             })
             // Same in EditForm, if works, DELETE
@@ -127,6 +120,7 @@ export default function EditProfile({
             const i = event.target.files[0]
 
             setProfileImage(i)
+
             setCreateObjectURL(URL.createObjectURL(i))
             setShowProfileImg(!showProfileImg)
         }
@@ -173,6 +167,7 @@ export default function EditProfile({
                                                 Full name
                                             </span>
                                             <input
+                                                data-test="new-name"
                                                 type="text"
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 value={newName}
@@ -186,6 +181,7 @@ export default function EditProfile({
                                                 Add a biography
                                             </span>
                                             <textarea
+                                                data-test="new-biography"
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={newBiography}
                                                 onChange={(e) =>
@@ -201,17 +197,19 @@ export default function EditProfile({
                                                 Profile Image
                                             </span>
                                             <input
+                                                data-test="new-profile-image"
                                                 className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
                                                 onChange={(e) =>
                                                     uploadProfileImage(e)
                                                 }
-                                            ></input>
+                                            />
                                         </label>
                                         {showProfileImg ? (
                                             <div className="fixed inset-auto">
                                                 <div className="flex justify-end">
                                                     <button
+                                                        data-test="accept-profile-image"
                                                         onClick={
                                                             acceptProfileImg
                                                         }
@@ -248,6 +246,7 @@ export default function EditProfile({
                                                 Background Image
                                             </span>
                                             <input
+                                                data-test="new-background-image"
                                                 className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
                                                 onChange={uploadBackgroundImage}
@@ -258,8 +257,8 @@ export default function EditProfile({
                                                 Where are you located?
                                             </span>
                                             <select
-                                                className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                value={newLocation}
+                                                data-test="new-location"
+                                                className="block p-1 w-full rounded-lg border   sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 onChange={(e) =>
                                                     setNewLocation(
                                                         e.target.value
@@ -294,6 +293,7 @@ export default function EditProfile({
                                         </label>
                                         <div className="flex justify-center">
                                             <button
+                                                data-test="submit-button"
                                                 className={`${
                                                     isMutating
                                                         ? "bg-opacity-60 animate-pulse"

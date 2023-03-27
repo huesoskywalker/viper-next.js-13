@@ -1,0 +1,19 @@
+{
+    "user": {
+        "name": "Hueso Skywalker",
+        "email": "huesoskywalker@gmail.com",
+        "image": "https://lh3.googleusercontent.com/a/AEdFTp4aMn5bItl_CDwyHf659hv8nTOw2p4QUxQKCHY=s96-c",
+        "id": "63e2887fb3c82ae5e9e6b1d2",
+        "location": "Argentina",
+        "address": {
+            "phone": "+5493543555713",
+            "address": "Los Algarrobos",
+            "city": "Los Hornillos",
+            "province": "Córdoba",
+            "zip": "5100",
+            "country": "Argentina"
+        },
+        "customerAccessToken": "aba48a14f4900159e05d56390cfb2606"
+    },
+    "expires": "2023-04-23T01:28:03.627Z"
+}
