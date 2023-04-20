@@ -1,6 +1,6 @@
 import { PageProps } from "@/lib/getCategories"
 import { getBlogLikesAndRePosts } from "@/lib/vipers"
-import { CommentBlog, ExternalBlog } from "@/types/viper"
+import { ExternalBlog } from "@/types/viper"
 import PostAndLikeCard from "@/app/profile/[profileSlug]/PostAndLikeCard"
 
 export default async function ViperSlugPage({ params }: PageProps) {
@@ -9,8 +9,7 @@ export default async function ViperSlugPage({ params }: PageProps) {
     //     await getBlogLikesAndRePosts(viperId)
     return (
         <h1 className="text-yellow-500 text-lg">
-            Let's build this up again, Probably a 3rd commentComponent to make
-            things clearer{" "}
+            Let's build this up again, Probably a 3rd commentComponent to make things clearer{" "}
         </h1>
         // <div>
         //     {blogLikesAndRePosts?.map((blog) => {

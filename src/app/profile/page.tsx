@@ -7,8 +7,9 @@ import { Session } from "next-auth"
 
 export default async function ProfilePage() {
     const viperSession: Session | null = await getCurrentViper()
+
     if (!viperSession) throw new Error("No Viper bro")
-    const viperId: string = viperSession.user.id
+    const viperId: string = viperSession.user._id
 
     // Using cache pattern built on top of parallel fetching
 
@@ -21,7 +22,7 @@ export default async function ProfilePage() {
          * Gotta see what to do with preloadViperBlogs and on <ViperBlogs>
          */
     }
-    // preloadViperBlogs(viperId)
+    preloadViperBlogs(viperId)
 
     return (
         <div className="space-y-4">

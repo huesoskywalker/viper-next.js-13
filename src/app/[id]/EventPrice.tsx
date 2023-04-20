@@ -1,6 +1,6 @@
 export const EventPrice = ({ price }: { price: number }) => {
     return (
-        <div className="flex">
+        <div className="flex" data-test="price">
             {price === 0 ? (
                 <h1 className="text-lg font-bold leading-snug text-white">
                     FREE{" "}

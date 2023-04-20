@@ -3,18 +3,13 @@ import { EventInterface } from "@/types/event"
 import { ObjectId } from "mongodb"
 import { NextApiRequest, NextApiResponse } from "next"
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
     const id: string = body.id
     const viperId: string = body.viperId
 
     const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
+    const db = client.db("viperDb").collection<EventInterface>("events")
     if (body.comment !== "") {
         const response = await db.findOneAndUpdate(
             {

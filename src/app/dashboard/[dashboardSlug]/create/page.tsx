@@ -1,24 +1,39 @@
-import { getViperLatestCreatedEvent } from "@/lib/events"
 import { getCurrentViper } from "@/lib/session"
 import { Suspense } from "react"
 import Loading from "./loading"
-import ShowEventButton from "./ShowEventButton"
-import { EventInterface } from "@/types/event"
+import PreviewEventButton from "@/app/dashboard/[dashboardSlug]/create/PreviewEventButton"
 import { Session } from "next-auth"
 import { Event } from "@/app/[id]/Event"
+import { Viper } from "@/types/viper"
+import { preloadEventById } from "@/lib/events"
 
-export default async function CreatePage() {
-    const viperSession: Session | null = await getCurrentViper()
-    if (!viperSession) throw new Error("No Viper bro")
-    const viper = viperSession?.user
-    const lastEvent: Promise<EventInterface> = getViperLatestCreatedEvent(
-        viper.id
-    )
-
+export default async function CreateEventPage() {
+    const session: Session | null = await getCurrentViper()
+    if (!session) throw new Error("No Viper bro")
+    const viperSession = session?.user
+    const fetchViper = await fetch(`http://localhost:3000/api/viper/${viperSession._id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        cache: "no-cache",
+    })
+    const viper: Viper = await fetchViper.json()
+    const lastEventCreated = viper.myEvents?.created.pop()
+    if (!lastEventCreated?._id)
+        return (
+            <div>
+                <span className="text-gray-400 text-xs flex justify-start align-baseline">
+                    You have not created any event yet. Go ahead for the vipers.
+                </span>
+            </div>
+        )
+    const lastEventId = JSON.stringify(lastEventCreated._id).replace(/['"]+/g, "")
+    preloadEventById(lastEventId)
     return (
         <div className="flex justify-start">
             <Suspense fallback={<Loading />}>
-                <ShowEventButton>
+                <PreviewEventButton>
                     <div>
                         <span className="text-gray-400 text-xs flex justify-start align-baseline">
                             The last event you created
@@ -29,9 +44,9 @@ export default async function CreatePage() {
                             href={`/dashboard/myevents/${lastEventId}`}
                         /> */}
                         {/* @ts-expect-error Async Server Component */}
-                        <Event eventPromise={lastEvent} />
+                        <Event eventId={lastEventCreated._id} />
                     </div>
-                </ShowEventButton>
+                </PreviewEventButton>
             </Suspense>
         </div>
     )

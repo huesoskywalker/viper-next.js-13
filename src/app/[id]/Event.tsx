@@ -10,46 +10,47 @@ import { EventInterface } from "@/types/event"
 import { getCurrentViper } from "@/lib/session"
 import { Session } from "next-auth"
 import { getEventById } from "@/lib/events"
+import { preloadViperBasicProps } from "@/lib/vipers"
 
 export async function Event({ eventId }: { eventId: string }) {
     const likedCookie: string = cookies().get("_is_liked")?.value || "none"
     const viperSession: Promise<Session | null> = getCurrentViper()
     const event: Promise<EventInterface | null> = getEventById(eventId)
 
-    const [currentViper, selectedEvent] = await Promise.all([
-        viperSession,
-        event,
-    ])
-
+    const [currentViper, selectedEvent] = await Promise.all([viperSession, event])
     // This will activate the closest `error.ts` Error Boundary
     if (!currentViper) throw new Error("No Session bro")
-    if (!selectedEvent)
-        return (
-            <div className="text-yellow-400 text-sm">Build up, from Event</div>
-        )
-
+    if (!selectedEvent) return <div className="text-yellow-400 text-sm">Build up, from Event</div>
+    preloadViperBasicProps(selectedEvent.organizer._id)
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">
                 <div className="space-y-2">
                     <Image
+                        data-test="image"
                         src={`/upload/${selectedEvent.image}`}
                         alt={selectedEvent.title}
                         height={400}
                         width={400}
-                        className="hidden rounded-lg  lg:block max-h-24  object-cover object-center"
+                        className="rounded-lg  lg:block max-h-24  object-cover object-center"
                     />
                 </div>
             </div>
 
             <div className="col-span-full space-y-4 lg:col-span-2">
-                <div className="truncate text-xl font-medium text-white lg:text-2xl">
+                <div
+                    data-test="title"
+                    className="truncate text-xl font-medium text-white lg:text-2xl"
+                >
                     {selectedEvent.title}
                 </div>
-                <div className="space-y-4 text-sm text-gray-200">
+                <div data-test="content" className="space-y-4 text-sm text-gray-200">
                     {selectedEvent.content}
                 </div>
-                <div className="space-y-4 text-sm text-gray-200 flex justify-start">
+                <div
+                    data-test="address"
+                    className="space-y-4 text-sm text-gray-200 flex justify-start"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
@@ -70,7 +71,7 @@ export async function Event({ eventId }: { eventId: string }) {
                 <Suspense fallback={<InfoSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
                     <EventInfo
-                        currentViperId={currentViper.user.id}
+                        currentViperId={currentViper.user._id}
                         eventId={eventId}
                         eventDate={selectedEvent.date}
                         eventLocation={selectedEvent.location}
@@ -81,29 +82,22 @@ export async function Event({ eventId }: { eventId: string }) {
                 </Suspense>
             </div>
             <div className="mt-2 col-start-1 col-span-2 max-h-auto">
-                <ShowViper
-                    viperName={selectedEvent.organizer.name}
-                    event={true}
-                    blog={true}
-                >
+                <ShowViper viperName={selectedEvent.organizer.name} event={true} blog={true}>
                     <Suspense
                         fallback={
-                            <div className="text-yellow-500 text-lg">
-                                suspense from event...
-                            </div>
+                            <div className="text-yellow-500 text-lg">suspense from event...</div>
                         }
                     >
                         {/* @ts-expect-error Async Server Component */}
                         <OrganizerInfo
-                            key={selectedEvent.organizer.id}
-                            organizerId={selectedEvent.organizer.id}
+                            key={selectedEvent.organizer._id}
+                            organizerId={selectedEvent.organizer._id}
                             event={true}
                         />
                     </Suspense>
                 </ShowViper>
             </div>
             <div className="text-gray-300 col-start-4">
-                {/* @ts-expect-error Async Server Component */}
                 <AddLike
                     eventId={eventId}
                     commentId={JSON.stringify(selectedEvent._id)}

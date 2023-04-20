@@ -14,34 +14,40 @@ export const EventCard = ({
     title: string
     content: string
     location: string
-    date: Date
+    date: string
     href: string
 }) => {
     return (
-        <Link href={href} className="group block">
-            <div className="space-y-4">
-                <div className="space-y-2 overflow-hidden">
-                    <Image
-                        src={`/upload/${image}`}
-                        width={300}
-                        height={300}
-                        loading="lazy"
-                        style={{
-                            objectFit: "contain",
-                            objectPosition: "center",
-                        }}
-                        className="rounded-xl group-hover:opacity-80 max-h-44 "
-                        alt={title}
-                        placeholder="blur"
-                        blurDataURL={`/upload/${image}`}
-                    />
-                    <h2 className="font-bold text-gray-100">{title}</h2>
-                    <div className="text-sm font-bold leading-snug text-white">
-                        {content}
-                    </div>
-                    <p className="text-sm text-gray-300">{location}</p>
-                    <EventShowTime dateTime={date} />
+        <Link data-test="select-event" href={href} className="group block">
+            <div className="space-y-4 overflow-hidden">
+                <Image
+                    data-test="event-card-image"
+                    src={`/upload/${image}`}
+                    width={300}
+                    height={300}
+                    loading="lazy"
+                    style={{
+                        objectFit: "contain",
+                        objectPosition: "center",
+                    }}
+                    className="rounded-xl group-hover:opacity-80 max-h-44 "
+                    alt={title}
+                    placeholder="blur"
+                    blurDataURL={`/upload/${image}`}
+                />
+                <h2 data-test="event-card-title" className="font-bold text-gray-100">
+                    {title}
+                </h2>
+                <div
+                    data-test="event-card-content"
+                    className="text-sm font-bold leading-snug text-white"
+                >
+                    {content}
                 </div>
+                <p data-test="event-card-location" className="text-sm text-gray-300">
+                    {location}
+                </p>
+                <EventShowTime dateTime={date} />
             </div>
         </Link>
     )

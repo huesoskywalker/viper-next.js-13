@@ -3,16 +3,16 @@ import { useEffect, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
 export default function RePostBlog({
-    bloggerId,
-    blogId,
-    viperId,
+    _id,
+    blogOwner_id,
+    viper_id,
     rePosts,
     timestamp,
     rePostCookie,
 }: {
-    bloggerId: string
-    blogId: string
-    viperId: string
+    _id: string
+    blogOwner_id: string
+    viper_id: string
     rePosts: number
     timestamp: number
     rePostCookie: string
@@ -28,9 +28,9 @@ export default function RePostBlog({
                 "Content-type": "application/json",
             },
             body: JSON.stringify({
-                bloggerId: bloggerId,
-                blogId: blogId,
-                viperId: viperId,
+                _id: _id,
+                blogOwner_id: blogOwner_id,
+                viper_id: viper_id,
             }),
         })
 

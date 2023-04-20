@@ -4,11 +4,13 @@ export const PRODUCT_PUBLISH = gql`
     mutation publishablePublish($id: ID!, $input: [PublicationInput!]!) {
         publishablePublish(id: $id, input: $input) {
             publishable {
-                availablePublicationCount
-                publicationCount
+                publishedOnCurrentPublication
+                # resourcePublicationsV2 {
+                #     isPublished
+                # }
             }
             shop {
-                publicationCount
+                url
             }
             userErrors {
                 field

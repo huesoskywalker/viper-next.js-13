@@ -1,0 +1,2 @@
+db.users.updateOne({ name: "Hueso Skywalker" }, { $set: { "address": { "phone": null, "address": "", "city": "", "province": "", "zip": null, "country": "" }, "backgroundImage": "", "biography": "", "blog": { "myBlog": [], "likes": [], "commented": [], "rePosts": [] }, "location": "", "myEvents": { "_id": "", "created": [], "collection": [], "likes": [] }, "shopify": { "customerAccessToken": "", "customerId": "" }, "followers": [], "follows": [] }})
+

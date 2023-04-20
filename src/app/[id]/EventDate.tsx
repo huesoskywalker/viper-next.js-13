@@ -4,24 +4,29 @@ export const EventDate = ({
     date,
     collection,
 }: {
-    date: Date | number
+    date: string | number
     collection: boolean
 }) => {
+    console.log(`-----EventDate------`)
+    console.log(date)
     return (
         <div>
-            {typeof date === "object" ? (
+            {typeof date === "string" ? (
                 <div className="grid">
-                    <strong className="font-bold text-sm text-gray-100">
-                        {format(date, " MMM do, yyyy")}
+                    <strong data-test="date" className="font-bold text-sm text-gray-100">
+                        {format(new Date(date), " MMM do, yyyy")}
                     </strong>
                     {!collection ? (
-                        <strong className="font-semibold text-xs text-gray-100">
-                            {format(date, " cccc p")}
+                        <strong
+                            data-test="schedule"
+                            className="font-semibold text-xs text-gray-100"
+                        >
+                            {format(new Date(date), " cccc p")}
                         </strong>
                     ) : null}
                 </div>
             ) : typeof date === "number" ? (
-                <span className="flex justify-end text-xs text-gray-400 ">
+                <span data-test="timestamp" className="flex justify-end text-xs text-gray-400 ">
                     {format(date, "MMM d, yyyy")}
                 </span>
             ) : null}

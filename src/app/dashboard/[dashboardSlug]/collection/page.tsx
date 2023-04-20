@@ -11,7 +11,7 @@ export default async function CollectionPage() {
     if (!viperSession) throw new Error("No Viper bro")
     const viper = viperSession?.user
 
-    const collection: Promise<Collection[]> = getViperCollection(viper.id)
+    const collection: Promise<Collection[]> = getViperCollection(viper._id)
 
     return (
         <div>
@@ -19,7 +19,7 @@ export default async function CollectionPage() {
                 {/* @ts-expect-error Async Server Component */}
                 <ViperCollection
                     collectionPromise={collection}
-                    viperId={viper.id}
+                    viperId={viper._id}
                     isCollection={true}
                 />
             </Suspense>

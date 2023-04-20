@@ -38,8 +38,8 @@ export function AddLike({
     }
 
     const viper = useSession()
-    if (!viper) return
-    const viperId = viper.data?.user.id
+    if (!viper) throw new Error("No viper bro")
+    const viperId = viper.data?.user._id
 
     const router = useRouter()
 
@@ -86,18 +86,20 @@ export function AddLike({
             })
             await response.json()
         } else if (!event && blog) {
-            const response = await fetch(`/api/like-blog`, {
+            const response = await fetch(`/api/viper/blog/like`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    bloggerId: eventId,
-                    blogId: commentId,
-                    viperId: viperId,
+                    _id: commentId,
+                    blogOwner_id: eventId,
+                    viper_id: viperId,
                 }),
             })
-            await response.json()
+            const freshLikedBlog = await response.json()
+            console.log(`-----freshLikedBlog-AddLike----`)
+            console.log(freshLikedBlog)
         }
 
         toggleLike()
@@ -132,15 +134,14 @@ export function AddLike({
                 <div className="flex justify-center space-x-1">
                     {event ? (
                         <svg
+                            data-test="like-event"
                             xmlns="http://www.w3.org/2000/svg"
                             fill={` ${isPending ? "rgb(64,0,0)" : likedCookie}`}
                             viewBox="0 0 24 24"
                             strokeWidth={1.5}
                             stroke="currentColor"
                             className={`w-6 h-6 hover:text-red-700 hover:animate-pulse ${
-                                isPending
-                                    ? "text-red-700"
-                                    : `text-${likedCookie}-700`
+                                isPending ? "text-red-700" : `text-${likedCookie}-700`
                             }`}
                         >
                             <path
@@ -156,9 +157,7 @@ export function AddLike({
                             viewBox="0 0 20 20"
                             fill="currentColor"
                             className={`w-6 h-6 hover:text-red-700 hover:animate-pulse ${
-                                isPending
-                                    ? "text-red-700"
-                                    : `text-${likedCookie}-700`
+                                isPending ? "text-red-700" : `text-${likedCookie}-700`
                             }`}
                         >
                             <path
@@ -176,9 +175,7 @@ export function AddLike({
                             strokeWidth={1.8}
                             stroke="currentColor"
                             className={`w-5 h-5 mt-1 text-gray-400 hover:text-yellow-900 ${
-                                isPending
-                                    ? "text-yellow-600"
-                                    : `text-${isLiked}-700`
+                                isPending ? "text-yellow-600" : `text-${isLiked}-700`
                             }`}
                         >
                             <path

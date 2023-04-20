@@ -19,7 +19,7 @@ export async function EventInfo({
 }: {
     currentViperId: string
     eventId: string
-    eventDate: Date
+    eventDate: string
     eventLocation: string
     eventPrice: number
     productId: string
@@ -27,16 +27,12 @@ export async function EventInfo({
 }) {
     // // Normally you would fetch data here
 
-    const viperOnListData: Promise<boolean> = isViperOnTheList(
-        eventId,
-        currentViperId
-    )
-    const viperRequestData: Promise<boolean> = requestEventParticipation(
+    const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, currentViperId)
+    const viperRequestData: Promise<boolean> = requestEventParticipation(currentViperId, eventId)
+    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
         currentViperId,
         eventId
     )
-    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> =
-        isCheckoutFulFilled(currentViperId, eventId)
 
     const [viperOnList, viperRequest, checkoutFulfillment] = await Promise.all([
         viperOnListData,
@@ -48,17 +44,17 @@ export async function EventInfo({
         /** Probably will be good to resolve this promise with all the others , the thing is if this one
         will resolve all Promises on revalidation*/
     }
+    // RE-check this one, make it GET request and figure it out well.
+    // Cheers
+    const productId_numbers = productId.match(/\d+/g)
     const productInventoryData = await fetch(
-        `http://localhost:3000/api/product/${eventId}`,
+        `http://localhost:3000/api/product/inventory/${productId_numbers}`,
         {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                productId,
-            }),
-            next: { revalidate: 30 },
+            next: { revalidate: 60 },
         }
     )
     const productInventory: InventoryItem = await productInventoryData.json()
@@ -93,7 +89,6 @@ export async function EventInfo({
                     </div>
                 </button>
             ) : (
-                /* @ts-expect-error Async Server Component */
                 <Participate
                     eventId={eventId}
                     productId={productId}

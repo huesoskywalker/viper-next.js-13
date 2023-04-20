@@ -10,7 +10,7 @@ export default function GlobalNav() {
 
     if (status === "unauthenticated") {
         return (
-            <div className="fixed top-0 z-10 flex w-full flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-auto lg:w-48 lg:border-r lg:border-gray-800">
+            <div className="fixed top-0 flex z-10 w-48 flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-10 lg:w-48 lg:border-r lg:border-gray-800">
                 <div className="flex h-14 items-center py-4 px-4 lg:h-auto">
                     <Link
                         href="#"
@@ -45,41 +45,19 @@ export default function GlobalNav() {
     }
     // if (!session) throw new Error("Something wrong bro")
     return (
-        <div className="fixed top-0 z-10 flex w-full flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-auto lg:w-48 lg:border-r lg:border-gray-800">
-            <div className="flex h-14 items-center py-4 px-4 lg:h-auto">
+        <div className="fixed top-0 z-10 flex w-48 flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-auto lg:w-48 lg:border-r lg:border-gray-800">
+            <div className="group flex h-14 items-center py-4 px-4 lg:h-auto">
                 <Link
+                    data-test="viper"
                     href="/"
-                    className="group flex w-full items-center space-x-2.5"
+                    className=" flex w-full items-center space-x-2.5 font-semibold tracking-wide text-gray-400 group-hover:text-gray-50"
                     // onClick={close}
                 >
-                    {/* <div className="h-9 w-9 rounded-full border text-gray-400 border-white/30 group-hover:border-white/50"> */}
                     {/* <ViperLogo /> */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="w-5 h-5 text-gray-400"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M4.606 12.97a.75.75 0 01-.134 1.051 2.494 2.494 0 00-.93 2.437 2.494 2.494 0 002.437-.93.75.75 0 111.186.918 3.995 3.995 0 01-4.482 1.332.75.75 0 01-.461-.461 3.994 3.994 0 011.332-4.482.75.75 0 011.052.134z"
-                            clipRule="evenodd"
-                        />
-                        <path
-                            fillRule="evenodd"
-                            d="M5.752 12A13.07 13.07 0 008 14.248v4.002c0 .414.336.75.75.75a5 5 0 004.797-6.414 12.984 12.984 0 005.45-10.848.75.75 0 00-.735-.735 12.984 12.984 0 00-10.849 5.45A5 5 0 001 11.25c.001.414.337.75.751.75h4.002zM13 9a2 2 0 100-4 2 2 0 000 4z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                    <h3 className="font-semibold tracking-wide text-gray-400 group-hover:text-gray-50">
-                        <span className="Work in progress">
-                            v
-                            <span className="text-yellow-300/80 hover:text-yellow-300">
-                                i
-                            </span>
-                            per
-                        </span>
-                    </h3>
+                    {/* <h3 className="font-semibold tracking-wide text-gray-400 group-hover:text-gray-50"> */}
+                    v<span className="text-yellow-300/80 hover:text-yellow-300">i</span>
+                    per
+                    {/* </h3> */}
                 </Link>
             </div>
             <div
@@ -104,9 +82,7 @@ export default function GlobalNav() {
                                 onClick={() => signIn()}
                                 className="block rounded-md px-3 py-2 text-sm font-medium text-gray-400 hover:text-gray-300 hover:bg-gray-800"
                             >
-                                <span className="opacity-80 animate-pulse">
-                                    Sign out
-                                </span>
+                                <span className="opacity-80 animate-pulse">Sign out</span>
                             </Link>
                         </li>
                     ) : session ? (
@@ -136,13 +112,7 @@ export default function GlobalNav() {
     )
 }
 
-function GlobalNavItem({
-    item,
-    viperName,
-}: {
-    item: Item
-    viperName: string | undefined
-}) {
+function GlobalNavItem({ item, viperName }: { item: Item; viperName: string | undefined }) {
     const segment = useSelectedLayoutSegment()
     const isActive = item.slug === segment
 
@@ -150,13 +120,10 @@ function GlobalNavItem({
         <Link
             data-test="nav-item"
             href={`/${item.slug}`}
-            className={clsx(
-                "block rounded-md px-3 py-2 text-sm font-medium hover:text-gray-300",
-                {
-                    "text-gray-400 hover:bg-gray-800": !isActive,
-                    "text-white": isActive,
-                }
-            )}
+            className={clsx("block rounded-md px-3 py-2 text-sm font-medium hover:text-gray-300", {
+                "text-gray-400 hover:bg-gray-800": !isActive,
+                "text-white": isActive,
+            })}
         >
             {item.name === "Profile" ? viperName : item.name}
         </Link>

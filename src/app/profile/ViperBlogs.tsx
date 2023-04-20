@@ -1,5 +1,5 @@
 // import { getViperBlogs } from "@/lib/vipers"
-import { Blog } from "@/types/viper"
+import { MyBlog } from "@/types/viper"
 import { CommentCard } from "./CommentCard"
 
 export async function ViperBlogs({ viperId }: { viperId: string }) {
@@ -10,7 +10,7 @@ export async function ViperBlogs({ viperId }: { viperId: string }) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            viperId: viperId,
+            viper_id: viperId,
         }),
         // IN here there is a preloadCache, I'm releasing it for TEST
         // So I can get instant server side render
@@ -21,7 +21,7 @@ export async function ViperBlogs({ viperId }: { viperId: string }) {
             revalidate: 60,
         },
     })
-    const viperBlogs: Blog[] = await fetchBlogs.json()
+    const viperBlogs: MyBlog[] = await fetchBlogs.json()
     {
         /**
          * Wondering if this fetch way or the one above is a better practice.
@@ -34,7 +34,7 @@ export async function ViperBlogs({ viperId }: { viperId: string }) {
     return (
         <>
             <div className="space-y-4 w-full">
-                {viperBlogs.map((blog: Blog) => {
+                {viperBlogs.map((blog: MyBlog) => {
                     return (
                         /* @ts-expect-error Server Component */
                         <CommentCard

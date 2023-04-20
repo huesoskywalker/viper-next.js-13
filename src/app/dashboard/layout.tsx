@@ -7,7 +7,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
     return (
         <>
             <div className="grid grid-cols-5 gap-2">
-                <div className="lg:border-r lg:border-gray-800">
+                <div className="lg:border-r lg:border-gray-800 z-10">
                     <DashGroup
                         path={`/dashboard`}
                         items={[

@@ -1,13 +1,13 @@
 import { formatDuration, isTomorrow, intervalToDuration } from "date-fns"
 
-export const EventShowTime = ({ dateTime }: { dateTime: Date }) => {
+export const EventShowTime = ({ dateTime }: { dateTime: string }) => {
     const date: Duration = intervalToDuration({
         start: new Date(),
         end: new Date(dateTime),
     })
     return (
         <div className="text-sm text-gray-300">
-            <strong className="font-bold text-gray-100">
+            <strong data-test="event-show-time" className="font-bold text-gray-100">
                 {isTomorrow(new Date(dateTime)) ? "Tomorrow, " : null}
                 In{" "}
                 {formatDuration(date, {

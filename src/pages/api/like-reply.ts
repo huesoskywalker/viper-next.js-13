@@ -3,18 +3,13 @@ import { NextApiRequest, NextApiResponse } from "next"
 import clientPromise from "@/lib/mongodb"
 import { EventInterface } from "@/types/event"
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
     const eventId: string = body.eventId
     const commentId: string = body.commentId
     const viperId: string = body.viperId
     const client = await clientPromise
-    const db = client
-        .db("viperDb")
-        .collection<EventInterface>("organized_events")
+    const db = client.db("viperDb").collection<EventInterface>("events")
     if (req.method === "POST") {
         const reply_id: string = body.replyId.replace(/["']+/g, "")
         const isLiked = await db
@@ -60,9 +55,7 @@ export default async function handler(
                     },
                     {
                         $push: {
-                            "comments.$[i].replies.$[j].likes": new ObjectId(
-                                viperId
-                            ),
+                            "comments.$[i].replies.$[j].likes": new ObjectId(viperId),
                         },
                     },
                     {
@@ -91,9 +84,7 @@ export default async function handler(
                     },
                     {
                         $pull: {
-                            "comments.$[i].replies.$[j].likes": new ObjectId(
-                                viperId
-                            ),
+                            "comments.$[i].replies.$[j].likes": new ObjectId(viperId),
                         },
                     },
                     {

@@ -6,16 +6,12 @@ import { CommentReplies } from "./CommentReplies"
 import { Suspense } from "react"
 import { preloadViperBasicProps } from "@/lib/vipers"
 
-export default async function CommentIdPage({
-    params: { id, commentId, viperId },
-}: PageProps) {
+export default async function CommentIdPage({ params: { id, commentId, viperId } }: PageProps) {
     const eventId: string = id
-
+    console.log(`viperId from [][][]commentIdPage---shouting an error viperBasic props wrong hex`)
+    console.log(viperId)
     // To minimize client-server waterfalls, we recommend this pattern to fetch data in parallel
-    const eventCommentData: Promise<Comments[] | null> = getEventCommentById(
-        eventId,
-        commentId
-    )
+    const eventCommentData: Promise<Comments[] | null> = getEventCommentById(eventId, commentId)
 
     const commentRepliesData: Promise<Reply[]> = getEventCommentReplies(
         eventId,
@@ -27,27 +23,14 @@ export default async function CommentIdPage({
         <div className="mr-10 space-y-5">
             <div>
                 <Suspense
-                    fallback={
-                        <div className="text-yellow-400 text-lg">
-                            Comment Suspense
-                        </div>
-                    }
+                    fallback={<div className="text-yellow-400 text-lg">Comment Suspense</div>}
                 >
                     {/* @ts-expect-error Async Server Component */}
-                    <EventComments
-                        commentsPromise={eventCommentData}
-                        eventId={eventId}
-                    />
+                    <EventComments commentsPromise={eventCommentData} eventId={eventId} />
                 </Suspense>
             </div>
             <div className="space-y-5">
-                <Suspense
-                    fallback={
-                        <div className="text-yellow-400 text-lg">
-                            Reply Suspense
-                        </div>
-                    }
-                >
+                <Suspense fallback={<div className="text-yellow-400 text-lg">Reply Suspense</div>}>
                     {/* @ts-expect-error Async Server Component */}
                     <CommentReplies
                         repliesPromise={commentRepliesData}

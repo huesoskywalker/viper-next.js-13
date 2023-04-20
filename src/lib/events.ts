@@ -6,10 +6,11 @@ import { EventInterface, Comments, Reply } from "@/types/event"
 import { cache } from "react"
 
 const client = await clientPromise
-const eventCollection = client
-    .db("viperDb")
-    .collection<EventInterface>("organized_events")
+const eventCollection = client.db("viperDb").collection<EventInterface>("events")
 
+export const preloadAllEvents = (): void => {
+    void getAllEvents()
+}
 export async function getAllEvents(): Promise<EventInterface[]> {
     const events = await eventCollection
         .aggregate<EventInterface>([
@@ -36,19 +37,15 @@ export async function getAllEvents(): Promise<EventInterface[]> {
 export const preloadEventById = (eventId: string): void => {
     void getEventById(eventId)
 }
-export const getEventById = cache(
-    async (eventId: string): Promise<EventInterface | null> => {
-        const event = await eventCollection.findOne<EventInterface>({
-            _id: new ObjectId(eventId),
-        })
-        if (!event) return null
-        return event
-    }
-)
+export const getEventById = cache(async (eventId: string): Promise<EventInterface | null> => {
+    const event = await eventCollection.findOne<EventInterface>({
+        _id: new ObjectId(eventId),
+    })
+    if (!event) return null
+    return event
+})
 
-export async function getEventsByCategory(
-    category: string
-): Promise<EventInterface[]> {
+export async function getEventsByCategory(category: string): Promise<EventInterface[]> {
     const event = await eventCollection
         .aggregate<EventInterface>([
             {
@@ -99,54 +96,7 @@ function sortBy(field: string) {
     }
 }
 
-export const preloadViperCreatedEvents = (viperId: string): void => {
-    void getViperCreatedEvents(viperId)
-}
-export const getViperCreatedEvents = cache(
-    async (viperId: string): Promise<EventInterface[]> => {
-        const events = await eventCollection
-            .aggregate<EventInterface>([
-                {
-                    $match: { "organizer.id": viperId },
-                },
-                {
-                    $sort: { creationDate: -1 },
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        // organizer: 1,
-                        title: 1,
-                        content: 1,
-                        location: 1,
-                        // address: 1,
-                        date: 1,
-                        category: 1,
-                        // creationDate: 1,
-                        // price: 1,
-                        image: 1,
-                        // participants: 1,
-                        // likes: 1,
-                        // comments: 1,
-                    },
-                },
-            ])
-            .toArray()
-        return events
-    }
-)
-
-export async function getViperLatestCreatedEvent(
-    viperId: string
-): Promise<EventInterface> {
-    const events: EventInterface[] = await getViperCreatedEvents(viperId)
-    const lastEvent: EventInterface = events[0]
-    return lastEvent
-}
-
-export async function getEventComments(
-    eventId: string
-): Promise<Comments[] | null> {
+export async function getEventComments(eventId: string): Promise<Comments[] | null> {
     const eventComments = await eventCollection
         .aggregate<Comments>([
             {

@@ -12,7 +12,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         .aggregate([
             {
                 $match: {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(body.viper_id),
                 },
             },
             {
@@ -26,9 +26,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             },
             {
                 $match: {
-                    "blogRePosts.bloggerId": new ObjectId(body.bloggerId),
-                    "blogRePosts.blogId": new ObjectId(body.blogId),
-                    "blogRePosts.viperId": new ObjectId(body.viperId),
+                    "blogRePosts.blogOwner_id": new ObjectId(body.blogOwner_id),
+                    "blogRePosts._id": new ObjectId(body._id),
+                    "blogRePosts.viper_id": new ObjectId(body.viper_id),
                 },
             },
         ])
@@ -38,14 +38,14 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         try {
             const viperBlog = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(body.viper_id),
                 },
                 {
                     $push: {
                         blogRePosts: {
-                            bloggerId: new ObjectId(body.bloggerId),
-                            blogId: new ObjectId(body.blogId),
-                            viperId: new ObjectId(body.viperId),
+                            blogOwner_id: new ObjectId(body.blogOwner_id),
+                            _id: new ObjectId(body._id),
+                            viper_id: new ObjectId(body.viper_id),
                             timestamp: Date.now(),
                         },
                     },
@@ -54,16 +54,16 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
             const blogRePost = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.bloggerId),
+                    _id: new ObjectId(body.blogOwner_id),
                     blog: {
                         $elemMatch: {
-                            _id: new ObjectId(body.blogId),
+                            _id: new ObjectId(body._id),
                         },
                     },
                 },
                 {
                     $push: {
-                        "blog.$.rePosts": body.viperId,
+                        "blog.$.rePosts": body.viper_id,
                     },
                 }
             )
@@ -76,30 +76,30 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         try {
             const viperBlog = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.viperId),
+                    _id: new ObjectId(body.viper_id),
                 },
                 {
                     $pull: {
                         blogRePosts: {
-                            bloggerId: new ObjectId(body.bloggerId),
-                            blogId: new ObjectId(body.blogId),
-                            viperId: new ObjectId(body.viperId),
+                            blogOwner_id: new ObjectId(body.blogOwner_id),
+                            _id: new ObjectId(body._id),
+                            viper_id: new ObjectId(body.viper_id),
                         },
                     },
                 }
             )
             const blogUndoRePost = await db.findOneAndUpdate(
                 {
-                    _id: new ObjectId(body.bloggerId),
+                    _id: new ObjectId(body.blogOwner_id),
                     blog: {
                         $elemMatch: {
-                            _id: new ObjectId(body.blogId),
+                            _id: new ObjectId(body._id),
                         },
                     },
                 },
                 {
                     $pull: {
-                        "blog.$.rePosts": body.viperId,
+                        "blog.$.rePosts": body.viper_id,
                     },
                 }
             )

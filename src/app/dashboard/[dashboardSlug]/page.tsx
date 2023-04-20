@@ -1,26 +1,36 @@
-import { getViperCreatedEvents, preloadViperCreatedEvents } from "@/lib/events"
+import { preloadViperCreatedEvents } from "@/lib/vipers"
 import { getCurrentViper } from "@/lib/session"
 import { Suspense } from "react"
 import Loading from "./loading"
-import { EventInterface } from "@/types/event"
 import { Session } from "next-auth"
 import { DisplayEvents } from "@/app/events/(main)/DisplayEvents"
+import { preloadViperById } from "@/lib/vipers"
+import { EventInterface } from "@/types/event"
 
 export default async function MyEventsPage() {
     const viperSession: Session | null = await getCurrentViper()
     if (!viperSession) throw new Error("No Viper bro")
     const viper = viperSession?.user
-    const events: Promise<EventInterface[]> = getViperCreatedEvents(viper.id)
-    {
-        /* should we use cache patterns here ,
-         DisplayEvents have many inputs for 1 output,  created events  should be cached,  */
-    }
-    // preloadViperCreatedEvents(viper.id)
+    // Is this pattern too awful ? lol
+
+    preloadViperById(viper._id)
+    preloadViperCreatedEvents(viper._id)
+    const fetchViperEvents = await fetch(`http://localhost:3000/api/viper/events/created`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            viperId: viper._id,
+        }),
+        cache: "no-cache",
+        next: { revalidate: 600 },
+    })
+    const viperEvents: Promise<EventInterface> = fetchViperEvents.json()
+
     return (
         <div>
             <Suspense fallback={<Loading />}>
                 {/* @ts-expect-error Async Server Component */}
-                <DisplayEvents eventsPromise={events} dashboard={true} />
+                <DisplayEvents eventsPromise={viperEvents} dashboard={true} />
             </Suspense>
         </div>
     )

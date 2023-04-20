@@ -28,6 +28,7 @@ export default function ShowViper({
     }
     return (
         <div
+            data-test="show-viper"
             className="max-w-fit max-h-fit relative"
             onMouseLeave={closeOrganizer}
         >

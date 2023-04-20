@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { getViperById, getViperFollowById } from "@/lib/vipers"
+import { getViperBasicsProps, getViperFollowById } from "@/lib/vipers"
 import { firstLogin } from "@/lib/utils"
 import { Follow, Viper } from "@/types/viper"
 import ShowFollows from "../profile/ShowFollows"
@@ -14,54 +14,51 @@ export default async function OrganizerInfo({
     organizerId: string
     event: boolean
 }) {
-    const viperId: string = organizerId.replace(/["']+/g, "")
-    const viperData: Promise<Viper | null> = getViperById(viperId)
-    const isViperFollowedData: Promise<boolean> = getViperFollowById(viperId)
+    const organizer_id: string = organizerId.replace(/["']+/g, "")
+    const organizerData: Promise<Viper | null> = getViperBasicsProps(organizer_id)
+    const isOrganizerFollowedData: Promise<boolean> = getViperFollowById(organizer_id)
 
-    const [viper, isViperFollowed] = await Promise.all([
-        viperData,
-        isViperFollowedData,
+    const [organizer, isOrganizerFollowed] = await Promise.all([
+        organizerData,
+        isOrganizerFollowedData,
     ])
-    if (!viper) throw new Error("No viper from OrganizerInfo")
+    if (!organizer) throw new Error("No viper from OrganizerInfo")
+
     return (
         <div className="grid grid-cols-3 ">
             <div className="space-y-3 col-span-3 text-xs text-gray-300">
                 <div className="flex justify-between ">
                     <Image
                         src={`${
-                            firstLogin(viper.image)
-                                ? viper.image
-                                : `/vipers/${viper.image}`
+                            firstLogin(organizer.image)
+                                ? organizer.image
+                                : `/vipers/${organizer.image}`
                         }`}
                         width={50}
                         height={50}
                         className="rounded-full group-hover:opacity-80 h-[50px] w-[50px]"
-                        alt={viper.name}
+                        alt={organizer.name}
                         placeholder="blur"
-                        blurDataURL={"viper.imageBlur"}
+                        blurDataURL={"organizer.imageBlur"}
                     />
-                    <AddFollow
-                        id={viperId}
-                        isFollowed={isViperFollowed}
-                        event={event}
-                    />
+                    <AddFollow id={organizer_id} isFollowed={isOrganizerFollowed} event={event} />
                 </div>
                 <div className="h-fit w-fit">
-                    <Link href={`/dashboard/vipers/${viperId}`}>
+                    <Link href={`/dashboard/vipers/${organizer_id}`}>
                         <p className="hover:underline text-yellow-600 hover:text-gray-200">
-                            {viper.name}
+                            {organizer.name}
                         </p>
                     </Link>
                 </div>
-                <p className="text-gray-200">{viper.location}</p>
-                <p className="text-white">{viper.biography}</p>
+                <p className="text-gray-200">{organizer.location}</p>
+                <p className="text-white">{organizer.biography}</p>
                 <div className="mt-5 space-x-8 text-gray-300 text-xs">
                     <ShowFollows
-                        follows={viper.follows?.length}
+                        follows={organizer.follows?.length}
                         followers={false}
                         profile={false}
                     >
-                        {viper.follows?.map((follows: Follow) => {
+                        {organizer.follows?.map((follows: Follow) => {
                             return (
                                 /* @ts-expect-error Async Server Component */
                                 <ViperInfo
@@ -73,11 +70,11 @@ export default async function OrganizerInfo({
                     </ShowFollows>
 
                     <ShowFollows
-                        follows={viper.followers?.length}
+                        follows={organizer.followers?.length}
                         followers={true}
                         profile={false}
                     >
-                        {viper.followers?.map((followers: Follow) => {
+                        {organizer.followers?.map((followers: Follow) => {
                             return (
                                 /* @ts-expect-error Async Server Component */
                                 <ViperInfo

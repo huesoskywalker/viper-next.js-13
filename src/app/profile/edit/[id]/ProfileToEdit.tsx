@@ -1,11 +1,7 @@
 import { Viper } from "@/types/viper"
 import EditProfile from "./EditProfile"
 
-export async function ProfileToEdit({
-    profilePromise,
-}: {
-    profilePromise: Promise<Viper>
-}) {
+export async function ProfileToEdit({ profilePromise }: { profilePromise: Promise<Viper> }) {
     const viper: Viper = await profilePromise
     const viperId: string = JSON.stringify(viper._id).replace(/['"]+/g, "")
     return (
@@ -14,6 +10,8 @@ export async function ProfileToEdit({
                 <EditProfile
                     viperId={viperId}
                     name={viper.name}
+                    // image={viper.image}
+                    // backgroundImage={viper.backgroundImage}
                     biography={viper.biography}
                     location={viper.location}
                 />

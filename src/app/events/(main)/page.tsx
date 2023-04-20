@@ -1,4 +1,3 @@
-import { getAllEvents } from "@/lib/events"
 import { Suspense } from "react"
 import Loading from "./loading"
 import { EventInterface } from "@/types/event"
@@ -10,13 +9,12 @@ export default async function EventsPage({}) {
         headers: {
             "Content-Type": "application/json",
         },
-        cache: "force-cache",
+        cache: "no-cache",
         next: {
             revalidate: 900,
         },
     })
     const events: Promise<EventInterface[]> = fetchEvents.json()
-
     return (
         <div className="space-y-9">
             <div className="flex justify-between">

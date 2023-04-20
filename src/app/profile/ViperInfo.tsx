@@ -7,6 +7,7 @@ import { Viper } from "@/types/viper"
 export default async function ViperInfo({ id }: { id: string }) {
     const viperId: string = id.replace(/['"]+/g, "")
     const viper: Viper | null = await getViperById(viperId)
+    console.log(viperId)
     if (!viper) return
 
     return (
@@ -14,11 +15,7 @@ export default async function ViperInfo({ id }: { id: string }) {
             <Link href={`/dashboard/vipers/${viperId}`} className="group-block">
                 <div className="space-y-4">
                     <Image
-                        src={`${
-                            firstLogin(viper.image)
-                                ? viper.image
-                                : `/vipers/${viper.image}`
-                        }`}
+                        src={`${firstLogin(viper.image) ? viper.image : `/vipers/${viper.image}`}`}
                         width={50}
                         height={50}
                         className="rounded-full  group-hover:opacity-80"

@@ -12,7 +12,7 @@ export default async function CustomerCreatePage() {
     return (
         <div>
             <CreateCustomer
-                viperId={viper.id}
+                viperId={viper._id}
                 viperFirstName={firstName}
                 viperLastName={lastName}
                 viperEmail={viper.email}

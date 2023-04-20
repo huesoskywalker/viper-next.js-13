@@ -37,8 +37,9 @@ export default function AddComment({
     const router = useRouter()
 
     const viper = useSession()
-    const viperId = viper.data?.user.id
-    const viperImage = viper.data?.user.image
+    if (!viper) throw new Error("No viper bro")
+    const viperId: string | undefined = viper.data?.user._id
+    const viperImage: string | undefined = viper.data?.user.image
 
     const submitComment = async (e: any): Promise<void> => {
         e.preventDefault()
@@ -78,9 +79,9 @@ export default function AddComment({
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    id: id,
-                    viperId: viperId,
-                    commentId: commentId,
+                    _id: commentId,
+                    blogOwner_id: id,
+                    viper_id: viperId,
                     comment: comment,
                 }),
             })
@@ -109,10 +110,7 @@ export default function AddComment({
     return (
         <div className="flex justify-start">
             {blog ? (
-                <button
-                    onClick={writeComment}
-                    className=" text-gray-400 hover:text-blue-500/75"
-                >
+                <button onClick={writeComment} className=" text-gray-400 hover:text-blue-500/75">
                     {blog && !reply ? (
                         <div className="flex justify-center space-x-1">
                             <svg
@@ -165,6 +163,7 @@ export default function AddComment({
                 </button>
             ) : event ? (
                 <button
+                    data-test="comment-event"
                     onClick={writeComment}
                     className=" text-gray-400 hover:text-blue-700"
                 >
@@ -189,10 +188,7 @@ export default function AddComment({
                     </div>
                 </button>
             ) : (
-                <button
-                    onClick={writeComment}
-                    className=" text-gray-400 hover:text-blue-700"
-                >
+                <button onClick={writeComment} className=" text-gray-400 hover:text-blue-700">
                     <div className="flex justify-center space-x-1">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -224,9 +220,7 @@ export default function AddComment({
                                         <div className="grid grid-cols-9 space-y-2">
                                             <button
                                                 className="absolute left-2 top-2 text-gray-300 hover:text-red-700"
-                                                onClick={() =>
-                                                    setOpenCommentInput(false)
-                                                }
+                                                onClick={() => setOpenCommentInput(false)}
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -262,9 +256,7 @@ export default function AddComment({
                                             <textarea
                                                 className="h-20 p-2 col-start-3 col-span-7 text-gray-300 bg-black/30 border-[2px] rounded-lg border-transparent sm:text-xs outline-none focus:border-yellow-700/80"
                                                 value={comment}
-                                                onChange={(e) =>
-                                                    setComment(e.target.value)
-                                                }
+                                                onChange={(e) => setComment(e.target.value)}
                                                 rows={3}
                                                 placeholder={
                                                     !event && !reply
@@ -276,9 +268,7 @@ export default function AddComment({
                                             ></textarea>
                                             <button
                                                 className="col-start-5 col-span-2 relative w-full items-center space-x-2 rounded-lg bg-gray-800 px-3 py-1  text-sm font-medium text-white hover:bg-yellow-900/80 disabled:text-white/70"
-                                                onClick={(e) =>
-                                                    submitComment(e)
-                                                }
+                                                onClick={(e) => submitComment(e)}
                                             >
                                                 Comment
                                                 {isPending ? (
@@ -287,9 +277,7 @@ export default function AddComment({
                                                         role="status"
                                                     >
                                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                                        <span className="sr-only">
-                                                            Loading...
-                                                        </span>
+                                                        <span className="sr-only">Loading...</span>
                                                     </div>
                                                 ) : null}
                                             </button>

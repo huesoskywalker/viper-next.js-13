@@ -1,4 +1,4 @@
-import { ViperBasics, getViperBasicsProps } from "@/lib/vipers"
+import { getViperBasicsProps } from "@/lib/vipers"
 import Image from "next/image"
 import { cookies } from "next/headers"
 import AddComment from "@/components/AddComment"
@@ -9,6 +9,7 @@ import OrganizerInfo from "./OrganizerInfo"
 import ShowViper from "./ShowViper"
 import { EventDate } from "./EventDate"
 import { delay } from "@/lib/delay"
+import { Viper } from "@/types/viper"
 
 export async function EventCommentsCard({
     eventId,
@@ -35,12 +36,10 @@ export async function EventCommentsCard({
 }) {
     const viper_id: string = viperId.replace(/['"]+/g, "")
     const comment_id: string = commentId.replace(/['"]+/g, "")
-    const viper: ViperBasics | null = await getViperBasicsProps(viper_id)
+    const viper: Viper | null = await getViperBasicsProps(viper_id)
 
     if (!viper) throw new Error("No viper bro")
-    const likedCookie =
-        cookies().get(`_${reply ? replyId : comment_id}_is_liked`)?.value ||
-        "none"
+    const likedCookie = cookies().get(`_${reply ? replyId : comment_id}_is_liked`)?.value || "none"
 
     await delay(1500)
     return (
@@ -65,11 +64,7 @@ export async function EventCommentsCard({
                         </div>
                         <div className="col-start-2 col-span-7 border-[1px] border-slate-600 rounded-xl bg-gray-700/50 p-[6px] h-[7rem] w-[22rem]  space-y-2">
                             <div className="flex justify-between  max-h-auto">
-                                <ShowViper
-                                    viperName={viper.name}
-                                    event={false}
-                                    blog={false}
-                                >
+                                <ShowViper viperName={viper.name} event={false} blog={false}>
                                     {/* @ts-expect-error Async Server Component */}
                                     <OrganizerInfo
                                         key={JSON.stringify(viper._id)}
@@ -77,10 +72,7 @@ export async function EventCommentsCard({
                                         event={true}
                                     />
                                 </ShowViper>
-                                <EventDate
-                                    date={timestamp}
-                                    collection={false}
-                                />
+                                <EventDate date={timestamp} collection={false} />
                             </div>
 
                             <Link
@@ -112,7 +104,6 @@ export async function EventCommentsCard({
                 </div>
             </div>
             <div className="flex justify-center -ml-44 space-x-4 space-y-1 ">
-                {/* @ts-expect-error Async Server Component */}
                 <AddLike
                     eventId={eventId}
                     commentId={comment_id}

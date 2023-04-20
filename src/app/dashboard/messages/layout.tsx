@@ -9,7 +9,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
     const viperSession: Session | null = await getCurrentViper()
     if (!viperSession) throw new Error("No Viper bro")
     const viper = viperSession?.user
-    const viperFollows: Promise<Follow[]> = getViperFollows(viper.id)
+    const viperFollows: Promise<Follow[]> = getViperFollows(viper._id)
     return (
         <div>
             <div className="grid grid-cols-4 gap-2 ">
@@ -17,9 +17,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
                     <h1 className="text-gray-300 text-sm py-3 ">Contacts</h1>
                     <Suspense
                         fallback={
-                            <div className="text-yellow-400 text-sm">
-                                Suspense from layout
-                            </div>
+                            <div className="text-yellow-400 text-sm">Suspense from layout</div>
                         }
                     >
                         {/* @ts-expect-error Async Server Component */}

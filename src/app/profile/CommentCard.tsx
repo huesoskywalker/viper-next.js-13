@@ -34,10 +34,8 @@ export async function CommentCard({
     const viper: Viper | null = await getViperById(viper_id)
     if (!viper) throw new Error("No viper bro")
 
-    const likedCookie: string =
-        cookies().get(`_${timestamp}_is_liked`)?.value || "none"
-    const commentCookie =
-        cookies().get(`_${timestamp}_is_commented`)?.value || "none"
+    const likedCookie: string = cookies().get(`_${timestamp}_is_liked`)?.value || "none"
+    const commentCookie = cookies().get(`_${timestamp}_is_commented`)?.value || "none"
     // const rePostCookie: string =
     //     cookies().get(`_${timestamp}_is_rePosted`)?.value || "none"
     return (
@@ -62,11 +60,7 @@ export async function CommentCard({
                         </div>
                         <div className="col-start-2 col-span-7 border-[1px] border-yellow-600/60  rounded-xl bg-gray-700/50 p-2 h-[8rem] w-[22rem] space-y-2">
                             <div className=" col-start-1 col-span-2 max-h-auto">
-                                <ShowViper
-                                    viperName={viper.name}
-                                    event={false}
-                                    blog={blog}
-                                >
+                                <ShowViper viperName={viper.name} event={false} blog={blog}>
                                     {/* @ts-expect-error Async Server Component */}
                                     <OrganizerInfo
                                         key={JSON.stringify(viper._id)}
@@ -75,10 +69,7 @@ export async function CommentCard({
                                     />
                                 </ShowViper>
                             </div>
-                            <Link
-                                href={`/dashboard/vipers/${viper_id}`}
-                                className="space-y-2"
-                            >
+                            <Link href={`/dashboard/vipers/${viper_id}`} className="space-y-2">
                                 <div className="flex justify-between">
                                     <span
                                         data-test="blog-viperName"
@@ -86,10 +77,7 @@ export async function CommentCard({
                                     >
                                         {viper.name}
                                     </span>
-                                    <EventDate
-                                        date={timestamp}
-                                        collection={false}
-                                    />
+                                    <EventDate date={timestamp} collection={false} />
                                 </div>
                                 <span
                                     data-test="success-blog"
@@ -104,7 +92,6 @@ export async function CommentCard({
             </div>
 
             <div className=" flex justify-items-start space-x-4 space-y-1 ml-24">
-                {/* @ts-expect-error Server Component */}
                 <AddLike
                     eventId={viper_id}
                     commentId={comment_id}

@@ -16,9 +16,7 @@ export default async function Layout({ children, params }: PageProps) {
                 <div className="m-5 max-h-[100%] border-b-[1px] pb-3 border-gray-700/80">
                     <Suspense
                         fallback={
-                            <div className="text-yellow-500 text-lg">
-                                Suspense from Layout...
-                            </div>
+                            <div className="text-yellow-500 text-lg">Suspense from Layout...</div>
                         }
                     >
                         {/* @ts-expect-error Server Component */}

@@ -13,32 +13,8 @@ export async function DisplayEvents({
     if (events.length === 0) {
         return (
             <div className="flex justify-center align-text-bottom">
-                <p className="text-gray-400  text-xs">
-                    Hey buddy, create your first event
-                </p>
+                <p className="text-gray-400  text-xs">Hey buddy, create your first event</p>
             </div>
-        )
-    }
-    if (!dashboard) {
-        return (
-            <>
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {events.map((event: EventInterface) => {
-                        return (
-                            <div key={JSON.stringify(event._id)}>
-                                <EventCard
-                                    image={event.image}
-                                    title={event.title}
-                                    content={event.content}
-                                    location={event.location}
-                                    date={event.date}
-                                    href={`/${event._id}`}
-                                />
-                            </div>
-                        )
-                    })}
-                </div>
-            </>
         )
     }
     return (
@@ -46,10 +22,10 @@ export async function DisplayEvents({
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 {events.map((event: EventInterface) => {
                     return (
-                        <div key={JSON.stringify(event._id)}>
-                            <EditEventLink
-                                href={`/dashboard/myevents/${event._id}`}
-                            />
+                        <div data-test="display-events" key={JSON.stringify(event._id)}>
+                            {dashboard ? (
+                                <EditEventLink href={`/dashboard/myevents/${event._id}`} />
+                            ) : null}
                             <EventCard
                                 image={event.image}
                                 title={event.title}
@@ -64,4 +40,27 @@ export async function DisplayEvents({
             </div>
         </>
     )
+    // return (
+    //     <>
+    //         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    //             {events.map((event: EventInterface) => {
+    //                 return (
+    //                     <div key={JSON.stringify(event._id)}>
+    //                         <EditEventLink
+    //                             href={`/dashboard/myevents/${event._id}`}
+    //                         />
+    //                         <EventCard
+    //                             image={event.image}
+    //                             title={event.title}
+    //                             content={event.content}
+    //                             location={event.location}
+    //                             date={event.date}
+    //                             href={`/${event._id}`}
+    //                         />
+    //                     </div>
+    //                 )
+    //             })}
+    //         </div>
+    //     </>
+    // )
 }

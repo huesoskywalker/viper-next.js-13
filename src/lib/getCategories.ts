@@ -15,7 +15,7 @@ export type Category = {
 export const getCategories = cache((): Category[] => [
     {
         name: "Bars",
-        slug: "bars",
+        slug: "Bars",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
@@ -24,7 +24,7 @@ export const getCategories = cache((): Category[] => [
 
     {
         name: "Clubs",
-        slug: "clubs",
+        slug: "Clubs",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
@@ -32,7 +32,7 @@ export const getCategories = cache((): Category[] => [
     },
     {
         name: "Music",
-        slug: "music",
+        slug: "Music",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
@@ -40,7 +40,7 @@ export const getCategories = cache((): Category[] => [
     },
     {
         name: "Sports",
-        slug: "sports",
+        slug: "Sports",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },
@@ -48,7 +48,7 @@ export const getCategories = cache((): Category[] => [
     },
     {
         name: "Art",
-        slug: "art",
+        slug: "Art",
         items: [
             { name: "Most Liked", slug: "likes" },
             { name: "Closer to Date", slug: "date" },

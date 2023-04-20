@@ -3,17 +3,14 @@ import { NextApiRequest, NextApiResponse } from "next"
 import clientPromise from "@/lib/mongodb"
 import { Viper } from "@/types/viper"
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const viperId: string = body.viperId
-    const name: string = body.newName
-    const biography: string = body.newBiography
-    const imageUrl: string = body.imageUrl
-    const bgImageUrl: string = body.bgImageUrl
-    const location: string = body.newLocation
+    const _id: string = body._id
+    const name: string = body.name
+    const biography: string = body.biography
+    const image: string = body.image
+    const backgroundImage: string = body.backgroundImage
+    const location: string = body.location
     const client = await clientPromise
     const db = client.db("viperDb")
 
@@ -23,22 +20,15 @@ export default async function handler(
                 .collection<Viper>("users")
                 .findOneAndUpdate(
                     {
-                        _id: new ObjectId(viperId),
+                        _id: new ObjectId(_id),
                     },
                     {
                         $set: {
                             name: name,
                             biography: biography,
-                            image: imageUrl,
-                            backgroundImage: bgImageUrl,
+                            image: image,
+                            backgroundImage: backgroundImage,
                             location: location,
-
-                            //THIS IS PROVISORY TO FETCH THE CONCAT ARRAYS
-                            // Need to make the validation schemas from MongoDb Native driver
-                            blog: [],
-                            blogLikes: [],
-                            blogCommented: [],
-                            blogRePosts: [],
                         },
                     }
                 )

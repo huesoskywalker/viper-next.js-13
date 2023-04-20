@@ -10,7 +10,7 @@ export default async function LikedPage() {
     if (!viperSession) throw new Error("No Viper bro")
     const viper = viperSession?.user
 
-    const likes: Promise<Likes[]> = getViperLikedEvents(viper.id)
+    const likes: Promise<Likes[]> = getViperLikedEvents(viper._id)
 
     return (
         <div>
@@ -19,7 +19,7 @@ export default async function LikedPage() {
                 <ViperCollection
                     collectionPromise={likes}
                     isCollection={false}
-                    viperId={viper.id}
+                    viperId={viper._id}
                 />
             </Suspense>
         </div>

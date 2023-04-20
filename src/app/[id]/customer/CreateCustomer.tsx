@@ -1,7 +1,6 @@
 "use client"
 
-// this start happening after installing @shopify-api
-import { MouseEvent, useState, useTransition } from "react"
+import { FormEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
 import { CustomerAddress } from "@shopify/shopify-api/rest/admin/2023-01/customer_address"
@@ -38,13 +37,11 @@ export default function CreateCustomer({
 
     const router = useRouter()
 
-    const handleSubmit = async (
-        e: MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setIsFetching(true)
         try {
-            const customerCreate = await fetch(`/api/create-customer-shopify`, {
+            const customerCreate = await fetch(`/api/customer/create-shopify`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -57,77 +54,62 @@ export default function CreateCustomer({
                     lastName,
                 }),
             })
-            const newCustomer: Customer = await customerCreate.json()
+            const { newCustomerCreate }: { newCustomerCreate: Customer } =
+                await customerCreate.json()
+            const newCustomerId: string = newCustomerCreate.customer.id
 
-            const newCustomerId: string =
-                newCustomer.body.data.customerCreate.customer.id
+            const customerAccessTokenCreate = await fetch(`/api/customer/create-access-token`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            })
 
-            // ---------------------------------------------------------------------------------------
-
-            const customerAccessTokenCreate = await fetch(
-                `/api/create-customer-access-token`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    }),
-                }
-            )
-
-            const customerAccessToken: unknown =
+            const { customerAccessToken }: { customerAccessToken: any } =
                 await customerAccessTokenCreate.json()
-            const accessToken: string =
-                customerAccessToken.body.data.customerAccessTokenCreate
-                    .customerAccessToken.accessToken
+            const accessToken: string = customerAccessToken.accessToken
             // ---------------------------------------------------------------------------------------
-            const customerAddressCreate = await fetch(
-                `/api/create-customer-address`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        accessToken,
-                        lastName,
-                        firstName,
-                        phone,
-                        address,
-                        province,
-                        country,
-                        zip,
-                        city,
-                    }),
-                }
-            )
-            const newAddress: CustomerAddress =
-                await customerAddressCreate.json()
+            const customerAddressCreate = await fetch(`/api/customer/create-address`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    accessToken,
+                    lastName,
+                    firstName,
+                    phone,
+                    address,
+                    province,
+                    country,
+                    zip,
+                    city,
+                }),
+            })
+            const newAddress: CustomerAddress = await customerAddressCreate.json()
             // ---------------------------------------------------------------------------------------
 
-            const postAccessTokenToUser = await fetch(
-                `/api/update-viper-customer`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        viperId,
-                        accessToken,
-                        newCustomerId,
-                        phone,
-                        address,
-                        city,
-                        province,
-                        zip,
-                        country,
-                    }),
-                }
-            )
+            const postAccessTokenToUser = await fetch(`/api/customer/update-viper`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    viperId,
+                    accessToken,
+                    newCustomerId,
+                    phone,
+                    address,
+                    city,
+                    province,
+                    zip,
+                    country,
+                }),
+            })
 
             const updatedUser: Viper = await postAccessTokenToUser.json()
 
@@ -177,17 +159,12 @@ export default function CreateCustomer({
                                 />
                             </svg>
                         </button>
-                        <span className="flex justify-center text-gray-100">
-                            Join the store
-                        </span>
+                        <span className="flex justify-center text-gray-100">Join the store</span>
 
                         <div className="flex justify-center">
                             <div className="w-full mx-6">
                                 <div className="grid grid-cols-1 gap-6">
-                                    <form
-                                        onSubmit={(e) => e.preventDefault()}
-                                        className="text-sm"
-                                    >
+                                    <form onSubmit={(e) => handleSubmit(e)} className="text-sm">
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">
                                                 First name
@@ -196,9 +173,7 @@ export default function CreateCustomer({
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 type={"string"}
                                                 value={firstName}
-                                                onChange={(e) =>
-                                                    setFirstName(e.target.value)
-                                                }
+                                                onChange={(e) => setFirstName(e.target.value)}
                                             ></input>
                                         </label>
 
@@ -210,22 +185,16 @@ export default function CreateCustomer({
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 type={"string"}
                                                 value={lastName}
-                                                onChange={(e) =>
-                                                    setLastName(e.target.value)
-                                                }
+                                                onChange={(e) => setLastName(e.target.value)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300 ml-[4px]">
-                                                Email
-                                            </span>
+                                            <span className="text-gray-300 ml-[4px]">Email</span>
                                             <input
                                                 type="email"
                                                 className="block p-1 w-full  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={email}
-                                                onChange={(e) =>
-                                                    setEmail(e.target.value)
-                                                }
+                                                onChange={(e) => setEmail(e.target.value)}
                                             />
                                         </label>
                                         <label className="block py-1">
@@ -233,52 +202,42 @@ export default function CreateCustomer({
                                                 Password
                                             </span>
                                             <input
+                                                data-test="password"
                                                 type="password"
                                                 className="block p-1 w-full  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={password}
-                                                onChange={(e) =>
-                                                    setPassword(e.target.value)
-                                                }
+                                                onChange={(e) => setPassword(e.target.value)}
                                                 required
                                             />
                                         </label>
                                         <label className="block py-1 ">
-                                            <span className="text-gray-300 ml-[4px]">
-                                                Phone
-                                            </span>
+                                            <span className="text-gray-300 ml-[4px]">Phone</span>
                                             <input
+                                                data-test="phone"
                                                 type="tel"
                                                 className=" block p-1 w-full  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500 "
                                                 value={phone}
-                                                onChange={(e) =>
-                                                    setPhone(e.target.value)
-                                                }
+                                                onChange={(e) => setPhone(e.target.value)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300 ml-[4px]">
-                                                Address
-                                            </span>
+                                            <span className="text-gray-300 ml-[4px]">Address</span>
                                             <input
+                                                data-test="address"
                                                 className="block p-1 w-full hover:cursor-pointer rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 type={"string"}
                                                 value={address}
-                                                onChange={(e) =>
-                                                    setAddress(e.target.value)
-                                                }
+                                                onChange={(e) => setAddress(e.target.value)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300 ml-[4px]">
-                                                City
-                                            </span>
+                                            <span className="text-gray-300 ml-[4px]">City</span>
                                             <input
+                                                data-test="city"
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 type={"string"}
                                                 value={city}
-                                                onChange={(e) =>
-                                                    setCity(e.target.value)
-                                                }
+                                                onChange={(e) => setCity(e.target.value)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
@@ -286,12 +245,11 @@ export default function CreateCustomer({
                                                 Province
                                             </span>
                                             <input
+                                                data-test="province"
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 type={"string"}
                                                 value={province}
-                                                onChange={(e) =>
-                                                    setProvince(e.target.value)
-                                                }
+                                                onChange={(e) => setProvince(e.target.value)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
@@ -299,74 +257,50 @@ export default function CreateCustomer({
                                                 Zip Code
                                             </span>
                                             <input
+                                                data-test="zip-code"
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 type={"string"}
                                                 value={zip}
-                                                onChange={(e) =>
-                                                    setZip(e.target.value)
-                                                }
+                                                onChange={(e) => setZip(e.target.value)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300 ml-[4px]">
-                                                Country
-                                            </span>
+                                            <span className="text-gray-300 ml-[4px]">Country</span>
                                             <select
+                                                data-test="country"
                                                 className="block p-1 w-full  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={country}
-                                                onChange={(e) =>
-                                                    setCountry(e.target.value)
-                                                }
+                                                onChange={(e) => setCountry(e.target.value)}
                                                 // required
                                             >
-                                                <option value={"Nowhere"}>
-                                                    Select an Option
-                                                </option>
-                                                <option value={"Argentina"}>
-                                                    Argentina
-                                                </option>
-                                                <option value={"California"}>
-                                                    California
-                                                </option>
-                                                <option value={"Uruguay"}>
-                                                    Uruguay
-                                                </option>
-                                                <option value={"Spain"}>
-                                                    Spain
-                                                </option>
-                                                <option value={"Italy"}>
-                                                    Italy
-                                                </option>
-                                                <option value={"Greece"}>
-                                                    Greece
-                                                </option>
-                                                <option value={"New Zealand"}>
-                                                    New Zealand
-                                                </option>
+                                                <option value={"Nowhere"}>Select an Option</option>
+                                                <option value={"Argentina"}>Argentina</option>
+                                                <option value={"California"}>California</option>
+                                                <option value={"Uruguay"}>Uruguay</option>
+                                                <option value={"Spain"}>Spain</option>
+                                                <option value={"Italy"}>Italy</option>
+                                                <option value={"Greece"}>Greece</option>
+                                                <option value={"New Zealand"}>New Zealand</option>
                                             </select>
                                         </label>
                                         <div className="flex justify-center">
                                             <button
+                                                data-test="create-customer"
                                                 className={`${
-                                                    isMutating
-                                                        ? "opacity-70"
-                                                        : "opacity-100"
+                                                    isMutating ? "opacity-70" : "opacity-100"
                                                 } relative w-fit items-center space-x-3 rounded-lg bg-gray-700 my-3 py-2 px-5 text-sm font-medium text-white hover:bg-black hover:text-yellow-600 disabled:text-white/70`}
                                                 disabled={isPending}
-                                                onClick={(e) => handleSubmit}
+                                                // onClick={(e) => handleSubmit}
+                                                type={"submit"}
                                             >
-                                                {isMutating
-                                                    ? "Proceeding..."
-                                                    : "Create Customer"}
+                                                {isMutating ? "Proceeding..." : "Create Customer"}
                                                 {isPending ? (
                                                     <div
                                                         className="absolute right-2 top-1.5"
                                                         role="status"
                                                     >
                                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                                        <span className="sr-only">
-                                                            Loading...
-                                                        </span>
+                                                        <span className="sr-only">Loading...</span>
                                                     </div>
                                                 ) : null}
                                             </button>

@@ -1,12 +1,20 @@
 "use client"
 
-import { useState, useTransition, Suspense, FormEvent } from "react"
+import { useState, useTransition, FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import Loading from "./loading"
+import { Organizer } from "@/types/event"
 
-export function CreateEvent() {
+export default function CreateEvent(): JSX.Element {
+    // viperId,
+    // viperName,
+    // viperEmail,
+    // viperImage,
+    // viperId: string
+    // viperName: string
+    // viperEmail: string
+    // viperImage: string
     const [title, setTitle] = useState<string>("")
     const [content, setContent] = useState<string>("")
     const [location, setLocation] = useState<string>("")
@@ -27,33 +35,24 @@ export function CreateEvent() {
 
     const { data: session } = useSession()
     const viper = session?.user
-    if (!viper) return
+    if (!viper) throw new Error("No viper bro")
 
-    // Check this type I think it's already made
-    type Organizer = {
-        id: string
-        name: string
-        email: string
-        image: string
-    }
     const organizer: Organizer = {
-        id: viper.id,
+        _id: viper._id,
         name: viper.name,
         email: viper.email,
-        image: viper.image,
     }
 
-    const handleSubmit = async (
-        e: FormEvent<HTMLFormElement>
-    ): Promise<void> => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         setIsFetching(true)
-
+        // At some point integrate the image in the other api
+        // figure out a way to resolve the promise and get the url
         try {
             const file = new FormData()
             file.append("file", image)
 
-            const uploadImage = await fetch(`/api/upload-image`, {
+            const uploadImage = await fetch(`/api/event/create/upload-image`, {
                 method: "POST",
                 body: file,
             })
@@ -75,24 +74,28 @@ export function CreateEvent() {
             const imageUrl: string | string[] | undefined = data?.url
 
             // ----------------------------------------------------------------------------------
-            const stageUpload = await fetch(`/api/stage-upload-shopify`, {
+            const stageUploadCreate = await fetch(`/api/product/stage-upload`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    filename: data?.filename,
-                    fileSize: data?.size,
-                    type: data?.type,
+                    data: data,
                 }),
             })
 
-            const stageUploadCreate = await stageUpload.json()
-            const target =
-                stageUploadCreate.body.data.stagedUploadsCreate.stagedTargets[0]
-            const parameters = target.parameters
-            const resourceUrl: string = target.resourceUrl
-            const url: string = target.url
+            const {
+                stageUpload,
+            }: {
+                stageUpload: {
+                    parameters: object[]
+                    url: string
+                    resourceUrl: string
+                }
+            } = await stageUploadCreate.json()
+            const url = stageUpload.url
+            const resourceUrl = stageUpload.resourceUrl
+            const parameters = stageUpload.parameters
 
             parameters.forEach(({ name, value }: any) => {
                 file.append(name, value)
@@ -106,16 +109,16 @@ export function CreateEvent() {
                 method: "POST",
                 body: file,
             })
-            await uploadStagedUrl.json()
+            // Don't await here for a response
             // ------------------------------------------------------------------------------
-            const createProduct = await fetch(`/api/create-product-shopify`, {
+            const createProduct = await fetch(`/api/product/create-shopify`, {
                 headers: {
                     "Content-Type": "application/json",
                 },
                 method: "POST",
 
                 body: JSON.stringify({
-                    organizer: organizer.name,
+                    organizer: organizer._id,
                     resourceUrl: resourceUrl,
                     title: title,
                     description: content,
@@ -126,67 +129,59 @@ export function CreateEvent() {
                     entries: entries,
                 }),
             })
-            // IF this does not work get back to the previous one
-            //
-            //
-            //
-            const { product }: { product: { id: string } } =
-                await createProduct.json()
+
+            const { product }: { product: { id: string } } = await createProduct.json()
             const productId: string = product.id
-            // const newProduct = await createProduct.json()
-            // const productId = newProduct.body.data.productCreate.product.id
 
             // ------------------------------------------------------------------------------
-            const productCreateMedia = await fetch(
-                `/api/create-media-product-shopify`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        productId: productId,
-                        resourceUrl: resourceUrl,
-                    }),
-                }
-            )
-            await productCreateMedia.json()
-            // --------------------------------------------------------------------------
-            const publishProduct = await fetch(`/api/publish-product-shopify`, {
+            const productCreateMedia = await fetch(`/api/product/create-media`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     productId: productId,
-                    viperApp: "gid://shopify/Publication/121066586402",
+                    resourceUrl: resourceUrl,
                 }),
             })
-            await publishProduct.json()
-            // ---------------------------------------------------------------------------------------------
-
-            const createEvent = await fetch(`/api/create-event`, {
+            await productCreateMedia.json()
+            // --------------------------------------------------------------------------
+            const publishProduct = await fetch(`/api/product/publish-shopify`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    organizer,
-                    title,
-                    content,
-                    time,
-                    location,
-                    address,
-                    date,
-                    category,
-                    price,
-                    entries,
-                    imageUrl,
-                    productId,
+                    productId: productId,
+                }),
+            })
+            const freshProductInStore = await publishProduct.json()
+            // ---------------------------------------------------------------------------------------------
+
+            const createEvent = await fetch(`/api/event/create/submit`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    organizer: organizer,
+                    title: title,
+                    content: content,
+                    // time: time,
+                    location: location,
+                    address: address,
+                    date: `${date}T${time}.000Z`,
+                    category: category,
+                    price: Number(price),
+                    entries: Number(entries),
+                    image: imageUrl,
+                    productId: productId,
                 }),
             })
 
-            await createEvent.json()
+            const freshEvent = await createEvent.json()
+            console.log(`-------freshEvent--CreateEvent-------`)
+            console.log(freshEvent)
 
             setIsFetching(false)
 
@@ -218,17 +213,15 @@ export function CreateEvent() {
             setCreateObjectURL(URL.createObjectURL(i))
         }
     }
-    // useEffect(() => {}, [image])
     return (
         <div className="py-2 flex justify-center">
             <div className="w-4/5">
                 <div className="grid grid-cols-1 gap-6">
                     <form onSubmit={(e) => handleSubmit(e)} className="text-sm">
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                Event name
-                            </span>
+                            <span className="text-gray-300 ml-1">Event name</span>
                             <input
+                                data-test="title"
                                 type="text"
                                 className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={title}
@@ -237,10 +230,9 @@ export function CreateEvent() {
                             />
                         </label>
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                Additional details
-                            </span>
+                            <span className="text-gray-300 ml-1">Additional details</span>
                             <textarea
+                                data-test="content"
                                 className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
@@ -249,28 +241,26 @@ export function CreateEvent() {
                             ></textarea>
                         </label>
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                What type of event is it?
-                            </span>
+                            <span className="text-gray-300 ml-1">What type of event is it?</span>
                             <select
+                                data-test="category"
                                 className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                                 required
                             >
                                 <option value={"All"}>Select an Option</option>
-                                <option value={"bars"}>Bars</option>
-                                <option value={"clubs"}>Clubs</option>
-                                <option value={"music"}>Music</option>
-                                <option value={"sports"}>Sports</option>
-                                <option value={"art"}>Art</option>
+                                <option value={"Bars"}>Bars</option>
+                                <option value={"Clubs"}>Clubs</option>
+                                <option value={"Music"}>Music</option>
+                                <option value={"Sports"}>Sports</option>
+                                <option value={"Art"}>Art</option>
                             </select>
                         </label>
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                When is your event?
-                            </span>
+                            <span className="text-gray-300 ml-1">When is your event?</span>
                             <input
+                                data-test="date"
                                 type="date"
                                 className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={date}
@@ -279,10 +269,9 @@ export function CreateEvent() {
                             />
                         </label>
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                At what time?
-                            </span>
+                            <span className="text-gray-300 ml-1">At what time?</span>
                             <input
+                                data-test="time"
                                 type="time"
                                 value={time}
                                 onChange={(e) => setTime(e.target.value)}
@@ -291,32 +280,28 @@ export function CreateEvent() {
                             />
                         </label>
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                Where is it happening?
-                            </span>
+                            <span className="text-gray-300 ml-1">Where is it happening?</span>
                             <select
+                                data-test="location"
                                 className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                                 required
                             >
-                                <option value={"Nowhere"}>
-                                    Select an Option
-                                </option>
+                                <option value={"Nowhere"}>Select an Option</option>
                                 <option value={"Argentina"}>Argentina</option>
                                 <option value={"California"}>California</option>
                                 <option value={"Uruguay"}>Uruguay</option>
                                 <option value={"Spain"}>Spain</option>
                                 <option value={"Italy"}>Italy</option>
                                 <option value={"Greece"}>Greece</option>
-                                <option value={"New Zealand"}>
-                                    New Zealand
-                                </option>
+                                <option value={"New Zealand"}>New Zealand</option>
                             </select>
                         </label>
                         <label className="block py-1">
                             <span className="text-gray-300 ml-1">Address</span>
                             <input
+                                data-test="address"
                                 type="text"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
@@ -324,25 +309,22 @@ export function CreateEvent() {
                                 required
                             />
                         </label>
-                        <Suspense fallback={<Loading />}>
-                            <div>
-                                {createObjectURL !== "" ? (
-                                    <Image
-                                        src={createObjectURL}
-                                        className="hidden rounded-lg lg:block"
-                                        alt={createObjectURL}
-                                        height={400}
-                                        width={400}
-                                        loading="lazy"
-                                    />
-                                ) : null}
-                            </div>
-                        </Suspense>
+                        <div>
+                            {createObjectURL !== "" ? (
+                                <Image
+                                    src={createObjectURL}
+                                    className="hidden rounded-lg lg:block"
+                                    alt={createObjectURL}
+                                    height={400}
+                                    width={400}
+                                    loading="lazy"
+                                />
+                            ) : null}
+                        </div>
                         <label className="block py-1">
-                            <span className="text-gray-300 ml-1">
-                                Select an image
-                            </span>
+                            <span className="text-gray-300 ml-1">Select an image</span>
                             <input
+                                data-test="image"
                                 type="file"
                                 name="myImage"
                                 onChange={uploadToClient}
@@ -352,6 +334,7 @@ export function CreateEvent() {
                         <label className="block py-1">
                             <span className="text-gray-300 ml-1">Price</span>
                             <input
+                                data-test="price"
                                 type="number"
                                 className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                 value={price}
@@ -360,10 +343,9 @@ export function CreateEvent() {
                         </label>
                         {price && price !== "0" ? (
                             <label className="block py-1">
-                                <span className="text-gray-300 ml-1">
-                                    Entries
-                                </span>
+                                <span className="text-gray-300 ml-1">Entries</span>
                                 <input
+                                    data-test="entries"
                                     type="number"
                                     className="block  p-1 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs outline-none focus:ring-blue-500 focus:border-yellow-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:yellow-blue-500"
                                     value={entries}
@@ -374,10 +356,9 @@ export function CreateEvent() {
 
                         <div className={`flex justify-center`}>
                             <button
+                                data-test="create-event"
                                 className={`${
-                                    isMutating
-                                        ? "bg-opacity-60 animate-pulse"
-                                        : "bg-opacity-100"
+                                    isMutating ? "bg-opacity-60 animate-pulse" : "bg-opacity-100"
                                 } relative w-full items-center space-x-2 rounded-lg bg-gray-700 my-3 mx-32 py-2 text-sm font-medium text-gray-100 hover:bg-yellow-600/80 hover:text-white disabled:text-white/70`}
                                 disabled={isPending}
                                 // onClick={handleSubmit}
@@ -385,14 +366,9 @@ export function CreateEvent() {
                             >
                                 {isMutating ? "Creating..." : "Create Event"}
                                 {isPending ? (
-                                    <div
-                                        className="absolute right-2 top-1.5"
-                                        role="status"
-                                    >
+                                    <div className="absolute right-2 top-1.5" role="status">
                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                        <span className="sr-only">
-                                            Loading...
-                                        </span>
+                                        <span className="sr-only">Loading...</span>
                                     </div>
                                 ) : null}
                             </button>

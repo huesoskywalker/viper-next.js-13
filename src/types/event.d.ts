@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb"
 
 export interface EventInterface {
-    readonly _id: ObjectId
+    readonly _id: ObjectId | string
     organizer: Organizer
     title: string
     content: string
     location: string
     address: string
-    date: Date
+    date: string
     category: string
     creationDate: number
     image: string
@@ -20,24 +20,27 @@ export interface EventInterface {
     productId: string
 }
 
+// Check here why string, Probably:
+// 1- to go through components as strings instead of Object,
+// 2 - no need to place and Object Id, probably won't be a search query.
+// Recheck even
 export type Organizer = {
-    readonly id: string
+    _id: string
     name: string
     email: string
-    image: string
 }
 export interface Participants {
-    readonly _id: ObjectId
+    readonly _id: ObjectId | string
 }
 export interface Likes {
-    readonly _id: ObjectId
+    readonly _id: ObjectId | string
 }
 export interface Comments {
-    readonly _id: ObjectId
+    readonly _id: ObjectId | string
     eventTitle?: string
-    viperId: ObjectId
+    viperId: ObjectId | string
     text: string
-    likes: string[]
+    likes: Likes[]
     replies: Reply[]
     timestamp: number
 }
@@ -46,7 +49,7 @@ export interface Reply {
     readonly _id: Object
     viperId: string
     reply: string
-    likes: string[]
+    likes: likes[]
     timestamp: number
 }
 

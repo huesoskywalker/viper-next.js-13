@@ -11,6 +11,10 @@ export const STAGE_UPLOAD = gql`
                     value
                 }
             }
+            userErrors {
+                field
+                message
+            }
         }
     }
 `

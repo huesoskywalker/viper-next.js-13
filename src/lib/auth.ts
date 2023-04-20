@@ -124,26 +124,22 @@ export const authOptions: NextAuthOptions = {
             // console.log`---------session-user----------`
             // console.log(user)
             if (token) {
-                {
-                    session.user.id = token._id
-                    session.user.name = token.name
-                    session.user.email = token.email
-                    session.user.image = token.image
-                    session.user.location = token.location
-                    session.user.address = token.address
-                    session.user.customerAccessToken =
-                        token.shopify?.customerAccessToken
-                    return session
-                }
+                session.user._id = token._id
+                session.user.name = token.name
+                session.user.email = token.email
+                session.user.image = token.image
+                session.user.location = token.location
+                session.user.address = token.address
+                session.user.shopify = token.shopify
+                return session
             } else {
-                session.user.id = user.id
+                session.user._id = user._id
                 session.user.name = user.name
                 session.user.email = user.email
                 session.user.image = user.image
                 session.user.location = user.location
                 session.user.address = user.address
-                session.user.customerAccessToken =
-                    user.shopify?.customerAccessToken
+                session.user.shopify = user.shopify
 
                 // session.user.emailVerified = user.emailVerified
 

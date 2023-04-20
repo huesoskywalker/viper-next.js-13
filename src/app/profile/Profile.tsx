@@ -7,13 +7,7 @@ import { Follow, Viper } from "@/types/viper"
 import { EditProfileLink } from "./EditProfileLink"
 import { CheckFollow } from "@/app/dashboard/vipers/[id]/CheckFollow"
 
-export const Profile = async ({
-    viperId,
-    profile,
-}: {
-    viperId: string
-    profile: boolean
-}) => {
+export const Profile = async ({ viperId, profile }: { viperId: string; profile: boolean }) => {
     const fullViper: Viper | null = await getViperById(viperId)
     if (!fullViper) throw new Error("No viper bro")
     preloadViperFollowed(viperId)
@@ -52,38 +46,25 @@ export const Profile = async ({
                         loading="lazy"
                     />
                     <div className="grid grid-cols-2">
-                        <h1
-                            data-test="name"
-                            className="text-sm text-yellow-700 mt-4"
-                        >
+                        <h1 data-test="name" className="text-sm text-yellow-700 mt-4">
                             {fullViper.name}
-                            <p className="text-xs text-gray-300 mt-1">
-                                {fullViper.email}
-                            </p>
+                            <p className="text-xs text-gray-300 mt-1">{fullViper.email}</p>
                             <p className="text-xs text-gray-400 mt-2">
                                 Settled in{" "}
-                                <span
-                                    data-test="location"
-                                    className="text-gray-200 "
-                                >
+                                <span data-test="location" className="text-gray-200 ">
                                     {fullViper.location ?? "Planet Earth"}
                                 </span>
                             </p>
                         </h1>
                         {profile ? (
-                            <EditProfileLink
-                                href={`/profile/edit/${viperId}`}
-                            />
+                            <EditProfileLink href={`/profile/edit/${viperId}`} />
                         ) : (
                             /* @ts-expect-error Server Component */
                             <CheckFollow viperId={viperId} />
                         )}
                     </div>
                     <div className="break-after-column">
-                        <h1
-                            data-test="biography"
-                            className="text-gray-300 text-sm mt-5"
-                        >
+                        <h1 data-test="biography" className="text-gray-300 text-sm mt-5">
                             {fullViper.biography}
                         </h1>
                     </div>
@@ -109,7 +90,7 @@ export const Profile = async ({
                             followers={true}
                             profile={true}
                         >
-                            {fullViper.followers.map((followers: Follow) => {
+                            {fullViper.followers?.map((followers: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo

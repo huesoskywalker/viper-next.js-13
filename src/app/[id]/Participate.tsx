@@ -1,6 +1,5 @@
 "use client"
 
-// This Started happening when I installed @shopify/shopify-api
 import { useTransition, useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -26,7 +25,7 @@ export function Participate({
     isCheckoutPaid: string | undefined
     eventEntries: number
     totalInventory: number
-}) {
+}): JSX.Element {
     const [isCheckout, setIsCheckout] = useState<string>("")
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -35,16 +34,15 @@ export function Participate({
 
     const router = useRouter()
 
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
     const viper = session?.user
-    if (!viper) return
+    if (!viper) throw new Error("No viper bro")
     const viperAccessToken: string = session.user.customerAccessToken
-
     // --------------------------------------------------------------------------------
     const addParticipant = async (): Promise<void> => {
         setIsFetching(true)
         // --------------------------------------------------------------------------
-        const checkoutCreate = await fetch(`/api/create-checkout-shopify`, {
+        const checkoutCreate = await fetch(`/api/shopify/create-checkout`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -55,46 +53,38 @@ export function Participate({
                 viperEmail: viper?.email,
             }),
         })
-        const checkout: Checkout = await checkoutCreate.json()
-
-        const checkoutId: string = checkout.body.data.checkoutCreate.checkout.id
+        const { checkout }: { checkout: Checkout } = await checkoutCreate.json()
+        const checkoutId: string = checkout.id
 
         // --------------------------------------------------------------------------
-        const checkoutCustomerAssociate = await fetch(
-            `/api/associate-checkout-customer`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    checkoutId,
-                    customerAccessToken: viperAccessToken,
-                }),
-            }
-        )
-        const association: Checkout & Customer =
+        const checkoutCustomerAssociate = await fetch(`/api/customer/associate-checkout`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                checkoutId: checkoutId,
+                customerAccessToken: viperAccessToken,
+            }),
+        })
+        const { association }: { association: Checkout & Customer } =
             await checkoutCustomerAssociate.json()
-        const webUrl: string =
-            association.body.data.checkoutCustomerAssociateV2.checkout.webUrl
+        const webUrl: string = association.checkout.webUrl
         setIsCheckout(webUrl)
 
         // ------------------------------------------------------------------------------------------- //
-        const requestParticipation = await fetch(
-            `/api/request-participation-event`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                    viperId: viper.id,
-                    eventId,
-                    checkoutId,
-                }),
-            }
-        )
-        const eventRequest: Viper = await requestParticipation.json()
+        const requestParticipation = await fetch(`/api/event/request-participation`, {
+            method: "PUT",
+            headers: {
+                "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+                _id: viper._id,
+                eventId,
+                checkoutId,
+            }),
+        })
+        const requestResponse: Viper = await requestParticipation.json()
         setIsFetching(false)
 
         startTransition(() => {
@@ -105,18 +95,20 @@ export function Participate({
     const claimCard = async (): Promise<void> => {
         setIsFetching(true)
 
-        const addCardToViper = await fetch(`/api/claim-event-card`, {
+        const addCardToViper = await fetch(`/api/event/claim-card`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 eventId,
-                viperId: viper?.id,
+                viperId: viper._id,
             }),
         })
 
         const eventCard: EventInterface = await addCardToViper.json()
+        console.log(`------------eventCard------------`)
+        console.log(eventCard)
 
         setIsFetching(false)
         startTransition(() => {
@@ -126,7 +118,10 @@ export function Participate({
 
     return (
         <div className="space-y-2">
-            <div className="flex justify-start items-center text-[16px] text-gray-300">
+            <div
+                data-test="inventory-of-entries"
+                className="flex justify-start items-center text-[16px] text-gray-300"
+            >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
@@ -141,100 +136,88 @@ export function Participate({
                 </svg>
                 {totalInventory} of {eventEntries}
             </div>
-
-            {
-                totalInventory > 0 ? (
-                    !viperOnList ? (
-                        !viperAccessToken ? (
-                            <Link
-                                href={`/${eventId}/customer`}
-                                className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
-                            >
-                                Participate
-                            </Link>
-                        ) : !viperRequest ? (
-                            <button
-                                className={`${
-                                    isMutating
-                                        ? "bg-opacity-60 animate-pulse"
-                                        : "bg-opacity-100"
-                                }  relative w-full items-center space-x-2 rounded-lg bg-gray-700 px-3 py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
-                                onClick={addParticipant}
-                                disabled={isPending}
-                            >
-                                {isMutating ? "Preparing..." : "Participate"}
-                                {isPending ? (
-                                    <div
-                                        className="absolute right-2 top-1.5"
-                                        role="status"
-                                    >
-                                        <div
-                                            className="
+            <div data-test="participate">
+                {
+                    totalInventory > 0 ? (
+                        !viperOnList ? (
+                            !viperAccessToken ? (
+                                <Link
+                                    href={`/${eventId}/customer`}
+                                    className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
+                                >
+                                    Participate
+                                </Link>
+                            ) : !viperRequest ? (
+                                <button
+                                    className={`${
+                                        isMutating
+                                            ? "bg-opacity-60 animate-pulse"
+                                            : "bg-opacity-100"
+                                    }  relative w-full items-center space-x-2 rounded-lg bg-gray-700 px-3 py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
+                                    onClick={addParticipant}
+                                    disabled={isPending}
+                                >
+                                    {isMutating ? "Preparing..." : "Participate"}
+                                    {isPending ? (
+                                        <div className="absolute right-2 top-1.5" role="status">
+                                            <div
+                                                className="
         h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent"
-                                        />
-                                        <span className="sr-only">
-                                            Loading...
-                                        </span>
-                                    </div>
-                                ) : null}
-                            </button>
-                        ) : !isCheckoutPaid ? (
-                            <a
-                                href={isCheckout}
-                                target="_blank"
-                                className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
-                            >
-                                <span>VIPER GO</span>
-                            </a>
-                        ) : isCheckoutPaid !== "PAID" ? (
-                            <button
-                                disabled={true}
-                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-gray-300 hover:animate-pulse disabled:text-white/70"
-                            >
-                                PENDING
-                            </button>
+                                            />
+                                            <span className="sr-only">Loading...</span>
+                                        </div>
+                                    ) : null}
+                                </button>
+                            ) : !isCheckoutPaid ? (
+                                <a
+                                    href={isCheckout}
+                                    target="_blank"
+                                    className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
+                                >
+                                    <span>VIPER GO</span>
+                                </a>
+                            ) : isCheckoutPaid !== "PAID" ? (
+                                <button
+                                    disabled={true}
+                                    className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-gray-300 hover:animate-pulse disabled:text-white/70"
+                                >
+                                    PENDING
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={claimCard}
+                                    className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-green-600 hover:animate-pulse hover:cursor-grab disabled:text-white/70"
+                                >
+                                    {isMutating ? "Sending..." : "CLAIM CARD"}
+                                    {isPending ? (
+                                        <div className="absolute right-2 top-1.5" role="status">
+                                            <div
+                                                className="
+        h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent"
+                                            />
+                                            <span className="sr-only">Loading...</span>
+                                        </div>
+                                    ) : null}
+                                </button>
+                            )
                         ) : (
                             <button
-                                onClick={claimCard}
-                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-green-600 hover:animate-pulse hover:cursor-grab disabled:text-white/70"
+                                disabled={true}
+                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
                             >
-                                {isMutating ? "Sending..." : "CLAIM CARD"}
-                                {isPending ? (
-                                    <div
-                                        className="absolute right-2 top-1.5"
-                                        role="status"
-                                    >
-                                        <div
-                                            className="
-        h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent"
-                                        />
-                                        <span className="sr-only">
-                                            Loading...
-                                        </span>
-                                    </div>
-                                ) : null}
+                                V<span className="text-yellow-400 hover:animate-none">i</span>
+                                PER
                             </button>
                         )
-                    ) : (
-                        <button
-                            disabled={true}
-                            className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
-                        >
-                            V
-                            <span className="text-yellow-400 hover:animate-none">
-                                i
-                            </span>
-                            PER
-                        </button>
-                    )
-                ) : null
-                // <button
-                //     disabled={true}
-                //     className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-yellow-400"
-                // >
-                //     full ViPERS
-                // </button>
-            }
+                    ) : null
+                    // <button
+                    //     disabled={true}
+                    //     className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-yellow-400"
+                    // >
+                    //     full ViPERS
+                    // </button>
+                }
+            </div>
         </div>
     )
 }

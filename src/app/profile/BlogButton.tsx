@@ -25,17 +25,18 @@ export function BlogButton({
     const writeBlog = async (): Promise<void> => {
         // remember this for when we clear the AddComment Button
         //   if (!event && !reply && !blog) {
-        const response = await fetch(`/api/create-blog`, {
+        const response = await fetch(`/api/viper/blog/create`, {
             method: "POST",
             headers: {
                 "Content-type": "application/json",
             },
             body: JSON.stringify({
-                viperId: viperId,
-                comment: comment,
+                _id: viperId,
+                content: comment,
             }),
         })
-        await response.json()
+        const freshComment = await response.json()
+
         startTransition(() => {
             setComment("")
             setOpenCommentInput(!openCommentInput)
@@ -54,10 +55,7 @@ export function BlogButton({
                 Let's Blog
             </button>
             {openCommentInput ? (
-                <div
-                    data-test="commentInput"
-                    className="fixed  inset-0 z-30 overflow-x-auto "
-                >
+                <div data-test="commentInput" className="fixed  inset-0 z-30 overflow-x-auto ">
                     <div className="flex items-center min-h-screen px-4 py-4">
                         <div className="relative w-full max-w-md p-4  mx-auto bg-gray-900 rounded-xl shadow-lg">
                             <div className="space-x-2">
@@ -65,9 +63,7 @@ export function BlogButton({
                                     <div className="grid grid-cols-9 space-y-2">
                                         <button
                                             className="absolute left-2 top-2 text-gray-300 hover:text-red-700"
-                                            onClick={() =>
-                                                setOpenCommentInput(false)
-                                            }
+                                            onClick={() => setOpenCommentInput(false)}
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -104,9 +100,7 @@ export function BlogButton({
                                             data-test="add-comment"
                                             className="h-20 p-2 col-start-3 col-span-7 text-gray-300 bg-black/30 border-[2px] rounded-lg border-transparent sm:text-xs outline-none focus:border-yellow-700/80"
                                             value={comment}
-                                            onChange={(e) =>
-                                                setComment(e.target.value)
-                                            }
+                                            onChange={(e) => setComment(e.target.value)}
                                             rows={3}
                                             placeholder={"Share your thoughts"}
                                             maxLength={160}
@@ -124,9 +118,7 @@ export function BlogButton({
                                                     role="status"
                                                 >
                                                     <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                                    <span className="sr-only">
-                                                        Loading...
-                                                    </span>
+                                                    <span className="sr-only">Loading...</span>
                                                 </div>
                                             ) : null}
                                         </button>

@@ -9,14 +9,16 @@ declare module "next-auth" {
      */
     interface Session {
         user: {
-            id: string
+            _id: string
             name: string
             email: string
             image: string
             location: string
             address: Address
-            customerAccessToken: string
+            shopify: Shopify
+            // we are not using the accessToken,, yet
             accessToken: string
+            // customerAccessToken: string
         }
     }
     /**
@@ -33,16 +35,19 @@ declare module "next-auth" {
         image: string
         location: string
         address: Address
-        customerAccessToken: string
+        shopify: Shopify
+        // we are not using the accessToken,, yet
         accessToken: string
     }
 
     interface User {
+        _id: string
         name: string
         email: string
         image: string
         location: string
         shopify: Shopify
         address: Address
+        // we are not using the accessToken,, yet
     }
 }

@@ -1,11 +1,7 @@
 import { Chats } from "@/types/viper"
 import Chat from "./Chat"
 
-export async function DisplayChat({
-    chatPromise,
-}: {
-    chatPromise: Promise<Chats[]>
-}) {
+export async function DisplayChat({ chatPromise }: { chatPromise: Promise<Chats[]> }) {
     const messenger: Chats[] = await chatPromise
     return (
         <>

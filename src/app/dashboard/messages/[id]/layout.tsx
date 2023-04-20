@@ -13,7 +13,7 @@ export default async function Layout({ children, params }: PageProps) {
         <div>
             <div className="my-5">{children}</div>
 
-            <ChatInput id={id} viperId={viper.id} />
+            <ChatInput id={id} viperId={viper._id} />
         </div>
     )
 }

@@ -1,7 +1,8 @@
 import { Reply } from "@/types/event"
 import { EventCommentsCard } from "@/app/[id]/EventCommentsCard"
 import { delay } from "@/lib/delay"
-import { ViperBasics, getViperBasicsProps } from "@/lib/vipers"
+import { getViperBasicsProps } from "@/lib/vipers"
+import { Viper } from "@/types/viper"
 
 export async function CommentReplies({
     repliesPromise,
@@ -14,13 +15,9 @@ export async function CommentReplies({
     commentId: string
     viperId: string
 }) {
-    const commentViperData: Promise<ViperBasics | null> =
-        getViperBasicsProps(viperId)
+    const commentViperData: Promise<Viper | null> = getViperBasicsProps(viperId)
 
-    const [replies, commentViper] = await Promise.all([
-        repliesPromise,
-        commentViperData,
-    ])
+    const [replies, commentViper] = await Promise.all([repliesPromise, commentViperData])
 
     if (!replies) throw new Error("No event bro")
 
@@ -38,10 +35,7 @@ export async function CommentReplies({
                         viperId={JSON.stringify(reply.viperId)}
                         text={reply.reply}
                         commentLikes={reply.likes.length}
-                        replyId={JSON.stringify(reply._id).replace(
-                            /["']+/g,
-                            ""
-                        )}
+                        replyId={JSON.stringify(reply._id).replace(/["']+/g, "")}
                         timestamp={reply.timestamp}
                         reply={true}
                     />

@@ -13,6 +13,7 @@ export const EditEventLink = <T extends string>({
     return (
         <div className="flex justify-end">
             <Link
+                data-test="edit"
                 href={href}
                 className="flex justify-between gap-1 text-gray-300 py-3"
             >

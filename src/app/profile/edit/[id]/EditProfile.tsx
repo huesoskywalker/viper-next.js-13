@@ -1,25 +1,29 @@
 "use client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState, useTransition, FormEvent } from "react"
+import { useState, useTransition, FormEvent, useEffect } from "react"
 import Image from "next/image"
 
 export default function EditProfile({
     viperId,
     name,
+    // image,
+    // backgroundImage,
     biography,
     location,
 }: {
     viperId: string
     name: string
+    // image: string
+    // backgroundImage: string
     biography: string
     location: string
 }) {
     const [newName, setNewName] = useState<string>(name)
     const [newBiography, setNewBiography] = useState<string>(biography)
     const [newLocation, setNewLocation] = useState<string>(location)
-    const [profileImage, setProfileImage] = useState<string>("")
-    const [backgroundImage, setBackgroundImage] = useState<string>("")
+    const [profileImageFile, setProfileImageFile] = useState<File>()
+    const [backgroundImageFile, setBackgroundImageFile] = useState<File>()
     const [createObjectURL, setCreateObjectURL] = useState<string>("")
     const [showProfileImg, setShowProfileImg] = useState<boolean>(false)
 
@@ -30,64 +34,60 @@ export default function EditProfile({
 
     const isMutating = isFetching || isPending
 
-    const handleSubmit = async (
-        e: FormEvent<HTMLFormElement>
-    ): Promise<void> => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         setIsFetching(true)
+
         try {
-            const image = new FormData()
-            image.append("image", profileImage)
-            const uploadImage = await fetch(`/api/viper/update-profile-image`, {
+            const profileImage = new FormData()
+            if (profileImageFile) profileImage.append("file", profileImageFile)
+            const uploadImage = await fetch(`/api/viper/profile-image`, {
                 method: "PUT",
-                body: image,
+                body: profileImage,
             })
             const {
                 data,
                 error,
             }: {
                 data: {
-                    url: string | string[] | null
-                } | null
+                    url: string | null
+                }
                 error: string | null
             } = await uploadImage.json()
             const imageUrl = data?.url
-
-            const bgImage = new FormData()
-            bgImage.append("backgroundImage", backgroundImage)
-            const bgUploadImage = await fetch(
-                `/api/viper/update-background-image`,
-                {
-                    method: "PUT",
-                    body: bgImage,
-                }
-            )
+            // ---------------------------------------------------------------
+            const backgroundImage = new FormData()
+            if (backgroundImageFile) backgroundImage.append("file", backgroundImageFile)
+            const bgUploadImage = await fetch(`/api/viper/background-image`, {
+                method: "PUT",
+                body: backgroundImage,
+            })
             const {
                 bgData,
                 bgError,
             }: {
                 bgData: {
-                    url: string | string[] | null
-                } | null
+                    url: string | null
+                }
                 bgError: string | null
             } = await bgUploadImage.json()
             const bgImageUrl = bgData?.url
-
+            // -----------------------------------------------
             const response = await fetch(`/api/viper/edit`, {
                 method: "PUT",
                 headers: {
                     "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                    viperId,
-                    newName,
-                    newBiography,
-                    newLocation,
-                    imageUrl: imageUrl,
-                    bgImageUrl: bgImageUrl,
+                    _id: viperId,
+                    name: newName,
+                    biography: newBiography,
+                    location: newLocation,
+                    image: imageUrl,
+                    backgroundImage: bgImageUrl,
                 }),
             })
-            await response.json()
+            const freshViper = await response.json()
 
             setIsFetching(false)
 
@@ -95,39 +95,38 @@ export default function EditProfile({
                 setNewName("")
                 setNewBiography("")
                 setNewLocation("")
-                setProfileImage("")
-                setBackgroundImage("")
+                // check here, refresh is maybe for the new data?
+                // or should the edge fetch revalidate?
                 router.refresh()
                 router.prefetch("/profile")
             })
-            // Same in EditForm, if works, DELETE
             router.push(`/profile`)
         } catch (error) {
             console.error(error)
         }
     }
 
-    const uploadBackgroundImage = (event: any) => {
+    const uploadProfileImage = async (event: any) => {
         if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0]
-
-            setBackgroundImage(i)
-            // setCreateObjectURL(URL.createObjectURL(i))
+            const profileFile = event.target.files[0]
+            setProfileImageFile(profileFile)
+            setCreateObjectURL(URL.createObjectURL(profileFile))
+            setShowProfileImg(!showProfileImg)
         }
     }
-    const uploadProfileImage = (event: any) => {
+    const uploadBackgroundImage = async (event: any) => {
         if (event.target.files && event.target.files[0]) {
-            const i = event.target.files[0]
+            const backgroundFile = event.target.files[0]
+            setBackgroundImageFile(backgroundFile)
 
-            setProfileImage(i)
-
-            setCreateObjectURL(URL.createObjectURL(i))
-            setShowProfileImg(!showProfileImg)
+            // setCreateObjectURL(URL.createObjectURL(j))
+            // setShowProfileImg(!showProfileImg)
         }
     }
 
     const acceptProfileImg = (): void => {
         setShowProfileImg(!showProfileImg)
+        setCreateObjectURL("")
     }
 
     return (
@@ -158,51 +157,34 @@ export default function EditProfile({
                         <div className="flex justify-center">
                             <div className="w-full mx-6">
                                 <div className="grid grid-cols-1 gap-6">
-                                    <form
-                                        onSubmit={(e) => handleSubmit(e)}
-                                        className="text-sm"
-                                    >
+                                    <form onSubmit={(e) => handleSubmit(e)} className="text-sm">
                                         <label className="block py-1">
-                                            <span className="text-gray-300">
-                                                Full name
-                                            </span>
+                                            <span className="text-gray-300">Full name</span>
                                             <input
                                                 data-test="new-name"
                                                 type="text"
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 value={newName}
-                                                onChange={(e) =>
-                                                    setNewName(e.target.value)
-                                                }
+                                                onChange={(e) => setNewName(e.target.value)}
                                             />
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300">
-                                                Add a biography
-                                            </span>
+                                            <span className="text-gray-300">Add a biography</span>
                                             <textarea
                                                 data-test="new-biography"
                                                 className="block p-1 w-full   rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={newBiography}
-                                                onChange={(e) =>
-                                                    setNewBiography(
-                                                        e.target.value
-                                                    )
-                                                }
+                                                onChange={(e) => setNewBiography(e.target.value)}
                                                 rows={2}
                                             ></textarea>
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300">
-                                                Profile Image
-                                            </span>
+                                            <span className="text-gray-300">Profile Image</span>
                                             <input
                                                 data-test="new-profile-image"
                                                 className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
-                                                onChange={(e) =>
-                                                    uploadProfileImage(e)
-                                                }
+                                                onChange={(e) => uploadProfileImage(e)}
                                             />
                                         </label>
                                         {showProfileImg ? (
@@ -210,9 +192,7 @@ export default function EditProfile({
                                                 <div className="flex justify-end">
                                                     <button
                                                         data-test="accept-profile-image"
-                                                        onClick={
-                                                            acceptProfileImg
-                                                        }
+                                                        onClick={acceptProfileImg}
                                                         className="fixed j rounded-full bg-black z-10"
                                                     >
                                                         <svg
@@ -242,14 +222,12 @@ export default function EditProfile({
                                             </div>
                                         ) : null}
                                         <label className="block py-1">
-                                            <span className="text-gray-300">
-                                                Background Image
-                                            </span>
+                                            <span className="text-gray-300">Background Image</span>
                                             <input
                                                 data-test="new-background-image"
                                                 className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
                                                 type={"file"}
-                                                onChange={uploadBackgroundImage}
+                                                onChange={(e) => uploadBackgroundImage(e)}
                                             ></input>
                                         </label>
                                         <label className="block py-1">
@@ -259,36 +237,16 @@ export default function EditProfile({
                                             <select
                                                 data-test="new-location"
                                                 className="block p-1 w-full rounded-lg border   sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                onChange={(e) =>
-                                                    setNewLocation(
-                                                        e.target.value
-                                                    )
-                                                }
+                                                onChange={(e) => setNewLocation(e.target.value)}
                                             >
-                                                <option value={"Nowhere"}>
-                                                    Select an Option
-                                                </option>
-                                                <option value={"Argentina"}>
-                                                    Argentina
-                                                </option>
-                                                <option value={"California"}>
-                                                    California
-                                                </option>
-                                                <option value={"Uruguay"}>
-                                                    Uruguay
-                                                </option>
-                                                <option value={"Spain"}>
-                                                    Spain
-                                                </option>
-                                                <option value={"Italy"}>
-                                                    Italy
-                                                </option>
-                                                <option value={"Greece"}>
-                                                    Greece
-                                                </option>
-                                                <option value={"New Zealand"}>
-                                                    New Zealand
-                                                </option>
+                                                <option value={"Nowhere"}>Select an Option</option>
+                                                <option value={"Argentina"}>Argentina</option>
+                                                <option value={"California"}>California</option>
+                                                <option value={"Uruguay"}>Uruguay</option>
+                                                <option value={"Spain"}>Spain</option>
+                                                <option value={"Italy"}>Italy</option>
+                                                <option value={"Greece"}>Greece</option>
+                                                <option value={"New Zealand"}>New Zealand</option>
                                             </select>
                                         </label>
                                         <div className="flex justify-center">
@@ -302,18 +260,14 @@ export default function EditProfile({
                                                 disabled={isPending}
                                                 type={"submit"}
                                             >
-                                                {isMutating
-                                                    ? "Editing..."
-                                                    : "Edit Profile"}
+                                                {isMutating ? "Editing..." : "Edit"}
                                                 {isPending ? (
                                                     <div
                                                         className="absolute right-2 top-1.5"
                                                         role="status"
                                                     >
                                                         <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
-                                                        <span className="sr-only">
-                                                            Loading...
-                                                        </span>
+                                                        <span className="sr-only">Loading...</span>
                                                     </div>
                                                 ) : null}
                                             </button>

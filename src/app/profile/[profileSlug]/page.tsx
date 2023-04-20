@@ -1,7 +1,7 @@
 import { Session } from "next-auth"
 import { getCurrentViper } from "@/lib/session"
 import { getBlogLikesAndRePosts } from "@/lib/vipers"
-import { CommentBlog, ExternalBlog } from "@/types/viper"
+import { ExternalBlog } from "@/types/viper"
 import PostAndLikeCard from "./PostAndLikeCard"
 
 export default async function ProfileSlugPage() {

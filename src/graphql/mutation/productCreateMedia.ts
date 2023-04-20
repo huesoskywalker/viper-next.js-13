@@ -3,16 +3,16 @@ export const MEDIA_CREATE = gql`
     mutation productCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) {
         productCreateMedia(media: $media, productId: $productId) {
             media {
-                alt
+                # alt
                 mediaContentType
                 status
             }
-            mediaUserErrors {
-                field
-                message
-            }
+            # mediaUserErrors {
+            #     field
+            #     message
+            # }
             product {
-                id
+                # id
                 title
             }
         }
