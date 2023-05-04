@@ -27,7 +27,7 @@ export function AddFollow({
         const response = await fetch(`/api/follow-viper`, {
             method: "PUT",
             headers: {
-                "Content-type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
                 viperId: viperId,

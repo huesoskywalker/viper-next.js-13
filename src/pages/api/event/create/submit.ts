@@ -3,7 +3,7 @@ import clientPromise from "@/lib/mongodb"
 import { DeleteResult, InsertOneResult, ModifyResult, ObjectId } from "mongodb"
 import { existsSync } from "fs"
 import fs from "fs"
-import { EventInterface } from "@/types/event"
+import { EventInterface, Product } from "@/types/event"
 import { Viper } from "@/types/viper"
 
 export default async function handler(
@@ -12,29 +12,31 @@ export default async function handler(
     // Gotta add | Unions and ModifyResult is deprecated
     // res: NextApiResponse<InsertOneResult<EventInterface>>
 ) {
-    const body = req.body
-    const organizer: {
-        _id: string
-        name: string
-        email: string
-    } = body.organizer
-    const title: string = body.title
-    const content: string = body.content
-    // const time: string = body.time
-    const location: string = body.location
-    const address: string = body.address
-    const date: string = body.date
-    const category: string = body.category
-    const price: number = body.price
-    const entries: number = body.entries
-    const image: string = body.image
-    const productId: string = body.productId
-
     const client = await clientPromise
     const db = client.db("viperDb")
     const eventCollection = db.collection<EventInterface>("events")
     const viperCollection = db.collection<Viper>("users")
+
+    const body = req.body
+
+    const title: string = body.title
+    const content: string = body.content
+    const location: string = body.location
+    const date: string = body.date
+    const category: string = body.category
+    const price: number = body.price
+
     if (req.method === "POST") {
+        const organizer: {
+            _id: string
+            name: string
+            email: string
+        } = body.organizer
+        const address: string = body.address
+        const entries: number = body.entries
+        const image: string = body.image
+        const product: Product = body.product
+
         try {
             const newEvent: InsertOneResult<EventInterface> = await eventCollection.insertOne({
                 _id: new ObjectId(),
@@ -53,10 +55,10 @@ export default async function handler(
                 editionDate: Date.now(),
                 likes: [],
                 comments: [],
-                productId: productId,
+                product: product,
             })
 
-            const eventOrganizer: ModifyResult<Viper> = await viperCollection.findOneAndUpdate(
+            const organizerEvent: ModifyResult<Viper> = await viperCollection.findOneAndUpdate(
                 {
                     _id: new ObjectId(organizer._id),
                 },
@@ -68,27 +70,14 @@ export default async function handler(
                     },
                 }
             )
-            console.log(`-------newEvent---------`)
-            console.log(newEvent)
-            console.log(`-------eventOrganizer---------`)
-            console.log(eventOrganizer)
-            return res.status(200).json(
-                newEvent
-                //     {
-                //     newEvent: {
-                //         acknowledged: newEvent.acknowledged,
-                //         insertedId: newEvent.insertedId,
-                //     },
-                //     organizer: {
-                //         ok: eventOrganizer.ok,
-                //     },
-                // }
-            )
+
+            return res.status(200).json([newEvent, organizerEvent])
         } catch (error) {
             return res.status(400).json(error)
         }
     }
     if (req.method === "PUT") {
+        const dateNow: number = body.dateNow
         try {
             const editEvent: ModifyResult<EventInterface> = await eventCollection.findOneAndUpdate(
                 {
@@ -106,8 +95,8 @@ export default async function handler(
                         location: location,
                         date: date,
                         category: category,
-                        editionDate: Date.now(),
-                        price: Number(price),
+                        editionDate: dateNow,
+                        price: price,
                     },
                 }
             )
@@ -117,6 +106,7 @@ export default async function handler(
         }
     }
     if (req.method === "DELETE") {
+        // If crash on delete, it is because the declares declares outside are not requested on the body
         try {
             const deleteEvent: DeleteResult = await eventCollection.deleteOne({
                 _id: new ObjectId(body.eventId),

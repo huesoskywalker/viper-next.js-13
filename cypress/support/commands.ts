@@ -2,21 +2,29 @@
 
 import { format } from "date-fns"
 import _ from "lodash"
-import { sessionViper } from "./sessionViper"
-import { productInventory } from "./event"
-import { eventKeys, productInventoryKey, sessionKeys } from "./objectKeys"
-import {
-    buildObjectProperties,
-    buildProps,
-    expectBodyKeyEqualObjectKey,
-    expectInterceptionEqualRequestOptions,
-    isAliasObject,
-    isPathInTarget,
-} from "./helperFuncs"
+import { rawSession } from "./myApp/session"
+import { ProductInventory, productInventory } from "./myApp/event"
+import { sessionKeys } from "./myApp/sessionKeys"
+import { eventKeys, productInventoryKeys } from "./myApp/eventKeys"
+import { EventInterface } from "@/types/event"
 
 export {}
 
-Cypress.Commands.add("signInWithCredential", (username, password) => {
+export type Alias<T> = {
+    [K in keyof T]: `@\${string & T[K]}`
+}
+
+export type BodyType = {
+    [key: string]: any
+}
+
+function isPathInTarget(object: object | string, path: string | undefined) {
+    if (!path) return undefined
+    const cleanPath = path.replace(/(?:\.\w+|\[\d+\])$/, "")
+    return _.has(object, cleanPath) ? cleanPath : undefined
+}
+
+Cypress.Commands.add("signInWithCredential", (username: string, password: string) => {
     cy.session(
         username,
         () => {
@@ -47,7 +55,7 @@ Cypress.Commands.add("signInWithCredential", (username, password) => {
                         path: "user",
                     },
                     build: {
-                        object: sessionViper,
+                        object: rawSession,
                         alias: "session",
                     },
                 }
@@ -70,22 +78,13 @@ Cypress.Commands.add("signInWithCredential", (username, password) => {
         //     },
         // }
     )
-    // .then(() => {
-    //     cy.visit("/")
-
-    //     return
-    //  cy.get("@session").then((viper: any) => {
-    //         cy.getByData("nav-item").contains(viper.name)
-    //         cy.log("Cypress login successful")
-    //     })
-    // })
 })
 
-Cypress.Commands.add("getByData", (selector) => {
+Cypress.Commands.add("getByData", (selector: string) => {
     return cy.get(`[data-test=${selector}]`)
 })
 
-Cypress.Commands.add("clickButton", (selector, contains, href?) => {
+Cypress.Commands.add("clickButton", (selector: string, contains: string, href?: string) => {
     if (href) {
         return cy.getByData(selector).contains(contains).should("have.attr", "href", href).click()
     } else {
@@ -93,130 +92,283 @@ Cypress.Commands.add("clickButton", (selector, contains, href?) => {
     }
 })
 
-Cypress.Commands.add("inputType", (selector, value) => {
+Cypress.Commands.add("inputType", (selector: string, value: string) => {
     return cy.getByData(selector).clear().type(value)
 })
 
-Cypress.Commands.add("inputSelect", (selector, value) => {
+Cypress.Commands.add("inputSelect", (selector: string, value: string) => {
     return cy.getByData(selector).select(value).should("have.value", value)
 })
 
-Cypress.Commands.add("dataInContainer", (selector, value) => {
+Cypress.Commands.add("dataInContainer", (selector: string, value: string) => {
     return cy.getByData(selector).contains(value).should("be.visible")
 })
 
-Cypress.Commands.add("apiRequestAndResponse", (requestOptions, responseOptions) => {
-    const { url, headers, method, body } = requestOptions
-    const { status, expectRequest, build } = responseOptions
-    const request =
-        method === "GET"
-            ? cy.api({
-                  url: url,
-                  method: method,
-                  headers: headers,
-              })
-            : cy.api({
-                  url: url,
-                  method: method,
-                  headers: headers,
-                  body: body,
-              })
-
-    request.then((response) => {
-        const {
-            status: responseStatus,
-            requestHeaders,
-            headers: responseHeaders,
-            body: responseBody,
-        } = response
-        const targetBody = Array.isArray(responseBody) ? responseBody[0] : responseBody
-        expect(responseStatus).to.equal(status)
-        expect(requestHeaders).to.include(headers)
-        if (expectRequest) {
-            const { keys, object, path } = expectRequest
-            const targetValue = path ? _.get(targetBody, path) : targetBody
-            expect(targetValue).to.have.all.keys(keys)
-            // this super wrong bro, why if object? makes no sense
-            if (object) {
-                // check please ! why if object
-                expectBodyKeyEqualObjectKey(targetValue, object)
+Cypress.Commands.add(
+    "apiRequestAndResponse",
+    (
+        requestOptions: {
+            url: string
+            headers: object
+            method: string
+            body?: object
+        },
+        responseOptions: {
+            status: number
+            expectRequest?: {
+                keys: string[]
+                object?: object | Alias<string>
+                path?: string
             }
-            if (build) {
-                const { object, alias } = build
-                buildObjectProperties(targetValue, object, { propPath: path, alias: alias })
+            build?: {
+                object: object | Alias<string>
+                alias?: Alias<string>
             }
         }
-    })
-})
+    ) => {
+        const { url, headers, method, body } = requestOptions
+        const { status, expectRequest, build } = responseOptions
+
+        const request =
+            method === "GET"
+                ? cy.api({
+                      url: url,
+                      method: method,
+                      headers: headers,
+                  })
+                : cy.api({
+                      url: url,
+                      method: method,
+                      headers: headers,
+                      body: body,
+                  })
+
+        request.then((response) => {
+            const {
+                status: responseStatus,
+                requestHeaders,
+                headers: responseHeaders,
+                body: responseBody,
+            } = response
+            const targetBody = Array.isArray(responseBody) ? responseBody[0] : responseBody
+            expect(responseStatus).to.equal(status)
+            expect(requestHeaders).to.include(headers)
+            if (expectRequest) {
+                const { keys, object: expectObject, path } = expectRequest
+                const targetValue = path ? _.get(targetBody, path) : targetBody
+                expect(targetValue).to.have.all.keys(keys)
+                if (expectObject) {
+                    cy.expectBodyKeyEqualObjectKey(targetValue, expectObject)
+                }
+                if (build) {
+                    const { object: buildObject, alias } = build
+                    cy.buildObjectProperties(targetValue, buildObject, {
+                        objPath: path,
+                        alias: alias,
+                    })
+                }
+            } else if (!expectRequest && build) {
+                const { object, alias } = build
+                cy.buildObjectProperties(targetBody, object, { alias })
+            }
+        })
+    }
+)
+
+Cypress.Commands.add(
+    "expectBodyKeyEqualObjectKey",
+    (body: BodyType, object: object | Alias<string>) => {
+        cy.isAliasObject(object).then((realObject: any) => {
+            Object.keys(realObject).forEach((key: any) => {
+                expect(body[key]).to.deep.equal(realObject[key])
+            })
+        })
+    }
+)
 
 Cypress.Commands.add(
     "verifyInterceptionRequestAndResponse",
-    (interception, requestOptions, responseOptions, dataOptions, buildProperty?) => {
+    (
+        interception,
+        requestOptions: {
+            reqUrl: string
+            reqHeaders: object
+            reqMethod: string
+            reqBody: object | Alias<string> | (object | Alias<string>)[]
+            reqKeys: (string | number)[]
+        },
+        responseOptions: {
+            resStatus: number
+            resHeaders: object
+            resKeys: (string | number)[] | (string | number)[][]
+            resBody?: object | Alias<string> | (object | Alias<string>)[]
+        },
+        dataOptions:
+            | {
+                  source: "mongodb" | "shopify"
+                  action?: "create" | "edit"
+              }
+            | {
+                  source: "mongodb" | "shopify"
+                  action?: "create" | "edit"
+              }[],
+        buildProperty?:
+            | {
+                  body: "response" | "request"
+                  propKeys:
+                      | {
+                            reqKey: string
+                            objKey: string
+                        }
+                      | {
+                            reqKey: string
+                            objKey: string
+                        }[]
+                  object: object | Alias<string> | (object | Alias<string>)[]
+                  objPath?: string | (string | undefined)[]
+                  alias?: Alias<string> | (Alias<string> | undefined)[]
+              }
+            | ({
+                  body: "response" | "request"
+                  propKeys:
+                      | {
+                            reqKey: string
+                            objKey: string
+                        }
+                      | {
+                            reqKey: string
+                            objKey: string
+                        }[]
+                  object: object | Alias<string> | (object | Alias<string>)[]
+                  objPath?: string | (string | undefined)[]
+                  alias?: Alias<string> | (Alias<string> | undefined)[]
+              } | null)[]
+    ) => {
         const {
             statusCode: statusCode,
             headers: responseHeaders,
             body: responseBody,
         } = interception.response
-        const { reqHeaders } = requestOptions
         const { resStatus, resHeaders, resBody, resKeys } = responseOptions
-        const { source, action } = dataOptions
+        const { body: requestBody } = interception.request
 
-        const resHeadersAvailable = resHeaders ? resHeaders : reqHeaders
+        const isResponseBodyArray = Array.isArray(responseBody)
+        const isResKeysArray = Array.isArray(resKeys)
+        const isResBodyArray = Array.isArray(resBody)
+        const isDataOptionsArray = Array.isArray(dataOptions)
+        const isBuildPropertyArray = Array.isArray(buildProperty)
 
-        expect(statusCode).to.equal(resStatus)
-        expect(responseHeaders).to.include(resHeadersAvailable)
-        // expect(responseBody).to.have.all.keys(resKeys)
+        if (
+            isResponseBodyArray &&
+            isResKeysArray &&
+            isResBodyArray &&
+            isDataOptionsArray &&
+            isBuildPropertyArray
+        ) {
+            for (let i = 0; i < responseBody.length; i++) {
+                const { source, action } = dataOptions[i]
+                const isMongoEditDoc = source === "mongodb" && action === "edit"
+                const document = isMongoEditDoc ? responseBody[i].value : responseBody[i]
+                cy.expectInterceptionEqualRequestOptions(interception.request, requestOptions)
+                expect(statusCode).to.equal(resStatus)
+                expect(responseHeaders).to.include(resHeaders)
+                expect(document).to.have.all.keys(resKeys[i])
 
-        expectInterceptionEqualRequestOptions(interception.request, requestOptions)
-
-        if (Array.isArray(responseBody)) {
-            const { body: requestBody } = interception.request
-            responseBody.forEach((body: any) => {
-                const document = source === "mongodb" ? body.value : body
-                // we are missing the keys in here, why?
-                // let's play with the keys everywhere to make more gringo
-
-                expectBodyKeyEqualObjectKey(document, resBody)
-                expectMongoDBResponse(body)
-
-                if (buildProperty) {
-                    console.log(`--verifyCommand buildProp path`)
-                    console.log(buildProperty.propPath)
-                    buildObjectProperties(requestBody, resBody, buildProperty)
+                if (resBody[i]) {
+                    cy.expectBodyKeyEqualObjectKey(document, resBody[i])
                 }
-            })
-        } else if (buildProperty) {
-            buildObjectProperties(responseBody, resBody, buildProperty)
 
-            const { propKeys } = buildProperty
-            const [parentKey, ...childKeys] = propKeys.reqKey.split(".")
+                cy.expectMongoDBResponse(responseBody[i], action)
 
-            if (childKeys.length) {
-                const childKey = childKeys.join(".")
-                expect(responseBody[parentKey]).to.have.deep.property(childKey)
-            } else {
-                expect(responseBody).to.have.deep.property(parentKey)
+                if (buildProperty[i]) {
+                    const { body, propKeys, object, objPath, alias } = buildProperty[i]!
+                    const buildProps = {
+                        propKeys,
+                        realObject: object,
+                        expectProperty: body,
+                        objPath,
+                        alias,
+                    }
+
+                    const bodyValue = body === "response" ? document : requestBody
+                    cy.handleBuildProperty(bodyValue, buildProps)
+                }
             }
-        } else {
-            const responseValue = source === "mongodb" ? responseBody.value : responseBody
-            // keys here also?
-            expectBodyKeyEqualObjectKey(responseValue, resBody)
-            if (source === "mongodb") expectMongoDBResponse(responseBody)
+        } else if (!isDataOptionsArray) {
+            const { source, action } = dataOptions
+            const isMongoEditDoc = source === "mongodb" && action === "edit"
+            const responseValue = isMongoEditDoc ? responseBody.value : responseBody
+
+            expect(statusCode).to.equal(resStatus)
+            expect(responseHeaders).to.include(resHeaders)
+            expect(responseValue).to.have.all.keys(resKeys)
+            cy.expectInterceptionEqualRequestOptions(interception.request, requestOptions)
+            if (resBody) {
+                cy.expectBodyKeyEqualObjectKey(responseValue, resBody)
+            }
+            if (source === "mongodb") {
+                cy.expectMongoDBResponse(responseBody, action)
+            }
+            if (buildProperty && !isBuildPropertyArray) {
+                const { body, propKeys, object, objPath, alias } = buildProperty
+                const bodyValue = body === "response" ? responseValue : requestBody
+                const buildProps = {
+                    propKeys,
+                    expectProperty: body,
+                    realObject: object,
+                    objPath,
+                    alias,
+                }
+                cy.handleBuildProperty(bodyValue, buildProps)
+            }
         }
     }
 )
 
-function expectMongoDBResponse(response: any) {
-    // if (action === "edit") {
-    expect(response.ok).to.equal(1)
-    expect(response.lastErrorObject.n).to.equal(1)
-    expect(response.lastErrorObject.updatedExisting).to.equal(true)
-    // }
-}
-// }
-// )
+Cypress.Commands.add(
+    "expectInterceptionEqualRequestOptions",
+    (
+        interceptionRequest,
+        requestOptions: {
+            reqUrl: string
+            reqHeaders: object
+            reqMethod: string
+            reqBody: object | Alias<string> | (object | Alias<string>)[]
+            reqKeys: (string | number)[]
+        }
+    ) => {
+        const {
+            url: requestUrl,
+            method: requestMethod,
+            headers: requestHeaders,
+            body: requestBody,
+        } = interceptionRequest
+        const { reqUrl, reqHeaders, reqMethod, reqBody, reqKeys } = requestOptions
+        expect(requestUrl).to.include(reqUrl)
+        expect(requestMethod).to.equal(reqMethod)
+        expect(requestHeaders).to.include(reqHeaders)
+        expect(requestBody).to.have.all.keys(reqKeys)
+        if (Array.isArray(reqBody)) {
+            reqBody.forEach((body) => {
+                cy.expectBodyKeyEqualObjectKey(requestBody, body)
+            })
+        } else {
+            cy.expectBodyKeyEqualObjectKey(requestBody, reqBody)
+        }
+    }
+)
 
-Cypress.Commands.add("checkEventComponentProps", (event) => {
+Cypress.Commands.add("expectMongoDBResponse", (response, action?: "edit" | "create") => {
+    if (action === "edit") {
+        expect(response.ok).to.equal(1)
+        expect(response.lastErrorObject.n).to.equal(1)
+        expect(response.lastErrorObject.updatedExisting).to.equal(true)
+    } else {
+        expect(response.acknowledged).to.equal(true)
+    }
+})
+
+Cypress.Commands.add("checkEventComponentProps", (event: EventInterface) => {
     cy.apiRequestAndResponse(
         {
             url: `/api/event/${event._id}`,
@@ -240,7 +392,7 @@ Cypress.Commands.add("checkEventComponentProps", (event) => {
 
     cy.apiRequestAndResponse(
         {
-            url: `/api/product/inventory/${event.productId.toString().match(/\d+/g)}`,
+            url: `/api/product/inventory/${event.product._id.toString().match(/\d+/g)}`,
             headers: {
                 "content-type": "application/json",
             },
@@ -249,7 +401,7 @@ Cypress.Commands.add("checkEventComponentProps", (event) => {
         {
             status: 200,
             expectRequest: {
-                keys: productInventoryKey,
+                keys: productInventoryKeys,
             },
             build: {
                 object: productInventory,
@@ -258,13 +410,13 @@ Cypress.Commands.add("checkEventComponentProps", (event) => {
         }
     )
 
-    const checkDate = format(new Date(event.date), "MMM do, yyyy")
-    const checkSchedule = format(new Date(event.date), "cccc p")
+    const checkDate = format(new Date(event.date.split("T")[0]), "MMM do, yyyy")
+    const checkSchedule = format(new Date(event.date.split("T")[0]), "cccc p")
     cy.dataInContainer("date", checkDate)
     cy.dataInContainer("schedule", checkSchedule)
     cy.dataInContainer("location", event.location)
     cy.dataInContainer("price", `$${event.price}`)
-    cy.get("@productInventory").then((product: any) => {
+    cy.get<ProductInventory>("@productInventory").then((product) => {
         cy.dataInContainer("inventory-of-entries", `${product.totalInventory} of ${event.entries}`)
     })
 
@@ -272,6 +424,238 @@ Cypress.Commands.add("checkEventComponentProps", (event) => {
     cy.dataInContainer("show-viper", `Organized by:${event.organizer.name}`)
     cy.getByData("like-event").should("exist").and("be.visible")
     cy.getByData("comment-event").should("exist").and("be.visible")
+})
+
+Cypress.Commands.add(
+    "handleBuildProperty",
+    (
+        body: BodyType,
+        buildProperty: {
+            propKeys:
+                | {
+                      reqKey: string
+                      objKey: string
+                  }
+                | {
+                      reqKey: string
+                      objKey: string
+                  }[]
+            realObject: object | Alias<string> | (object | Alias<string>)[]
+            expectProperty: "response" | "request"
+            objPath?: string | (string | undefined)[]
+            alias?: Alias<string> | (Alias<string> | undefined)[]
+        }
+    ) => {
+        const { propKeys, realObject, expectProperty, objPath, alias } = buildProperty
+
+        if (expectProperty === "response") {
+            cy.handleAndExpectKeys(body, propKeys)
+        }
+
+        const isObjectArray = Array.isArray(realObject)
+        const isAliasArray = Array.isArray(alias)
+        const isPathArray = Array.isArray(objPath)
+
+        if (isObjectArray && isAliasArray && isPathArray) {
+            for (let i = 0; i < realObject.length && alias.length && objPath.length; i++) {
+                const object = realObject[i]
+                const objAlias = alias[i]
+                const path = objPath[i]
+                const wrapProperties = { propKeys, objPath: path, alias: objAlias }
+                cy.buildObjectProperties(body, object, wrapProperties)
+            }
+        } else if (isObjectArray && isAliasArray && !isPathArray) {
+            for (let i = 0; i < realObject.length && alias.length; i++) {
+                const object = realObject[i]
+                const objAlias = alias[i]
+                const path = objPath
+                const wrapProperties = { propKeys, objPath: path, alias: objAlias }
+                cy.buildObjectProperties(body, object, wrapProperties)
+            }
+        } else if (!isObjectArray && !isAliasArray && !isPathArray) {
+            const properties = { propKeys, objPath, alias }
+            cy.buildObjectProperties(body, realObject, properties)
+        } else if (isObjectArray && !alias && !isPathArray) {
+            const properties = { propKeys, objPath }
+            cy.buildObjectProperties(body, realObject, properties)
+        }
+    }
+)
+
+Cypress.Commands.add(
+    "handleAndExpectKeys",
+    (
+        body: BodyType,
+        propKeys: { reqKey: string; objKey: string } | { reqKey: string; objKey: string }[]
+    ) => {
+        if (Array.isArray(propKeys)) {
+            propKeys.forEach((keyPair) => {
+                const { reqKey, objKey } = keyPair
+                const [parentKey, ...childKeys] = reqKey.split(".")
+                if (childKeys.length) {
+                    const childKey = childKeys.join(".")
+                    expect(body[parentKey]).to.have.deep.property(childKey)
+                } else {
+                    expect(body).to.have.deep.property(parentKey)
+                }
+            })
+        } else {
+            const { reqKey, objKey } = propKeys
+            const [parentKey, ...childKeys] = reqKey.split(".")
+            if (childKeys.length) {
+                const childKey = childKeys.join(".")
+                expect(body[parentKey]).to.have.deep.property(childKey)
+            } else {
+                expect(body).to.have.deep.property(parentKey)
+            }
+        }
+    }
+)
+
+Cypress.Commands.add(
+    "buildObjectProperties",
+    (
+        body: BodyType,
+        object: object | Alias<string>,
+        properties: {
+            propKeys?:
+                | {
+                      reqKey: string
+                      objKey: string
+                  }
+                | {
+                      reqKey: string
+                      objKey: string
+                  }[]
+            objPath?: string
+            alias?: Alias<string>
+        }
+    ) => {
+        const { propKeys, objPath, alias } = properties
+
+        const objectProps = { propKeys, objPath }
+        if (alias && typeof object === "object") {
+            cy.wrap(object)
+                .then((object) => {
+                    cy.buildProps(body, object, objectProps)
+                })
+                .as(alias)
+        } else {
+            cy.isAliasObject(object).then((realObject) => {
+                cy.buildProps(body, realObject, objectProps)
+            })
+        }
+    }
+)
+
+Cypress.Commands.add("isAliasObject", (object: BodyType | Alias<string>) => {
+    const result: any = {}
+
+    if (typeof object === "string" && object.startsWith("@")) {
+        cy.get(`${object}`).then((realObject) => {
+            return realObject
+        })
+    } else if (typeof object === "object") {
+        Object.keys(object).forEach((key) => {
+            if (typeof object[key] === "string" && object[key].startsWith("@")) {
+                cy.get(`${object[key]}`).then((realObj) => {
+                    result[key] = realObj
+                })
+            } else if (
+                typeof object[key] === "object" &&
+                !Array.isArray(object[key]) &&
+                object[key] !== null
+            ) {
+                cy.isAliasObject(object[key]).then((realObj) => {
+                    result[key] = realObj
+                })
+            } else {
+                result[key] = object[key]
+            }
+        })
+        return cy.wrap(result)
+    }
+})
+
+Cypress.Commands.add(
+    "buildProps",
+    (
+        body: BodyType,
+        object: object,
+        properties: {
+            propKeys?:
+                | {
+                      reqKey: string
+                      objKey: string
+                  }
+                | {
+                      reqKey: string
+                      objKey: string
+                  }[]
+            objPath?: string | undefined
+        }
+    ) => {
+        const { propKeys, objPath } = properties
+
+        if (propKeys) {
+            cy.handleKeys(body, object, propKeys, objPath)
+        } else if (objPath) {
+            if (isPathInTarget(object, objPath)) {
+                cy.handlePath(object, objPath, body)
+            } else {
+                cy.handleObject(object, body)
+            }
+        } else {
+            cy.handleObject(object, body)
+        }
+    }
+)
+
+Cypress.Commands.add(
+    "handleKeys",
+    (
+        body: object,
+        object: object,
+        keys: { reqKey: string; objKey: string } | { reqKey: string; objKey: string }[],
+        path: string | undefined
+    ) => {
+        const propertyValues: { [key: string]: any } = {}
+
+        if (Array.isArray(keys)) {
+            keys.forEach((keyPair) => {
+                const { reqKey, objKey } = keyPair
+                propertyValues[objKey] = _.get(body, reqKey)
+            })
+        } else {
+            const { objKey, reqKey } = keys
+            propertyValues[objKey] = _.get(body, reqKey)
+        }
+        if (path) {
+            if (isPathInTarget(object, path)) {
+                cy.handlePath(object, path, propertyValues)
+            } else {
+                const bodyValue = _.get(body, path)
+                cy.handleObject(object, bodyValue)
+            }
+        } else {
+            cy.handleObject(object, propertyValues)
+        }
+    }
+)
+
+Cypress.Commands.add("handlePath", (object: object, path: string, value: object) => {
+    _.update(object, path, (currentValue) => {
+        const action = Array.isArray(currentValue)
+            ? _.concat(currentValue, value)
+            : { ...currentValue, ...value }
+        return action
+    })
+    return object
+})
+
+Cypress.Commands.add("handleObject", (object: object, value: object) => {
+    Object.assign(object, value)
+    return object
 })
 
 //     // Set the cookie for cypress.

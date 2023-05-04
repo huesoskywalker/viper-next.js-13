@@ -3,7 +3,7 @@ import { formatDuration, isTomorrow, intervalToDuration } from "date-fns"
 export const EventShowTime = ({ dateTime }: { dateTime: string }) => {
     const date: Duration = intervalToDuration({
         start: new Date(),
-        end: new Date(dateTime),
+        end: new Date(dateTime.split("T")[0]),
     })
     return (
         <div className="text-sm text-gray-300">

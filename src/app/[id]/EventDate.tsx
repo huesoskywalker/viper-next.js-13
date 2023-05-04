@@ -7,21 +7,19 @@ export const EventDate = ({
     date: string | number
     collection: boolean
 }) => {
-    console.log(`-----EventDate------`)
-    console.log(date)
     return (
         <div>
             {typeof date === "string" ? (
                 <div className="grid">
                     <strong data-test="date" className="font-bold text-sm text-gray-100">
-                        {format(new Date(date), " MMM do, yyyy")}
+                        {format(new Date(date.split("T")[0]), " MMM do, yyyy")}
                     </strong>
                     {!collection ? (
                         <strong
                             data-test="schedule"
                             className="font-semibold text-xs text-gray-100"
                         >
-                            {format(new Date(date), " cccc p")}
+                            {format(new Date(date.split("T")[0]), " cccc p")}
                         </strong>
                     ) : null}
                 </div>

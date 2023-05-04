@@ -5,15 +5,18 @@ import { Viper } from "@/types/viper"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const viperId: string = body.viperId
-    const phone: string = body.phone
-    const address: string = body.address
-    const city: string = body.city
-    const province: string = body.province
-    const zip: string = body.zip
-    const country: string = body.country
-    const accessToken: string = body.accessToken
-    const newCustomerId: string = body.newCustomerId
+    const shopify = body.shopify
+    const bodyAddress = body.address
+
+    const viperId: string = body._id
+    const phone: string = bodyAddress.phone
+    const address: string = bodyAddress.address
+    const city: string = bodyAddress.city
+    const province: string = bodyAddress.province
+    const zip: string = bodyAddress.zip
+    const country: string = bodyAddress.country
+    const accessToken: string = shopify.customerAccessToken
+    const newCustomerId: string = shopify.customerId
 
     const client = await clientPromise
     const db = client.db("viperDb")
@@ -27,11 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 {
                     $set: {
                         address: {
-                            phone: Number(phone),
+                            phone: phone,
                             address: address,
                             city: city,
                             province: province,
-                            zip: Number(zip),
+                            zip: zip,
                             country: country,
                         },
                         shopify: {
@@ -42,7 +45,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
                 { upsert: true }
             )
-            console.log(updateViper)
             return res.status(200).json(updateViper)
         } catch (error) {
             return res.status(400).json(error)

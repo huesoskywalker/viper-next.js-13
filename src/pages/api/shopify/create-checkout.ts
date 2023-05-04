@@ -11,13 +11,15 @@ import { RequestReturn } from "@shopify/shopify-api"
 const checkoutCreate = async (req: NextApiRequest, res: NextApiResponse) => {
     const body = req.body
     const session = shopifyAdmin.session.customAppSession("vipers-go.myshopify.com")
+    const email: string = body.email
+    const productId: string = body.product._id
 
     if (req.method === "POST") {
         try {
             const client = new shopifyAdmin.clients.Graphql({ session })
 
             const PRODUCT_INPUT = {
-                id: body.productId,
+                id: productId,
             }
 
             const product: RequestReturn<Product> = await client.query({
@@ -31,7 +33,7 @@ const checkoutCreate = async (req: NextApiRequest, res: NextApiResponse) => {
             const CHECKOUT_INPUT = {
                 input: {
                     allowPartialAddresses: true,
-                    email: body.viperEmail,
+                    email: email,
 
                     lineItems: [
                         {
@@ -48,8 +50,11 @@ const checkoutCreate = async (req: NextApiRequest, res: NextApiResponse) => {
                     variables: CHECKOUT_INPUT,
                 },
             })
-
-            return res.status(200).json({ checkout: checkout.body.data.checkoutCreate.checkout })
+            const checkoutCreate = checkout.body.data.checkoutCreate
+            return res.status(200).json({
+                checkout: checkoutCreate.checkout,
+                checkoutUserErrors: checkoutCreate.checkoutUserErrors,
+            })
         } catch (error: any) {
             return res.status(400).json(error)
         }

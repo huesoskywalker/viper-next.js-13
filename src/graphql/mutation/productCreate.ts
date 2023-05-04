@@ -5,6 +5,13 @@ export const PRODUCT_CREATE = gql`
         productCreate(input: $input) {
             product {
                 id
+                variants(first: 1) {
+                    edges {
+                        node {
+                            id
+                        }
+                    }
+                }
             }
             shop {
                 id

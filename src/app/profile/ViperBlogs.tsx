@@ -7,7 +7,7 @@ export async function ViperBlogs({ viperId }: { viperId: string }) {
     const fetchBlogs = await fetch("http://localhost:3000/api/viper/blog/all", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            "content-type": "application/json; charset=utf-8",
         },
         body: JSON.stringify({
             viper_id: viperId,

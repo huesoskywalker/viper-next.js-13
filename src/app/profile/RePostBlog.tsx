@@ -25,7 +25,7 @@ export default function RePostBlog({
         const response = await fetch(`/api/re-post-blog`, {
             method: "POST",
             headers: {
-                "Content-type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
                 _id: _id,

@@ -12,6 +12,10 @@ import {
     Likes,
 } from "@/types/viper"
 
+export type ID = {
+    [key: string]: string
+}
+
 export const address: Address = {
     phone: null,
     address: "",
@@ -45,10 +49,6 @@ export const blog: Blog = {
     likes: [],
     commented: [],
     rePosts: [],
-    // myBlog: [myBlog],
-    // likes: [externalBlog],
-    // commented: [externalBlog],
-    // rePosts: [externalBlog],
 }
 
 export const created: Created = {
@@ -62,11 +62,8 @@ export const collection: Collection = {
 export const myEvents: MyEvents = {
     _id: "",
     created: [],
-    // created: [created],
     collection: [],
-    // collection: [collection],
     likes: [],
-    // likes: [likes],
 }
 
 export const shopify: Shopify = {
@@ -80,7 +77,7 @@ const follows: Follow = {
     _id: "",
 }
 
-export const viper: Viper = {
+export const rawViper: Viper = {
     _id: "",
     address: address,
     backgroundImage: "",
@@ -94,7 +91,9 @@ export const viper: Viper = {
     shopify: shopify,
     myEvents: myEvents,
     followers: [],
-    // followers: [followers],
     follows: [],
-    // follows: [follows],
+}
+
+export const rawViperId: ID = {
+    _id: "",
 }

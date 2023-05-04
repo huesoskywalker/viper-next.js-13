@@ -7,12 +7,13 @@ import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    console.log(body.checkoutId)
+    const customerAccessToken: string = body.shopify.customerAccessToken
+    const checkoutId: string = body.checkoutId
     if (req.method === "POST") {
         try {
             const CHECKOUT_CUSTOMER_INPUT = {
-                checkoutId: body.checkoutId,
-                customerAccessToken: body.customerAccessToken,
+                checkoutId: checkoutId,
+                customerAccessToken: customerAccessToken,
             }
 
             const association: RequestReturn<Checkout & Customer> = await storefrontClient.query({
@@ -21,9 +22,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     variables: CHECKOUT_CUSTOMER_INPUT,
                 },
             })
-            return res
-                .status(200)
-                .json({ association: association.body.data.checkoutCustomerAssociateV2 })
+            const checkoutCustomerAssociateV2 = association.body.data.checkoutCustomerAssociateV2
+            return res.status(200).json({
+                associateCheckout: checkoutCustomerAssociateV2.checkout,
+                associateUserErrors: checkoutCustomerAssociateV2.checkoutUserErrors,
+                customer: checkoutCustomerAssociateV2.customer,
+            })
         } catch (error) {
             return res.status(400).json(error)
         }

@@ -7,7 +7,7 @@ import { Product } from "@shopify/shopify-api/rest/admin/2023-01/product"
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
     const resourceUrl: string = body.resourceUrl
-    const productId: string = body.productId
+    const productId: string = body.product._id
     const session = shopifyAdmin.session.customAppSession("vipers-go.myshopify.com")
     if (req.method === "POST") {
         try {

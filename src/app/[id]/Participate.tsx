@@ -6,20 +6,23 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Checkout } from "@shopify/shopify-api/rest/admin/2023-01/checkout"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
-import { Viper } from "@/types/viper"
-import { EventInterface } from "@/types/event"
+import { Shopify, Viper } from "@/types/viper"
+import { EventInterface, Product } from "@/types/event"
+import { Session } from "next-auth"
 
 export function Participate({
+    // currentViper,
     eventId,
-    productId,
+    product,
     viperOnList,
     viperRequest,
     isCheckoutPaid,
     eventEntries,
     totalInventory,
 }: {
+    // currentViper: Session
     eventId: string
-    productId: string
+    product: Product
     viperOnList: boolean
     viperRequest: boolean
     isCheckoutPaid: string | undefined
@@ -36,55 +39,75 @@ export function Participate({
 
     const { data: session, status } = useSession()
     const viper = session?.user
-    if (!viper) throw new Error("No viper bro")
-    const viperAccessToken: string = session.user.customerAccessToken
+    if (!viper) return <div>Loading</div>
+    const viperShopify: Shopify | null = viper.shopify
+    const viperAccessToken: string | null = viper.shopify.customerAccessToken
+    console.log(`---------viperAccessToken`)
+    console.log(viperAccessToken)
+
     // --------------------------------------------------------------------------------
     const addParticipant = async (): Promise<void> => {
         setIsFetching(true)
         // --------------------------------------------------------------------------
-        const checkoutCreate = await fetch(`/api/shopify/create-checkout`, {
+        const requestCheckout = await fetch(`/api/shopify/create-checkout`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "content-type": "application/json; charset=utf-8",
                 "Access-Control-Allow-Origin": "*",
             },
             body: JSON.stringify({
-                productId: productId,
-                viperEmail: viper?.email,
+                product: product,
+                email: viper?.email,
             }),
         })
-        const { checkout }: { checkout: Checkout } = await checkoutCreate.json()
+        const { checkout, checkoutUserErrors }: { checkout: Checkout; checkoutUserErrors: [] } =
+            await requestCheckout.json()
         const checkoutId: string = checkout.id
+        console.log(`--------checkout------`)
+        console.log(checkout)
 
         // --------------------------------------------------------------------------
         const checkoutCustomerAssociate = await fetch(`/api/customer/associate-checkout`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
                 checkoutId: checkoutId,
-                customerAccessToken: viperAccessToken,
+                shopify: viperShopify,
+                // we are sending the full shopify
+                // customerAccessToken: viperAccessToken,
             }),
         })
-        const { association }: { association: Checkout & Customer } =
+        const {
+            associateCheckout,
+            associateUserErrors,
+            customer,
+        }: { associateCheckout: Checkout; associateUserErrors: []; customer: Customer } =
             await checkoutCustomerAssociate.json()
-        const webUrl: string = association.checkout.webUrl
+        const webUrl: string = associateCheckout.webUrl
+        console.log(`------------webUrl`)
+        console.log(`------------webUrl`)
+        console.log(webUrl)
         setIsCheckout(webUrl)
 
         // ------------------------------------------------------------------------------------------- //
         const requestParticipation = await fetch(`/api/event/request-participation`, {
             method: "PUT",
             headers: {
-                "Content-type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
-                _id: viper._id,
-                eventId,
+                viper: { _id: viper?._id },
+                event: { _id: eventId },
+                // _id: viper?._id,
+                // eventId,
                 checkoutId,
             }),
         })
         const requestResponse: Viper = await requestParticipation.json()
+        console.log(`----requestParticipation`)
+        console.log(requestResponse)
         setIsFetching(false)
 
         startTransition(() => {
@@ -98,11 +121,11 @@ export function Participate({
         const addCardToViper = await fetch(`/api/event/claim-card`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
                 eventId,
-                viperId: viper._id,
+                viperId: viper?._id,
             }),
         })
 

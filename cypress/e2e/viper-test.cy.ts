@@ -2,59 +2,86 @@
 /// <reference path="../types.d.ts" />
 
 import {
-    checkoutEntries,
-    customerEntries,
     username,
     password,
-    createProductMedia,
+    content_type,
+    userEmail,
+    firstName,
+    lastName,
 } from "../support/entryPoint"
-import { event } from "../support/event"
-import { imageFile, productShopify } from "../support/entryPoint"
-import { viper, myBlog } from "../support/viper"
+import { rawEvent, rawEventId, rawProduct } from "../support/myApp/event"
+import { rawViper, myBlog, rawViperId, ID } from "../support/myApp/viper"
 import {
-    eventKeys,
-    newEventKeys,
-    productKeys,
-    stageUploadKeys,
-    viperKeys,
-    myBlogKeys,
-    externalBlogKeys,
-} from "../support/objectKeys"
-import {
-    responseNewEvent,
-    responseProductId,
+    responseCheckoutId,
+    responseCheckoutWebUrl,
+    responseCustomerShopify,
     responseProductMedia,
     responsePublishProduct,
-} from "../support/responseObjects"
+} from "../support/response/responseObjects"
 import {
     typeDate,
     typeTime,
-    createEventRequest,
-    profileEditRequest,
-    editEventRequest,
-    blogRequest,
-    likeBlogRequest,
-} from "../support/requestObjects"
+    requestCreateEvent,
+    requestEditProfile,
+    requestEditEvent,
+    requestCreateBlog,
+    requestLikeBlog,
+    requestEventImage,
+    requestProductMedia,
+    requestCustomerAddress,
+    requestProductShopify,
+} from "../support/request/requestObjects"
+import {
+    requestLikeBlogKeys,
+    requestEditProfileKeys,
+    requestCreateEventKeys,
+    requestEventImageKeys,
+    requestProductMediaKeys,
+    requestCreateBlogKeys,
+    requestEditEventKeys,
+    requestProductShopifyKeys,
+} from "../support/request/requestKeys"
+import {
+    responseNewEventKeys,
+    responseProductMediaKeys,
+    responsePublishProductKeys,
+    responseStageUploadKeys,
+    responseNewCustomerKeys,
+    responseCustomerAddressKeys,
+    responseCheckoutCreateKeys,
+    responseCheckoutCustomerAssociateKeys,
+    responseCustomerShopifyKeys,
+} from "../support/response/responseKeys"
+import { _idKey, externalBlogKeys, myBlogKeys, viperKeys } from "../support/myApp/viperKeys"
+import { eventKeys } from "../support/myApp/eventKeys"
+import { sessionKeys } from "../support/myApp/sessionKeys"
+import { CustomerShopify } from "../support/response/responseTypes"
+import { Session } from "../support/myApp/session"
+import { MyBlog, Viper } from "@/types/viper"
+import { EventInterface, Product } from "@/types/event"
+import { Interception } from "cypress/types/net-stubbing"
+import { LikeBlog } from "../support/request/requestTypes"
 
 export {}
 
-// =================================================================
-// Apply middleware on the API interceptions, once middleware from next-auth is implemented
-// { middleware: true },
 describe("Profile Page", () => {
     beforeEach(() => {
         cy.signInWithCredential(username, password)
         cy.visit("/")
     })
     context("Interacts in  the Profile Page", () => {
-        it.only("Creates a blog", () => {
+        it("Creates a blog", () => {
             cy.log(`Profile`)
-            cy.get("@session").then((session: any) => {
+
+            cy.get<Session>("@session").then((session: Session) => {
+                console.log(`==========session`)
+                console.log(session._id)
+                console.log(session)
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/${session._id}`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "GET",
                     },
@@ -66,107 +93,108 @@ describe("Profile Page", () => {
                             object: session,
                         },
                         build: {
-                            object: viper,
+                            object: rawViper,
                             alias: "profile",
                         },
                     }
                 )
-            })
-
-            cy.get("@profile").then((viper: any) => {
-                cy.clickButton("nav-item", viper.name)
+                cy.buildObjectProperties(session, rawViperId, {
+                    propKeys: {
+                        reqKey: "_id",
+                        objKey: "_id",
+                    },
+                    alias: "viperId",
+                })
+                cy.clickButton("nav-item", session.name)
                 cy.url().should("include", "/profile")
                 cy.clickButton("edit-profile", "Edit Profile")
-                cy.url().should("include", `/profile/edit/${viper._id}`)
+                cy.url().should("include", `/profile/edit/${session._id}`)
             })
-            cy.wrap(profileEditRequest)
-                .then((editRequest) => {
-                    cy.inputType("new-name", editRequest.name)
-                    cy.inputType("new-biography", editRequest.biography)
-                    cy.intercept("PUT", "/api/viper/profile-image").as("profile-image")
-                    cy.getByData("new-profile-image").selectFile([
-                        {
-                            contents: "cypress/fixtures/images/myprofile.jpeg",
-                            fileName: "myprofile.jpeg",
-                            mimeType: "image/jpeg",
-                            lastModified: new Date("Feb 18 2023").valueOf(),
-                        },
-                    ])
-                    cy.fixture("/images/myprofile.jpeg", "base64").as("profileImage")
-                    cy.getByData("accept-profile-image").click()
-                    cy.intercept("PUT", "/api/viper/background-image").as("background-image")
-                    cy.getByData("new-background-image").selectFile([
-                        {
-                            contents: "cypress/fixtures/images/jam-session.jpeg",
-                            fileName: "jam-session.jpeg",
-                            mimeType: "image/jpeg",
-                            lastModified: new Date("Feb 18 2023").valueOf(),
-                        },
-                    ])
+            cy.inputType("new-name", requestEditProfile.name)
+            cy.inputType("new-biography", requestEditProfile.biography)
+            cy.intercept("PUT", "/api/viper/profile-image").as("profile-image")
+            cy.getByData("new-profile-image").selectFile([
+                {
+                    contents: "cypress/fixtures/images/myprofile.jpeg",
+                    fileName: "myprofile.jpeg",
+                    mimeType: "image/jpeg",
+                    lastModified: new Date("Feb 18 2023").valueOf(),
+                },
+            ])
+            cy.fixture("/images/myprofile.jpeg", "base64").as("profileImage")
+            cy.getByData("accept-profile-image").click()
+            cy.intercept("PUT", "/api/viper/background-image").as("background-image")
+            cy.getByData("new-background-image").selectFile([
+                {
+                    contents: "cypress/fixtures/images/jam-session.jpeg",
+                    fileName: "jam-session.jpeg",
+                    mimeType: "image/jpeg",
+                    lastModified: new Date("Feb 18 2023").valueOf(),
+                },
+            ])
 
-                    cy.inputSelect("new-location", profileEditRequest.location)
-                    cy.intercept("PUT", `/api/viper/edit`).as("edit-viper")
-                })
-                .as("profileEditRequest")
+            cy.inputSelect("new-location", requestEditProfile.location)
+            cy.intercept("PUT", `/api/viper/edit`).as("edit-viper")
             cy.clickButton("submit-button", "Edit")
-            // ===============READ==========================
-            // This double wait is because with cypress the files get uploaded twice.
-            // drove me crazy 3 days.
+            // ===============LEAVE THIS DOUBLE WAIT==========================
             cy.wait("@profile-image")
-            cy.wait("@profile-image").then((interception) => {
+            cy.wait("@profile-image").then((interception: Interception) => {
                 const statusCode = interception.response!.statusCode
                 const responseBody = interception.response!.body
                 expect(statusCode).eq(200)
                 expect(responseBody.data.url).to.be.a("string")
 
-                cy.log(interception.request.body)
-                cy.wrap(profileEditRequest)
-                    .then((editRequest) => {
-                        editRequest.image = responseBody.data.url
-                    })
-                    .as("profileEditRequest")
+                cy.buildObjectProperties(responseBody, requestEditProfile, {
+                    propKeys: {
+                        reqKey: "data.url",
+                        objKey: "image",
+                    },
+                    alias: "requestEditProfile",
+                })
             })
-            cy.wait("@background-image").then((interception) => {
+            cy.wait("@background-image").then((interception: Interception) => {
                 const statusCode = interception.response!.statusCode
                 const responseBody = interception.response!.body
-                const bgData = responseBody.bgData
                 expect(statusCode).eq(200)
                 expect(responseBody.bgData.url).to.be.a("string")
-                cy.wrap(profileEditRequest)
-                    .then((editRequest) => {
-                        editRequest.backgroundImage = bgData.url
-                    })
-                    .as("profileEditRequest")
+                cy.buildObjectProperties(responseBody, "@requestEditProfile", {
+                    propKeys: {
+                        reqKey: "bgData.url",
+                        objKey: "backgroundImage",
+                    },
+                })
             })
-            cy.wait("@edit-viper").then((interception) => {
+            cy.wait("@edit-viper").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/viper/edit`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "PUT",
-                        reqBody: "@profileEditRequest",
+                        reqBody: "@requestEditProfile",
+                        reqKeys: [..._idKey, ...requestEditProfileKeys],
                     },
                     {
                         resStatus: 200,
-                        resBody: "@profile",
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
+                        resKeys: viperKeys,
+                        resBody: "@profile",
                     },
                     {
                         source: "mongodb",
                         action: "edit",
                     }
                 )
-                cy.get("@session").then((session: any) => {
+                cy.get<Session>("@session").then((session: Session) => {
                     cy.apiRequestAndResponse(
                         {
                             url: `/api/viper/${session._id}`,
                             headers: {
-                                "content-type": "application/json",
+                                "content-type": content_type,
                             },
                             method: "GET",
                         },
@@ -174,7 +202,7 @@ describe("Profile Page", () => {
                             status: 200,
                             expectRequest: {
                                 keys: viperKeys,
-                                object: "@profileEditRequest",
+                                object: "@requestEditProfile",
                             },
                             build: {
                                 object: "@profile",
@@ -184,43 +212,40 @@ describe("Profile Page", () => {
                 })
             })
             cy.url().should("include", "/profile")
-            cy.get("@profile").then((viper: any) => {
+            cy.get<Viper>("@profile").then((viper: Viper) => {
                 cy.getByData("profileImage").should("be.visible")
                 cy.getByData("backgroundImage").should("be.visible")
                 cy.dataInContainer("name", viper.name)
                 cy.dataInContainer("location", viper.location)
                 cy.dataInContainer("biography", viper.biography)
-                cy.wrap(blogRequest)
-                    .then((blogRequest) => {
-                        blogRequest._id = viper._id
-                    })
-                    .as("blogRequest")
             })
 
             // ======================BLOG=====================TEST CAN BE PERFORM BETTER IN HERE============================
 
             cy.clickButton("blog-button", "Let's Blog")
             cy.getByData("commentInput").should("exist")
-            cy.inputType("add-comment", blogRequest.content)
+            cy.inputType("add-comment", requestCreateBlog.content)
             cy.intercept("POST", `/api/viper/blog/create`).as("create-blog")
             cy.clickButton("post-blog", "Comment")
-            cy.wait("@create-blog").then((interception) => {
+            cy.wait("@create-blog").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/viper/blog/create`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@blogRequest",
+                        reqBody: ["@viperId", requestCreateBlog],
+                        reqKeys: [..._idKey, ...requestCreateBlogKeys],
                     },
                     {
                         resStatus: 200,
-                        resBody: "@profile",
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
+                        resKeys: viperKeys,
+                        resBody: "@profile",
                     },
                     {
                         source: "mongodb",
@@ -230,12 +255,13 @@ describe("Profile Page", () => {
             })
 
             cy.getByData("commentInput").should("not.exist")
-            cy.get("@profile").then((viper: any) => {
+
+            cy.get<Viper>("@profile").then((viper: Viper) => {
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/blog/all`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "POST",
                         body: {
@@ -246,9 +272,7 @@ describe("Profile Page", () => {
                         status: 200,
                         expectRequest: {
                             keys: myBlogKeys,
-                            object: {
-                                content: blogRequest.content,
-                            },
+                            object: requestCreateBlog,
                         },
                         build: {
                             object: myBlog,
@@ -258,16 +282,12 @@ describe("Profile Page", () => {
                 )
             })
 
-            // .its("body")
-            // .each((value) => {
-            //     return expect(value).to.have.all.keys(myBlogKeys)
-            // })
-            cy.get("@session").then((session: any) => {
+            cy.get<Session>("@session").then((session: Session) => {
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/${session._id}`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "GET",
                     },
@@ -276,7 +296,6 @@ describe("Profile Page", () => {
                         expectRequest: {
                             keys: myBlogKeys,
                             object: "@myBlog",
-                            // [-1] is not working to grab the last index of the array
                             path: "blog.myBlog[0]",
                         },
                         build: {
@@ -286,81 +305,89 @@ describe("Profile Page", () => {
                 )
                 cy.dataInContainer("blog-viperName", session.name)
             })
-            cy.getByData("success-blog").eq(0).should("contain", blogRequest.content)
+            cy.getByData("success-blog").eq(0).should("contain", requestCreateBlog.content)
             cy.log("Success creating a Blog")
             cy.intercept("POST", `/api/viper/blog/like`).as("like-blog")
             cy.getByData("like-blog").eq(0).click()
-            cy.get("@myBlog").then((blog: any) => {
-                cy.get("@session").then((session: any) => {
-                    cy.url().then((url) => {
+
+            cy.url().then((url) => {
+                cy.get<MyBlog>("@myBlog").then((blog: MyBlog) => {
+                    cy.get<Session>("@session").then((session: Session) => {
                         const regex = /\/[a-f\d]{24}$/
                         if (regex.test(url)) {
                             const id = url.split("/").pop()
-
-                            cy.wrap(likeBlogRequest)
-                                .then((likeRequest: any) => {
+                            cy.wrap<LikeBlog>(requestLikeBlog)
+                                .then((likeRequest: LikeBlog) => {
                                     likeRequest._id = blog._id
                                     likeRequest.blogOwner_id = id
                                     likeRequest.viper_id = session._id
                                     return likeRequest
                                 })
-                                .as("likeBlogRequest")
+                                .as("requestLikeBlog")
                         } else {
-                            cy.wrap(likeBlogRequest)
-                                .then((likeRequest: any) => {
+                            cy.wrap<LikeBlog>(requestLikeBlog)
+                                .then((likeRequest: LikeBlog) => {
                                     likeRequest._id = blog._id
                                     likeRequest.blogOwner_id = session._id
                                     likeRequest.viper_id = session._id
                                     return likeRequest
                                 })
-                                .as("likeBlogRequest")
+                                .as("requestLikeBlog")
                         }
                     })
                 })
             })
-            // // We are stuck here
-
-            cy.wait("@like-blog").then((interception) => {
+            cy.wait("@like-blog").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/viper/blog/like`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@likeBlogRequest",
+                        reqBody: "@requestLikeBlog",
+                        reqKeys: requestLikeBlogKeys,
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
-                        resBody: "@profile",
-                        resKeys: viperKeys,
+                        resKeys: [viperKeys, viperKeys],
+                        resBody: ["@profile", "@profile"],
                     },
-                    {
-                        source: "mongodb",
-                        action: "edit",
-                    },
-                    {
-                        propKeys: {
-                            reqKey: "viper_id",
-                            objKey: "_id",
+                    [
+                        {
+                            source: "mongodb",
+                            action: "edit",
                         },
-
-                        propPath: `blog.myBlog[0].likes[0]`,
-                    }
+                        {
+                            source: "mongodb",
+                            action: "edit",
+                        },
+                    ],
+                    [
+                        {
+                            body: "request",
+                            propKeys: {
+                                reqKey: "viper_id",
+                                objKey: "_id",
+                            },
+                            object: "@profile",
+                            objPath: `blog.myBlog[0].likes[0]`,
+                        },
+                        null,
+                    ]
                 )
             })
 
-            // // Check here once finish , if it is needed to build the response since I think we might have it already in the code above
-            cy.get("@session").then((session: any) => {
+            cy.get<Session>("@session").then((session: Session) => {
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/${session._id}`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "GET",
                     },
@@ -368,7 +395,7 @@ describe("Profile Page", () => {
                         status: 200,
                         expectRequest: {
                             keys: externalBlogKeys,
-                            object: "@likeBlogRequest",
+                            object: "@requestLikeBlog",
                             path: "blog.likes[0]",
                         },
                         build: {
@@ -382,15 +409,12 @@ describe("Profile Page", () => {
                 .eq(0)
                 .invoke("css", "color")
                 .should("equal", "rgb(185, 28, 28)")
-            // Once the time for a speed run arrives, and start from - , uncomment this!
             cy.getCookies().then((cookies) => {
                 expect(cookies[2]).to.have.property("value", "red")
             })
 
             cy.log("Successful Profile ")
-            // })
-            // =================================================================================
-            // it.only("testing create events", () => {
+
             cy.log(`Dashboard`)
 
             cy.clickButton("nav-item", "Dashboard", "/dashboard")
@@ -400,13 +424,13 @@ describe("Profile Page", () => {
             cy.clickButton("tab-item", "Create Event", `${"/dashboard/myevents/create"}`)
 
             cy.url().should("include", "/dashboard/myevents/create")
-            cy.inputType("title", createEventRequest.title)
-            cy.inputType("content", createEventRequest.content)
-            cy.inputSelect("category", createEventRequest.category)
+            cy.inputType("title", requestCreateEvent.title)
+            cy.inputType("content", requestCreateEvent.content)
+            cy.inputSelect("category", requestCreateEvent.category)
             cy.inputType("date", typeDate)
             cy.inputType("time", typeTime)
-            cy.inputSelect("location", createEventRequest.location)
-            cy.inputType("address", createEventRequest.address)
+            cy.inputSelect("location", requestCreateEvent.location)
+            cy.inputType("address", requestCreateEvent.address)
             cy.intercept("POST", "/api/event/create/upload-image").as("event-image")
             cy.getByData("image").selectFile([
                 {
@@ -416,8 +440,8 @@ describe("Profile Page", () => {
                     lastModified: new Date("Feb 18 2023").valueOf(),
                 },
             ])
-            cy.inputType("price", `${createEventRequest.price}`)
-            cy.inputType("entries", `${createEventRequest.entries}`)
+            cy.inputType("price", `${requestCreateEvent.price}`)
+            cy.inputType("entries", `${requestCreateEvent.entries}`)
 
             cy.intercept("POST", `/api/product/stage-upload`).as("stage-upload")
             cy.intercept("POST", `/api/product/create-shopify`).as("create-shopify")
@@ -425,157 +449,169 @@ describe("Profile Page", () => {
             cy.intercept("POST", `/api/product/publish-shopify`).as("publish-product")
             cy.intercept("POST", `/api/event/create/submit`).as("create-event")
             cy.clickButton("create-event", "Create Event")
-            cy.get("@session").then((session: any) => {
-                cy.wrap(createEventRequest)
-                    .then((eventRequest) => {
-                        eventRequest.organizer._id = session._id
-                        eventRequest.organizer.name = session.name
-                        eventRequest.organizer.email = session.email
-                        return eventRequest
-                    })
-                    .as("createEventRequest")
-                cy.wrap(productShopify)
-                    .then((product) => {
-                        product.organizer = session._id
-                        return product
-                    })
-                    .as("productShopify")
+
+            cy.get<Session>("@session").then((session: Session) => {
+                cy.buildObjectProperties(session, requestCreateEvent, {
+                    propKeys: [
+                        { reqKey: "_id", objKey: "_id" },
+                        { reqKey: "name", objKey: "name" },
+                        { reqKey: "email", objKey: "email" },
+                    ],
+                    objPath: "organizer",
+                    alias: "requestCreateEvent",
+                })
+
+                cy.buildObjectProperties(session, requestProductShopify, {
+                    propKeys: {
+                        reqKey: "_id",
+                        objKey: "organizer",
+                    },
+                    alias: "requestProductShopify",
+                })
             })
-            cy.wait("@event-image").then((interception) => {
+
+            cy.wait("@event-image").then((interception: Interception) => {
                 const statusCode = interception.response!.statusCode
                 const responseBody = interception.response!.body
                 expect(statusCode).eq(200)
                 expect(responseBody.data).to.exist
-                cy.wrap(imageFile)
-                    .then((file) => {
-                        file.data = responseBody.data
-                    })
-                    .as("eventImageFile")
-                // This will be provisory till we find another method to upload files and retrieve it in the bodyParse: false or switch method
-                cy.get("@createEventRequest").then((eventRequest: any) => {
-                    eventRequest.image = responseBody.data.url
-                    return eventRequest
+                cy.buildObjectProperties(responseBody, requestEventImage, {
+                    propKeys: {
+                        reqKey: "data",
+                        objKey: "data",
+                    },
+                    alias: "requestEventImage",
+                })
+                cy.buildObjectProperties(responseBody, "@requestCreateEvent", {
+                    propKeys: {
+                        reqKey: "data.url",
+                        objKey: "image",
+                    },
                 })
             })
-
-            cy.wait("@stage-upload").then((interception) => {
+            cy.wait("@stage-upload").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/product/stage-upload`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@eventImageFile",
+                        reqBody: "@requestEventImage",
+                        reqKeys: requestEventImageKeys,
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
-                        resBody: "@productShopify",
-                        resKeys: stageUploadKeys,
+                        resKeys: responseStageUploadKeys,
                     },
                     {
                         source: "shopify",
                     },
                     {
+                        body: "response",
                         propKeys: {
                             reqKey: `stageUpload.resourceUrl`,
                             objKey: `resourceUrl`,
                         },
-                        // propPath: null,
+                        object: ["@requestProductShopify", requestProductMedia],
+                        alias: [undefined, "requestProductMedia"],
                     }
                 )
             })
-            cy.wrap(responseProductId).as("responseProductId")
-            cy.wait("@create-shopify").then((interception) => {
+            cy.wait("@create-shopify").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/product/create-shopify`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@productShopify",
+                        reqBody: "@requestProductShopify",
+                        reqKeys: requestProductShopifyKeys,
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
-                        resBody: "@responseProductId",
-                        resKeys: productKeys,
+                        resKeys: ["product"],
                     },
                     {
                         source: "shopify",
                     },
                     {
-                        propKeys: {
-                            reqKey: "product.id",
-                            objKey: "productId",
-                        },
-                        // propPath: null,
+                        body: "response",
+                        propKeys: [
+                            {
+                                reqKey: "product._id",
+                                objKey: "_id",
+                            },
+                            {
+                                reqKey: "product.variant_id",
+                                objKey: "variant_id",
+                            },
+                        ],
+                        object: [
+                            { product: rawProduct },
+                            "@requestProductMedia",
+                            "@requestCreateEvent",
+                        ],
+                        objPath: "product",
+                        alias: ["eventProduct", undefined, undefined],
                     }
                 )
             })
 
-            cy.wrap(createProductMedia)
-                .then((productMedia) => {
-                    cy.get("@responseProductId").then((response: any) => {
-                        cy.get("@productShopify").then((product: any) => {
-                            productMedia.productId = response.productId
-                            productMedia.resourceUrl = product.resourceUrl
-                            return productMedia
-                        })
-                    })
-                })
-                .as("createProductMedia")
-
-            cy.wrap(responseProductMedia).as("responseProductMedia")
-            cy.wait("@product-media").then((interception) => {
+            cy.wait("@product-media").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/product/create-media`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@createProductMedia",
+                        reqBody: "@requestProductMedia",
+                        reqKeys: requestProductMediaKeys,
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
-                        resBody: "@responseProductMedia",
+                        resKeys: responseProductMediaKeys,
+                        resBody: responseProductMedia,
                     },
                     {
                         source: "shopify",
                     }
                 )
             })
-            cy.wrap(responsePublishProduct).as("responsePublishProduct")
-            cy.wait("@publish-product").then((interception) => {
+
+            cy.wait("@publish-product").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/product/publish-shopify`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@responseProductId",
+                        reqBody: "@eventProduct",
+                        reqKeys: ["product"],
                     },
                     {
                         resStatus: 200,
-                        resBody: "@responsePublishProduct",
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
+                        resKeys: responsePublishProductKeys,
+                        resBody: responsePublishProduct,
                     },
                     {
                         source: "shopify",
@@ -583,60 +619,65 @@ describe("Profile Page", () => {
                 )
             })
 
-            cy.wrap(createEventRequest)
-                .then((createEventRequest: any) => {
-                    cy.get("@session").then((session: any) => {
-                        cy.get("@responseProductId").then((response: any) => {
-                            createEventRequest.productId = response.productId
-                            createEventRequest.organizer._id = session._id
-                            createEventRequest.organizer.name = session.name
-                            createEventRequest.organizer.email = session.email
-                            return createEventRequest
-                        })
-                    })
-                })
-                .as("createEventRequest")
-            cy.wrap(responseNewEvent).as("responseNewEvent")
-            cy.wait("@create-event").then((interception) => {
+            cy.wait("@create-event").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/event/create/submit`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "POST",
-                        reqBody: "@createEventRequest",
+                        reqBody: "@requestCreateEvent",
+                        reqKeys: requestCreateEventKeys,
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
-                        resBody: "@responseNewEvent",
-                        resKeys: newEventKeys,
+                        resKeys: [responseNewEventKeys, viperKeys],
+                        resBody: [undefined, "@profile"],
                     },
-                    {
-                        source: "shopify",
-                    },
-                    {
-                        propKeys: {
-                            reqKey: "insertedId",
-                            objKey: "insertedId",
+                    [
+                        {
+                            source: "mongodb",
+                            action: "create",
                         },
-
-                        // propPath: null,
-                    }
+                        {
+                            source: "mongodb",
+                            action: "edit",
+                        },
+                    ],
+                    [
+                        {
+                            body: "response",
+                            propKeys: {
+                                reqKey: "insertedId",
+                                objKey: "_id",
+                            },
+                            object: rawEventId,
+                            alias: "createdEventId",
+                        },
+                        null,
+                    ]
                 )
             })
 
-            // In here can we pass the requestedCreateEvent and expect for the keys?
-            cy.get("@responseNewEvent").then((newEvent: any) => {
+            cy.get<ID>("@createdEventId").then((createdEvent: ID) => {
+                cy.buildObjectProperties(createdEvent, "@profile", {
+                    propKeys: {
+                        reqKey: "_id",
+                        objKey: "_id",
+                    },
+                    objPath: "myEvents.created[0]",
+                })
+
                 cy.apiRequestAndResponse(
                     {
-                        url: `/api/event/${newEvent.insertedId}`,
+                        url: `/api/event/${createdEvent._id}`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "GET",
                     },
@@ -644,36 +685,32 @@ describe("Profile Page", () => {
                         status: 200,
                         expectRequest: {
                             keys: eventKeys,
-                            object: "@createEventRequest",
+                            object: "@requestCreateEvent",
                         },
                         build: {
-                            object: event,
+                            object: rawEvent,
                             alias: "newEvent",
                         },
                     }
                 )
             })
-            // This reload crushed my session bro, gtfo
 
-            // cy.reload()
             cy.clickButton("preview-button", "Preview")
             cy.window().scrollTo("bottom")
-            cy.get("@newEvent").then((event: any) => {
+            cy.get<EventInterface>("@newEvent").then((event: EventInterface) => {
                 cy.checkEventComponentProps(event)
             })
-
             cy.window().scrollTo("top")
-
             cy.clickButton("tab-item", "My Events", "/dashboard/myevents")
             cy.url().should("include", "/dashboard/myevents")
             cy.log("Event Card")
             cy.getByData("display-events").should("exist")
-            cy.get("@session").then((session: any) => {
+            cy.get<Session>("@session").then((session: Session) => {
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/events/created`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "POST",
                         body: {
@@ -689,11 +726,11 @@ describe("Profile Page", () => {
                     }
                 )
             })
-            // ===============================================
+
             cy.getByData("display-events").should("exist").and("be.visible").first()
             cy.getByData("event-card-image").should("exist").and("be.visible").first()
 
-            cy.get("@newEvent").then((event: any) => {
+            cy.get<EventInterface>("@newEvent").then((event: EventInterface) => {
                 cy.dataInContainer("event-card-title", event.title).eq(0)
                 cy.dataInContainer("event-card-content", event.content).eq(0)
                 cy.dataInContainer("event-card-location", event.location).eq(0)
@@ -702,34 +739,62 @@ describe("Profile Page", () => {
                 cy.url().should("include", `/dashboard/myevents/${event._id}`)
             })
 
-            cy.inputType("event-title", `${editEventRequest.title}`)
-            cy.inputType("event-content", `${editEventRequest.content}`)
-            cy.inputSelect("event-location", `${editEventRequest.location}`)
-            cy.inputType("event-price", `${editEventRequest.price}`)
+            cy.inputType("event-title", `${requestEditEvent.title}`)
+            cy.inputType("event-content", `${requestEditEvent.content}`)
+            cy.inputSelect("event-location", `${requestEditEvent.location}`)
+            cy.inputType("event-price", `${requestEditEvent.price}`)
             cy.intercept("PUT", `/api/event/create/submit`).as("edit-event")
             cy.clickButton("edit-event-button", "Submit Edition")
 
-            cy.wait("@edit-event").then((interception) => {
+            cy.wait("@edit-event").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/event/create/submit`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "PUT",
-                        reqBody: "@editEventRequests",
+                        reqBody: requestEditEvent,
+                        reqKeys: ["dateNow", ...requestEditEventKeys],
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
+                        resKeys: eventKeys,
                         resBody: "@newEvent",
                     },
                     {
                         source: "mongodb",
                         action: "edit",
+                    },
+                    {
+                        body: "request",
+                        propKeys: [
+                            {
+                                reqKey: "dateNow",
+                                objKey: "editionDate",
+                            },
+                            {
+                                reqKey: "title",
+                                objKey: "title",
+                            },
+                            {
+                                reqKey: "content",
+                                objKey: "content",
+                            },
+                            {
+                                reqKey: "location",
+                                objKey: "location",
+                            },
+                            {
+                                reqKey: "price",
+                                objKey: "price",
+                            },
+                        ],
+                        object: "@newEvent",
                     }
                 )
             })
@@ -744,7 +809,7 @@ describe("Profile Page", () => {
                         {
                             url: `/api/event/${eventId}`,
                             headers: {
-                                "content-type": "application/json",
+                                "content-type": content_type,
                             },
                             method: "GET",
                         },
@@ -752,29 +817,23 @@ describe("Profile Page", () => {
                             status: 200,
                             expectRequest: {
                                 keys: eventKeys,
-                                object: editEventRequest,
-                            },
-                            build: {
                                 object: "@newEvent",
                             },
                         }
                     )
                 })
 
-            cy.get("@newEvent").then((event: any) => {
-                cy.url().should("include", `${event._id}`)
+            cy.get<EventInterface>("@newEvent").then((event: EventInterface) => {
+                cy.url().should("include", event._id)
                 cy.checkEventComponentProps(event)
             })
             cy.clickButton("viper", "viper", `/`)
-            cy.log("End of first round")
-        })
-        // ==========middle IT
-        it("starts a new round", () => {
-            cy.log("2nd Round")
+
+            cy.wait(500)
             cy.clickButton("nav-item", "Events", `/events`)
             cy.url().should("include", `/events`)
-            cy.clickButton("tab-item", "Music", `/events/music`)
-            cy.url().should("include", `/events/music`)
+            cy.clickButton("tab-item", "Music", `/events/Music`)
+            cy.url().should("include", `/events/Music`)
             cy.getByData("display-events").should("exist").eq(0)
             cy.getByData("select-event").click()
             cy.url()
@@ -782,195 +841,437 @@ describe("Profile Page", () => {
                     expect(url).to.match(/\/[a-f\d]{24}$/)
                 })
                 .then((url) => {
-                    const id = url.split("/").pop()
-                    cy.wrap(event)
-                        .then((selectedEvent: any) => {
-                            selectedEvent._id = id
+                    const id = {
+                        _id: url.split("/").pop(),
+                    }
+                    if (id)
+                        cy.buildObjectProperties(id, rawEventId, {
+                            propKeys: {
+                                reqKey: "_id",
+                                objKey: "_id",
+                            },
+                            alias: "selectedEventId",
                         })
-                        .as("selectedEvent")
                 })
-            cy.get("@selectedEvent").then((selectedEvent: any) => {
+            cy.get<ID>("@selectedEventId").then((event: ID) => {
                 cy.apiRequestAndResponse(
                     {
-                        url: `/api/event/${selectedEvent._id}`,
+                        url: `/api/event/${event._id}`,
                         headers: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         method: "GET",
                     },
                     {
                         status: 200,
                         expectRequest: {
-                            // We are only expecting the keys,
-                            // Most probably gotta expect an object as well
-                            // if not , check the command, will crash 102%
                             keys: eventKeys,
+                            object: { _id: event._id },
                         },
                         build: {
-                            object: selectedEvent,
+                            object: rawEvent,
+                            alias: "selectedEvent",
                         },
                     }
                 )
-                cy.checkEventComponentProps(selectedEvent)
-                cy.clickButton("participate", "Participate", `/${selectedEvent._id}/customer`)
-                cy.url().should("contain", `/${selectedEvent._id}/customer`)
+            })
+
+            cy.get<EventInterface>("@selectedEvent").then((event: EventInterface) => {
+                cy.checkEventComponentProps(event)
+                cy.clickButton("participate", "Participate", `/${event._id}/customer`)
+                cy.url().should("contain", `/${event._id}/customer`)
             })
 
             cy.inputType("password", password)
-            cy.inputType("phone", customerEntries.typePhone)
-            cy.inputType("address", customerEntries.typeAddress)
-            cy.inputType("city", customerEntries.typeCity)
-            cy.inputType("province", customerEntries.typeProvince)
-            cy.inputType("zip-code", customerEntries.typeZipCode)
-            cy.inputType("country", customerEntries.typeCountry)
+            cy.inputType("customer-phone", requestCustomerAddress.phone)
+            cy.inputType("customer-address", requestCustomerAddress.address)
+            cy.inputType("customer-city", requestCustomerAddress.city)
+            cy.inputType("customer-province", requestCustomerAddress.province)
+            cy.inputType("customer-zip-code", requestCustomerAddress.zip)
+            cy.inputSelect("customer-country", requestCustomerAddress.country)
             cy.intercept("POST", `/api/customer/create-shopify`).as("customer-shopify")
             cy.intercept("POST", `/api/customer/create-access-token`).as("access-token")
-            cy.intercept("POST", `/api/customer/create-address`).as("@create-address")
-            cy.intercept("PUT", `/api/customer/update-viper`).as("@update-viper")
+            cy.intercept("POST", `/api/customer/create-address`).as("create-address")
+            cy.intercept("PUT", `/api/customer/update-viper`).as("update-viper")
             cy.clickButton("create-customer", "Create Customer")
-            cy.wait("@customer-shopify").then((interception) => {
-                const statusCode = interception.response!.statusCode
-                const responseBody = interception.response!.body
-                expect(statusCode).eq(200)
-                expect(responseBody.userErrors).to.be.an("array").that.is.empty
-                expect(responseBody.customer._id).to.be.a("string")
-                cy.wrap(customerEntries)
-                    .then((customer) => {
-                        customer.customerId = responseBody.customer._id
-                    })
-                    .as("customerEntries")
+
+            cy.wait("@customer-shopify").then((interception: Interception) => {
+                cy.verifyInterceptionRequestAndResponse(
+                    interception,
+                    {
+                        reqUrl: `/api/customer/create-shopify`,
+                        reqHeaders: {
+                            "content-type": content_type,
+                        },
+                        reqMethod: "POST",
+                        reqBody: {
+                            email: userEmail,
+                            password: password,
+                            phone: requestCustomerAddress.phone,
+                            firstName: firstName,
+                            lastName: lastName,
+                        },
+                        reqKeys: ["email", "password", "phone", "firstName", "lastName"],
+                    },
+                    {
+                        resStatus: 200,
+                        resHeaders: {
+                            "content-type": content_type,
+                        },
+                        resKeys: responseNewCustomerKeys,
+                    },
+                    {
+                        source: "shopify",
+                    },
+                    {
+                        body: "response",
+                        propKeys: {
+                            reqKey: "customer.id",
+                            objKey: "customerId",
+                        },
+                        object: responseCustomerShopify,
+                        objPath: "shopify",
+                        alias: "responseCustomerShopify",
+                    }
+                )
             })
-            cy.wait("@access-token").then((interception) => {
-                const statusCode = interception.response!.statusCode
-                const responseBody = interception.response!.body
-                expect(statusCode).eq(200)
-                expect(responseBody.accessToken).to.be.a("string")
-                cy.wrap(customerEntries)
-                    .then((customer) => {
-                        customer.customerAccessToken = responseBody.accessToken
-                    })
-                    .as("customerEntries")
+            cy.wait("@access-token").then((interception: Interception) => {
+                cy.verifyInterceptionRequestAndResponse(
+                    interception,
+                    {
+                        reqUrl: `/api/customer/create-access-token`,
+                        reqHeaders: {
+                            "content-type": content_type,
+                        },
+                        reqMethod: "POST",
+                        reqBody: {
+                            email: userEmail,
+                            password: password,
+                        },
+                        reqKeys: ["email", "password"],
+                    },
+                    {
+                        resStatus: 200,
+                        resHeaders: {
+                            "content-type": content_type,
+                        },
+                        resKeys: ["accessTokenUserErrors", "customerAccessToken"],
+                    },
+                    {
+                        source: "shopify",
+                    },
+                    {
+                        body: "response",
+                        propKeys: {
+                            reqKey: "customerAccessToken.accessToken",
+                            objKey: "customerAccessToken",
+                        },
+                        object: "@responseCustomerShopify",
+                        objPath: "shopify",
+                    }
+                )
             })
-            cy.wait("@create-address").then((interception) => {
-                const statusCode = interception.response!.statusCode
-                const responseBody = interception.response!.body
-                const newAddress = responseBody.newAddress
-                expect(statusCode).eq(200)
-                expect(newAddress.customerUserErrors).to.be.an("array").that.is.empty
-                expect(newAddress.customerAddress.id).to.be.a("string")
+
+            cy.wait("@create-address").then((interception: Interception) => {
+                cy.verifyInterceptionRequestAndResponse(
+                    interception,
+                    {
+                        reqUrl: `/api/customer/create-address`,
+                        reqHeaders: {
+                            "content-type": content_type,
+                        },
+                        reqMethod: "POST",
+                        reqBody: [
+                            { firstName: firstName, lastName: lastName },
+                            { address: requestCustomerAddress },
+                            "@responseCustomerShopify",
+                        ],
+                        reqKeys: [
+                            "firstName",
+                            "lastName",
+                            "address",
+                            ...responseCustomerShopifyKeys,
+                        ],
+                    },
+                    {
+                        resStatus: 200,
+                        resHeaders: {
+                            "content-type": content_type,
+                        },
+                        resKeys: responseCustomerAddressKeys,
+                    },
+                    {
+                        source: "shopify",
+                    }
+                )
             })
-            // in here check whats going on
-            cy.get("@customerEntries").then((customer: any) => {
-                cy.get("@profile").then((viper: any) => {
-                    customer._id = viper._id
-                })
-            })
-            cy.wait("@update-viper").then((interception) => {
+
+            cy.wait("@update-viper").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
                         reqUrl: `/api/customer/update-viper`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
                         reqMethod: "PUT",
-                        reqBody: "@customerEntries",
+                        reqBody: [
+                            "@viperId",
+                            "@responseCustomerShopify",
+                            { address: requestCustomerAddress },
+                        ],
+                        reqKeys: [..._idKey, ...responseCustomerShopifyKeys, "address"],
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
+                        resKeys: viperKeys,
                         resBody: "@profile",
                     },
                     {
                         source: "mongodb",
                         action: "edit",
+                    },
+
+                    {
+                        body: "request",
+                        propKeys: [
+                            {
+                                reqKey: "shopify",
+                                objKey: "shopify",
+                            },
+                            {
+                                reqKey: "address",
+                                objKey: "address",
+                            },
+                        ],
+                        object: "@profile",
                     }
                 )
             })
 
+            cy.get<Session>("@session").then((session: Session) => {
+                cy.apiRequestAndResponse(
+                    {
+                        url: `/api/viper/${session._id}`,
+                        headers: {
+                            "content-type": content_type,
+                        },
+                        method: "GET",
+                    },
+                    {
+                        status: 200,
+                        expectRequest: {
+                            keys: viperKeys,
+                            object: "@profile",
+                        },
+                    }
+                )
+            })
+            cy.wait(1000)
             cy.apiRequestAndResponse(
                 {
-                    url: `/api/viper/${viper._id}`,
-                    headers: {
-                        "content-type": "application/json",
-                    },
+                    url: "/api/auth/session",
                     method: "GET",
+                    headers: {
+                        "content-type": content_type,
+                    },
                 },
                 {
                     status: 200,
                     expectRequest: {
-                        keys: viperKeys,
+                        keys: sessionKeys,
+                        object: "@responseCustomerShopify",
+                        path: "user",
                     },
                     build: {
-                        object: viper,
+                        object: "@session",
                     },
                 }
             )
-            cy.get("@selectedEvent").then((selectedEvent: any) => {
-                // Leave this url for the full run
+            cy.get<EventInterface>("@selectedEvent").then((selectedEvent: EventInterface) => {
                 cy.url().should("contain", `${selectedEvent._id}`)
+                cy.buildObjectProperties(
+                    selectedEvent,
+                    { product: rawProduct },
+                    {
+                        propKeys: {
+                            reqKey: "product",
+                            objKey: "product",
+                        },
+                        alias: "selectedProduct",
+                    }
+                )
             })
 
             cy.intercept("POST", `/api/shopify/create-checkout`).as("create-checkout")
             cy.intercept("POST", `/api/customer/associate-checkout`).as("associate-checkout")
             cy.intercept("PUT", `/api/event/request-participation`).as("request-participation")
             cy.clickButton("participate", "Participate")
-            cy.get("@selectedEvent").then((selectedEvent: any) => {
-                cy.wait("@create-checkout").then((interception) => {
-                    const statusCode = interception.response!.statusCode
-                    const responseBody = interception.response!.body
-                    const checkout = responseBody.checkout.edges[0].node
-                    expect(statusCode).eq(200)
-                    expect(responseBody.id).to.be.a("string")
-                    expect(responseBody.webUrl).to.be.a("string")
-                    expect(checkout.id).to.be.a("string")
-                    expect(checkout.title).eq(selectedEvent.title)
-                    expect(checkout.variant.title).to.be.a("string")
-                    expect(checkout.product.handle).to.be.a("string")
-                    expect(checkout.quantity).eq(1)
-                    cy.wrap(checkoutEntries)
-                        .then((checkoutEntries) => {
-                            // this will be used in the request assertion
-                            checkoutEntries._id = selectedEvent._id
-                            checkoutEntries.checkoutId = checkout.id
-                            checkoutEntries.webUrl = checkout.webUrl
-                        })
-                        .as("checkoutEntries")
-                })
-            })
 
-            cy.wait("@associate-checkout").then((interception) => {
-                const responseBody = interception.response!.body
-                const checkout = responseBody.checkout
-                expect(checkout.id).to.eq(checkoutEntries.checkoutId)
-                expect(checkout.webUrl).to.eq(checkoutEntries.webUrl)
-                expect(checkout.orderStatusUrl).to.be.null
-                expect(responseBody.checkoutUserErrors).to.be.an("array").that.is.empty
-                expect(responseBody.customer.id).eq(viper.shopify.customerId)
-            })
-            cy.wait("@request-participation").then((interception) => {
+            cy.wait("@create-checkout").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
                     interception,
                     {
-                        reqUrl: `/api/customer/update-viper`,
+                        reqUrl: `/api/shopify/create-checkout`,
                         reqHeaders: {
-                            "content-type": "application/json",
+                            "content-type": content_type,
                         },
-                        reqMethod: "PUT",
-                        reqBody: "@checkoutEntries",
+                        reqMethod: "POST",
+                        reqBody: ["@selectedProduct", { email: userEmail }],
+                        reqKeys: ["product", "email"],
                     },
                     {
                         resStatus: 200,
                         resHeaders: {
-                            "content-type": "application/json; charset=utf-8",
+                            "content-type": content_type,
                         },
+                        resKeys: responseCheckoutCreateKeys,
+                    },
+                    {
+                        source: "shopify",
+                    },
+                    {
+                        body: "response",
+                        propKeys: {
+                            reqKey: "checkout.id",
+                            objKey: "checkoutId",
+                        },
+                        object: responseCheckoutId,
+                        alias: "responseCheckoutId",
+                    }
+                )
+            })
+
+            cy.wait("@associate-checkout").then((interception: Interception) => {
+                cy.verifyInterceptionRequestAndResponse(
+                    interception,
+                    {
+                        reqUrl: `/api/customer/associate-checkout`,
+                        reqHeaders: {
+                            "content-type": content_type,
+                        },
+                        reqMethod: "POST",
+                        reqBody: ["@responseCheckoutId", "@responseCustomerShopify"],
+                        reqKeys: ["checkoutId", ...responseCustomerShopifyKeys],
+                    },
+                    {
+                        resStatus: 200,
+                        resHeaders: {
+                            "content-type": content_type,
+                        },
+                        resKeys: responseCheckoutCustomerAssociateKeys,
+                        // Here we can expect a body, customer _id
+                    },
+                    {
+                        source: "shopify",
+                    },
+                    {
+                        body: "response",
+                        propKeys: {
+                            reqKey: "associateCheckout.webUrl",
+                            objKey: "webUrl",
+                        },
+                        object: responseCheckoutWebUrl,
+                        alias: "responseCheckoutWebUrl",
+                    }
+                )
+            })
+
+            cy.wait("@request-participation").then((interception: Interception) => {
+                cy.verifyInterceptionRequestAndResponse(
+                    interception,
+                    {
+                        reqUrl: `/api/event/request-participation`,
+                        reqHeaders: {
+                            "content-type": content_type,
+                        },
+                        reqMethod: "PUT",
+                        reqBody: [
+                            {
+                                viper: "@viperId",
+                            },
+
+                            {
+                                event: "@selectedEventId",
+                            },
+                            "@responseCheckoutId",
+                        ],
+                        reqKeys: ["viper", "event", "checkoutId"],
+                    },
+                    {
+                        resStatus: 200,
+                        resHeaders: {
+                            "content-type": content_type,
+                        },
+                        resKeys: viperKeys,
                         resBody: "@profile",
                     },
                     {
                         source: "mongodb",
                         action: "edit",
+                    },
+                    {
+                        body: "request",
+                        propKeys: [
+                            {
+                                reqKey: "event._id",
+                                objKey: "_id",
+                            },
+                            {
+                                reqKey: "checkoutId",
+                                objKey: "checkoutId",
+                            },
+                        ],
+                        object: "@profile",
+                        objPath: "myEvents.collection",
+                    }
+                )
+            })
+            cy.get<ID>("@responseCheckoutWebUrl").then((checkout: ID) => {
+                cy.get<CustomerShopify>("@responseCustomerShopify").then(
+                    (response: CustomerShopify) => {
+                        cy.get<Product>("@selectedProduct").then((product: Product) => {
+                            cy.clickButton("participate", "VIPER GO", checkout.webUrl)
+                            cy.request({
+                                method: "POST",
+                                url: "https://api.shopify.com/checkout",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-Shopify-Access-Token": response.shopify.customerAccessToken,
+                                },
+                                body: {
+                                    line_items: [
+                                        {
+                                            variant_id: { product: product.variant_id },
+                                            quantity: 1,
+                                        },
+                                    ],
+                                    shipping_address: {
+                                        first_name: firstName,
+                                        last_name: lastName,
+                                        address1: "Los Algarrobos",
+                                        city: "Los Hornillos",
+                                        province: "Córdoba",
+                                        country: "Argentina",
+                                        zip: "5100",
+                                    },
+                                    payment_details: {
+                                        credit_card: {
+                                            number: "1",
+                                            name: "Bogus Gateway",
+                                            month: "11",
+                                            year: "2023",
+                                            verification_value: "123",
+                                        },
+                                    },
+                                },
+                            }).then((response) => {})
+                            cy.visit(checkout.webUrl)
+                            cy.pause()
+                        })
                     }
                 )
             })

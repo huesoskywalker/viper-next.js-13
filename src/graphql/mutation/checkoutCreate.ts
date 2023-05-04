@@ -11,8 +11,6 @@ export const CHECKOUT_CREATE = gql`
             checkout {
                 id
                 webUrl
-                id
-                webUrl
                 orderStatusUrl
                 lineItems(first: 1) {
                     edges {

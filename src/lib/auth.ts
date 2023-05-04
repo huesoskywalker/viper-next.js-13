@@ -59,6 +59,7 @@ export const authOptions: NextAuthOptions = {
     adapter: MongoDBAdapter(clientPromise as any),
     // Using jwt to manage cypress test, after that, get back to strategy: "database", or make both available
     session: {
+        // strategy: database? should be when we return to normal
         strategy: "jwt",
         maxAge: 30 * 24 * 60 * 60,
         updateAge: 24 * 60 * 60,
@@ -79,50 +80,19 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
-            // console.log`---------signIn-user----------`
-            // console.log(user)
-            // console.log`---------signIn-account----------`
-            // console.log(account)
-            // console.log`---------signIn-profile----------`
-            // console.log(profile)
-            // console.log`---------signIn-email----------`
-            // console.log(email)
-            // console.log`---------signIn-credentials----------`
-            // console.log(credentials)
-            // if (account.provider === "google") {
-            //     return (
-            //         profile.email_verified &&
-            //         profile.email.endsWith("@example.com")
-            //     )
-            // }
-
-            // Setting a cookie with additional options
-
-            // document.cookie = `next-auth.session-token=960cc3ca-583f-4351-8da1-2de786cc08b2; path=/; max-age=${
-            //     60 * 60 * 24 * 30
-            // }}`
-
-            // cookies.set("next-auth.session-token", sessionToken, {
-            //     expires: sessionExpiry,
-            // })
-
             return true // Do different verification for other providers that don't have `email_verified`
         },
-        async jwt({ token, user }) {
-            // console.log`-----------jwt-token-------------------------------`
-            // console.log(token)
-            // console.log`-----------jwt-user--------------------------------`
-            // console.log(user)
 
+        async jwt({ token, user, trigger, session }) {
+            if (trigger === "update" && session.shopify) {
+                token.shopify = session.shopify
+            }
             return { ...token, ...user }
         },
-        async session({ session, token, user }) {
-            // console.log`---------session-session----------`
-            // console.log(session)
-            // console.log`---------session-token----------`
-            // console.log(token)
-            // console.log`---------session-user----------`
-            // console.log(user)
+
+        // ===========================================
+        // The user is an object.prototype of the profile
+        async session({ session, token, user, trigger, newSession }) {
             if (token) {
                 session.user._id = token._id
                 session.user.name = token.name
@@ -131,6 +101,9 @@ export const authOptions: NextAuthOptions = {
                 session.user.location = token.location
                 session.user.address = token.address
                 session.user.shopify = token.shopify
+                if (trigger === "update" && newSession?.shopify) {
+                    session.user.shopify = newSession.shopify
+                }
                 return session
             } else {
                 session.user._id = user._id
@@ -141,6 +114,9 @@ export const authOptions: NextAuthOptions = {
                 session.user.address = user.address
                 session.user.shopify = user.shopify
 
+                if (trigger === "update" && newSession?.shopify) {
+                    session.user.shopify = newSession.shopify
+                }
                 // session.user.emailVerified = user.emailVerified
 
                 return session

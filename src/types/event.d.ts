@@ -17,7 +17,8 @@ export interface EventInterface {
     editionDate: number
     likes: Likes[]
     comments: Comments[]
-    productId: string
+    product: Product
+    // productId: string
 }
 
 // Check here why string, Probably:
@@ -61,4 +62,9 @@ export interface EditEvent {
     category: string
     price: string
     image: string
+}
+
+export interface Product {
+    _id: string
+    variant_id: string
 }

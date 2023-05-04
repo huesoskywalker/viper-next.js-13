@@ -18,8 +18,8 @@ export async function Event({ eventId }: { eventId: string }) {
     const event: Promise<EventInterface | null> = getEventById(eventId)
 
     const [currentViper, selectedEvent] = await Promise.all([viperSession, event])
-    // This will activate the closest `error.ts` Error Boundary
-    if (!currentViper) throw new Error("No Session bro")
+    if (!currentViper)
+        return <div className="text-yellow-400 text-sm"> remove this from Event</div>
     if (!selectedEvent) return <div className="text-yellow-400 text-sm">Build up, from Event</div>
     preloadViperBasicProps(selectedEvent.organizer._id)
     return (
@@ -32,7 +32,7 @@ export async function Event({ eventId }: { eventId: string }) {
                         alt={selectedEvent.title}
                         height={400}
                         width={400}
-                        className="rounded-lg  lg:block max-h-24  object-cover object-center"
+                        className="rounded-lg  lg:block max-h-24 max-w-auto object-cover object-center"
                     />
                 </div>
             </div>
@@ -71,12 +71,12 @@ export async function Event({ eventId }: { eventId: string }) {
                 <Suspense fallback={<InfoSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
                     <EventInfo
-                        currentViperId={currentViper.user._id}
+                        currentViper={currentViper}
                         eventId={eventId}
                         eventDate={selectedEvent.date}
                         eventLocation={selectedEvent.location}
                         eventPrice={selectedEvent.price}
-                        productId={selectedEvent.productId}
+                        product={selectedEvent.product}
                         eventEntries={selectedEvent.entries}
                     />
                 </Suspense>

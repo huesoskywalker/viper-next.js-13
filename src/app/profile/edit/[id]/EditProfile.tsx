@@ -76,7 +76,7 @@ export default function EditProfile({
             const response = await fetch(`/api/viper/edit`, {
                 method: "PUT",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     _id: viperId,

@@ -2,13 +2,7 @@
 import { FormEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
-export default function ChatInput({
-    id,
-    viperId,
-}: {
-    id: string
-    viperId: string
-}) {
+export default function ChatInput({ id, viperId }: { id: string; viperId: string }) {
     const [message, setMessage] = useState<string>("")
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState(false)
@@ -17,9 +11,7 @@ export default function ChatInput({
 
     const router = useRouter()
 
-    const sendMessage = async (
-        e: FormEvent<HTMLFormElement>
-    ): Promise<void> => {
+    const sendMessage = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         setIsFetching(true)
         setMessage("")
@@ -27,7 +19,7 @@ export default function ChatInput({
         const response = await fetch(`/api/messenger`, {
             method: "POST",
             headers: {
-                "Content-type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
                 id: id,

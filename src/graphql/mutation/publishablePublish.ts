@@ -5,9 +5,6 @@ export const PRODUCT_PUBLISH = gql`
         publishablePublish(id: $id, input: $input) {
             publishable {
                 publishedOnCurrentPublication
-                # resourcePublicationsV2 {
-                #     isPublished
-                # }
             }
             shop {
                 url

@@ -28,7 +28,7 @@ export function BlogButton({
         const response = await fetch(`/api/viper/blog/create`, {
             method: "POST",
             headers: {
-                "Content-type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
                 _id: viperId,

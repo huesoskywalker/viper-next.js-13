@@ -47,7 +47,7 @@ export default function AddComment({
             const response = await fetch(`/api/comment`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     id: id,
@@ -61,7 +61,7 @@ export default function AddComment({
             const response = await fetch(`/api/comment-comment`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     id: id,
@@ -76,7 +76,7 @@ export default function AddComment({
             const response = await fetch(`/api/comment-blog`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     _id: commentId,

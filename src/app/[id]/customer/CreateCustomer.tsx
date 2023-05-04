@@ -4,7 +4,8 @@ import { FormEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
 import { CustomerAddress } from "@shopify/shopify-api/rest/admin/2023-01/customer_address"
-import { Viper } from "@/types/viper"
+import { Shopify, Viper } from "@/types/viper"
+import { useSession } from "next-auth/react"
 
 export default function CreateCustomer({
     viperId,
@@ -12,12 +13,14 @@ export default function CreateCustomer({
     viperFirstName,
     viperLastName,
     viperLocation,
+    pageBack,
 }: {
     viperId: string
     viperEmail: string
     viperFirstName: string
     viperLastName: string
     viperLocation: string
+    pageBack: string
 }) {
     const [email, setEmail] = useState<string>(viperEmail)
     const [password, setPassword] = useState<string>("")
@@ -29,6 +32,8 @@ export default function CreateCustomer({
     const [province, setProvince] = useState<string>("")
     const [zip, setZip] = useState<string>("")
     const [country, setCountry] = useState<string>(viperLocation)
+
+    const { data: session, status, update } = useSession()
 
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -44,7 +49,7 @@ export default function CreateCustomer({
             const customerCreate = await fetch(`/api/customer/create-shopify`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     email,
@@ -54,66 +59,81 @@ export default function CreateCustomer({
                     lastName,
                 }),
             })
-            const { newCustomerCreate }: { newCustomerCreate: Customer } =
+            const { customer, userErrors }: { customer: Customer; userErrors: [] } =
                 await customerCreate.json()
-            const newCustomerId: string = newCustomerCreate.customer.id
+            const customerId: any = customer.id
 
             const customerAccessTokenCreate = await fetch(`/api/customer/create-access-token`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    email,
-                    password,
+                    email: email,
+                    password: password,
                 }),
             })
 
-            const { customerAccessToken }: { customerAccessToken: any } =
+            const {
+                customerAccessToken,
+                accessTokenUserErrors,
+            }: { customerAccessToken: any; accessTokenUserErrors: [] } =
                 await customerAccessTokenCreate.json()
             const accessToken: string = customerAccessToken.accessToken
+            // ---------------------------------------------------------------------------
+            const shopify: Shopify = {
+                customerAccessToken: accessToken,
+                customerId: customerId,
+            }
             // ---------------------------------------------------------------------------------------
             const customerAddressCreate = await fetch(`/api/customer/create-address`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    accessToken,
-                    lastName,
-                    firstName,
-                    phone,
-                    address,
-                    province,
-                    country,
-                    zip,
-                    city,
+                    lastName: lastName,
+                    firstName: firstName,
+                    address: {
+                        phone: phone,
+                        address: address,
+                        province: province,
+                        country: country,
+                        zip: zip,
+                        city: city,
+                    },
+                    shopify: shopify,
                 }),
             })
-            const newAddress: CustomerAddress = await customerAddressCreate.json()
+            const {
+                customerAddress,
+                addressUserErrors,
+            }: { customerAddress: CustomerAddress; addressUserErrors: [] } =
+                await customerAddressCreate.json()
             // ---------------------------------------------------------------------------------------
 
             const postAccessTokenToUser = await fetch(`/api/customer/update-viper`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    viperId,
-                    accessToken,
-                    newCustomerId,
-                    phone,
-                    address,
-                    city,
-                    province,
-                    zip,
-                    country,
+                    _id: viperId,
+                    shopify: shopify,
+                    address: {
+                        phone: phone,
+                        address: address,
+                        city: city,
+                        province: province,
+                        zip: zip,
+                        country: country,
+                    },
                 }),
             })
 
             const updatedUser: Viper = await postAccessTokenToUser.json()
-
             // ---------------------------------------------------------------------------------------
+            update({ shopify: shopify })
 
             setIsFetching(false)
 
@@ -128,9 +148,11 @@ export default function CreateCustomer({
                 setProvince("")
                 setZip("")
                 setCountry("")
-                router.refresh()
+
+                router.back()
+                // router.prefetch(`/${pageBack}`)
             })
-            router.back()
+            // router.push(`/${pageBack}`)
         } catch (error) {
             console.error(error)
         }
@@ -188,15 +210,17 @@ export default function CreateCustomer({
                                                 onChange={(e) => setLastName(e.target.value)}
                                             ></input>
                                         </label>
+
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">Email</span>
                                             <input
                                                 type="email"
-                                                className="block p-1 w-full  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full hover:cursor-pointer rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                             />
                                         </label>
+
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">
                                                 Password
@@ -204,50 +228,54 @@ export default function CreateCustomer({
                                             <input
                                                 data-test="password"
                                                 type="password"
-                                                className="block p-1 w-full  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
+                                                className="block p-1 w-full hover:cursor-pointer rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
                                             />
                                         </label>
+
                                         <label className="block py-1 ">
                                             <span className="text-gray-300 ml-[4px]">Phone</span>
                                             <input
-                                                data-test="phone"
+                                                data-test="customer-phone"
                                                 type="tel"
-                                                className=" block p-1 w-full  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500 "
+                                                className=" block p-1 w-full hover:cursor-pointer rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500 "
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
                                             ></input>
                                         </label>
+
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">Address</span>
                                             <input
-                                                data-test="address"
-                                                className="block p-1 w-full hover:cursor-pointer rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                type={"string"}
+                                                data-test="customer-address"
+                                                className=" block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
+                                                type={"text"}
                                                 value={address}
                                                 onChange={(e) => setAddress(e.target.value)}
                                             ></input>
                                         </label>
+
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">City</span>
                                             <input
-                                                data-test="city"
+                                                data-test="customer-city"
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                type={"string"}
+                                                type={"text"}
                                                 value={city}
                                                 onChange={(e) => setCity(e.target.value)}
                                             ></input>
                                         </label>
+
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">
                                                 Province
                                             </span>
                                             <input
-                                                data-test="province"
+                                                data-test="customer-province"
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                type={"string"}
+                                                type={"text"}
                                                 value={province}
                                                 onChange={(e) => setProvince(e.target.value)}
                                             ></input>
@@ -257,9 +285,9 @@ export default function CreateCustomer({
                                                 Zip Code
                                             </span>
                                             <input
-                                                data-test="zip-code"
+                                                data-test="customer-zip-code"
                                                 className="block p-1 w-full  hover:cursor-pointer  rounded-lg border sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
-                                                type={"string"}
+                                                type={"text"}
                                                 value={zip}
                                                 onChange={(e) => setZip(e.target.value)}
                                             ></input>
@@ -267,11 +295,11 @@ export default function CreateCustomer({
                                         <label className="block py-1">
                                             <span className="text-gray-300 ml-[4px]">Country</span>
                                             <select
-                                                data-test="country"
+                                                data-test="customer-country"
                                                 className="block p-1 w-full  rounded-lg border  sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900 dark:focus:border-yellow-500"
                                                 value={country}
                                                 onChange={(e) => setCountry(e.target.value)}
-                                                // required
+                                                required
                                             >
                                                 <option value={"Nowhere"}>Select an Option</option>
                                                 <option value={"Argentina"}>Argentina</option>

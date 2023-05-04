@@ -24,7 +24,7 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                     }
                     width={580}
                     height={80}
-                    className="-z-10 rounded-xl  group-hover:opacity-80 max-h-44 object-cover object-center -mb-2"
+                    className="-z-10 rounded-xl  group-hover:opacity-80 max-h-44 max-w-auto object-cover object-center -mb-2"
                     alt={fullViper.name}
                     placeholder="blur"
                     blurDataURL={fullViper.image}

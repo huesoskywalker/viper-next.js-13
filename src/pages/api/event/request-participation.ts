@@ -5,8 +5,8 @@ import { Viper } from "@/types/viper"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const viperId: string = body._id
-    const eventId: string = body.eventId
+    const viperId: string = body.viper._id
+    const eventId: string = body.event._id
     const checkoutId: string = body.checkoutId
     if (req.method === "PUT") {
         try {
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
                 {
                     $push: {
-                        collection: {
+                        "myEvents.collection": {
                             _id: new ObjectId(eventId),
                             checkoutId: checkoutId,
                         },

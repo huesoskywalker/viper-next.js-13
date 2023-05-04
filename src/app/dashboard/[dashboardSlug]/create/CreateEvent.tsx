@@ -7,14 +7,6 @@ import Image from "next/image"
 import { Organizer } from "@/types/event"
 
 export default function CreateEvent(): JSX.Element {
-    // viperId,
-    // viperName,
-    // viperEmail,
-    // viperImage,
-    // viperId: string
-    // viperName: string
-    // viperEmail: string
-    // viperImage: string
     const [title, setTitle] = useState<string>("")
     const [content, setContent] = useState<string>("")
     const [location, setLocation] = useState<string>("")
@@ -77,7 +69,7 @@ export default function CreateEvent(): JSX.Element {
             const stageUploadCreate = await fetch(`/api/product/stage-upload`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     data: data,
@@ -102,7 +94,7 @@ export default function CreateEvent(): JSX.Element {
             })
             //---------------------------------------------------------------------------------
             //IMAGE must be resized. height: 150px, width: 100px works fine for both.
-            const uploadStagedUrl = await fetch(url, {
+            const stageUploadUrl = await fetch(url, {
                 headers: {
                     "Content-Length": data!.size + 5000,
                 },
@@ -113,7 +105,7 @@ export default function CreateEvent(): JSX.Element {
             // ------------------------------------------------------------------------------
             const createProduct = await fetch(`/api/product/create-shopify`, {
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 method: "POST",
 
@@ -130,17 +122,23 @@ export default function CreateEvent(): JSX.Element {
                 }),
             })
 
-            const { product }: { product: { id: string } } = await createProduct.json()
-            const productId: string = product.id
-
+            const { product }: { product: { _id: string; variant_id: string } } =
+                await createProduct.json()
+            const productId: string = product._id
+            const variantId: string = product.variant_id
+            const newProduct = {
+                _id: productId,
+                variant_id: variantId,
+            }
             // ------------------------------------------------------------------------------
             const productCreateMedia = await fetch(`/api/product/create-media`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    productId: productId,
+                    product: newProduct,
+                    // productId: productId,
                     resourceUrl: resourceUrl,
                 }),
             })
@@ -149,10 +147,11 @@ export default function CreateEvent(): JSX.Element {
             const publishProduct = await fetch(`/api/product/publish-shopify`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    productId: productId,
+                    product: newProduct,
+                    // productId: productId,
                 }),
             })
             const freshProductInStore = await publishProduct.json()
@@ -161,13 +160,12 @@ export default function CreateEvent(): JSX.Element {
             const createEvent = await fetch(`/api/event/create/submit`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     organizer: organizer,
                     title: title,
                     content: content,
-                    // time: time,
                     location: location,
                     address: address,
                     date: `${date}T${time}.000Z`,
@@ -175,7 +173,7 @@ export default function CreateEvent(): JSX.Element {
                     price: Number(price),
                     entries: Number(entries),
                     image: imageUrl,
-                    productId: productId,
+                    product: newProduct,
                 }),
             })
 

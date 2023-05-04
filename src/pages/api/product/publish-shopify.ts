@@ -5,7 +5,7 @@ import { RequestReturn } from "@shopify/shopify-api"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const productId: string = body.productId
+    const productId: string = body.product._id
     const viperApp: string = process.env.VIPER_APP!
     if (req.method === "POST") {
         try {

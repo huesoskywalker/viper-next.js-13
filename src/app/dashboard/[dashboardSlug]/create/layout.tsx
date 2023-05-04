@@ -12,7 +12,7 @@ export default async function Layout({ children, params }: PageProps) {
     // const fetchViper = await fetch(`http://localhost:3000/api/viper/${viperId}`, {
     //     method: "GET",
     //     headers: {
-    //         "Content-Type": "application/json",
+    //         "content-type": "application/json; charset=utf-8",
     //     },
     // })
     // const viper: Viper = await fetchViper.json()

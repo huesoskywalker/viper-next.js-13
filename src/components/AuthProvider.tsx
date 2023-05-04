@@ -17,11 +17,7 @@ const Auth = ({ children }: PageProps) => {
 
     return <>{children}</>
 }
-export default function AuthProvider({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
     return (
         <SessionProvider>
             <Auth>{children}</Auth>

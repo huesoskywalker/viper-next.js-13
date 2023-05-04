@@ -48,7 +48,7 @@ export function AddLike({
             const response = await fetch(`/api/like-event`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     id: eventId,
@@ -61,7 +61,7 @@ export function AddLike({
             const response = await fetch(`/api/like-comment`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     id: eventId,
@@ -75,7 +75,7 @@ export function AddLike({
             const response = await fetch(`/api/like-reply`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     eventId: eventId,
@@ -89,7 +89,7 @@ export function AddLike({
             const response = await fetch(`/api/viper/blog/like`, {
                 method: "POST",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     _id: commentId,

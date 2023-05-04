@@ -8,7 +8,8 @@ const productCreate = async (
     req: NextApiRequest,
     res: NextApiResponse<{
         product: {
-            id: string
+            _id: string
+            variant_id: string
         }
     }>
 ) => {
@@ -19,6 +20,9 @@ const productCreate = async (
     const price: string = body.price
     const resourceUrl: string = body.resourceUrl
     const entries: string = body.entries
+    const category: string = body.category
+    const location: string = body.location
+    const address: string = body.address
 
     if (req.method === "POST") {
         try {
@@ -63,9 +67,11 @@ const productCreate = async (
                     variables: PRODUCT_INPUT,
                 },
             })
+            const product = newProduct.body.data.productCreate.product
             return res.status(200).json({
                 product: {
-                    id: newProduct.body.data.productCreate.product.id,
+                    _id: product.id,
+                    variant_id: product.variants.edges[0].node.id,
                 },
             })
         } catch (error: any) {

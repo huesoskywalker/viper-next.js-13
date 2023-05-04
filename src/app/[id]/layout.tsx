@@ -8,7 +8,10 @@ import { preloadViperSession } from "@/lib/session"
 export default async function Layout({ children, params }: PageProps) {
     const eventId: string = params.id
     preloadEventById(eventId)
-    preloadViperSession()
+    // this might be commented, cuz credential sing in
+    // then we have the new update hook of useSession,
+    // so uncomment, and check where the session should be updated
+    // preloadViperSession()
     return (
         <div className="flex justify-center space-x-2 mr-5">
             <GoBackArrow />

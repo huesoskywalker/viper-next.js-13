@@ -1,4 +1,8 @@
-import { Comments, EventInterface, Likes, Organizer, Participants, Reply } from "@/types/event"
+import { Comments, EventInterface, Organizer, Product, Reply } from "@/types/event"
+import { ID } from "./viper"
+export type ProductInventory = {
+    totalInventory: JQuery<number> | undefined
+}
 
 export const organizer: Organizer = {
     _id: "",
@@ -6,11 +10,11 @@ export const organizer: Organizer = {
     email: "",
 }
 
-export const participant: Participants = {
+export const participant: ID = {
     _id: "",
 }
 
-export const like: Likes = {
+export const like: ID = {
     _id: "",
 }
 
@@ -19,7 +23,7 @@ export const comment: Comments = {
     eventTitle: "",
     viperId: "",
     text: "",
-    likes: [like],
+    likes: [],
     replies: [],
     timestamp: 0,
 }
@@ -28,11 +32,19 @@ export const reply: Reply = {
     _id: "",
     viperId: "",
     reply: "",
-    likes: [like],
+    likes: [],
     timestamp: 0,
 }
+export const rawEventId: ID = {
+    _id: "",
+}
 
-export const event: EventInterface = {
+export const rawProduct: Product = {
+    _id: "",
+    variant_id: "",
+}
+
+export const rawEvent: EventInterface = {
     _id: "",
     organizer: organizer,
     title: "",
@@ -45,15 +57,16 @@ export const event: EventInterface = {
     image: "",
     price: 0,
     entries: 0,
-    participants: [participant],
+    participants: [],
     editionDate: 0,
-    likes: [like],
-    comments: [comment],
-    productId: "",
+    likes: [],
+    comments: [],
+    product: {
+        _id: "",
+        variant_id: "",
+    },
 }
-type ProductInventory = {
-    totalInventory: JQuery<number> | undefined
-}
+
 export const productInventory: ProductInventory = {
     totalInventory: undefined,
 }

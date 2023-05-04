@@ -14,7 +14,7 @@ export default async function CreateEventPage() {
     const fetchViper = await fetch(`http://localhost:3000/api/viper/${viperSession._id}`, {
         method: "GET",
         headers: {
-            "Content-Type": "application/json",
+            "content-type": "application/json; charset=utf-8",
         },
         cache: "no-cache",
     })

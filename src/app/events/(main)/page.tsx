@@ -7,7 +7,7 @@ export default async function EventsPage({}) {
     const fetchEvents = await fetch(`http:localhost:3000/api/event/all`, {
         method: "GET",
         headers: {
-            "Content-Type": "application/json",
+            "content-type": "application/json; charset=utf-8",
         },
         cache: "no-cache",
         next: {

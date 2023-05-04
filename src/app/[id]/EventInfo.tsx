@@ -7,30 +7,34 @@ import isCheckoutFulFilled from "@/helpers/isCheckoutFulFilled"
 import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfillment_order"
 import { InventoryItem } from "@shopify/shopify-api/rest/admin/2023-01/inventory_item"
 import { EventPrice } from "./EventPrice"
+import { Product } from "@/types/event"
+import { Session } from "next-auth"
 
 export async function EventInfo({
-    currentViperId,
+    currentViper,
+    // currentViperId,
     eventId,
     eventDate,
     eventLocation,
     eventPrice,
-    productId,
+    product,
     eventEntries,
 }: {
-    currentViperId: string
+    currentViper: Session
+    // currentViperId: string
     eventId: string
     eventDate: string
     eventLocation: string
     eventPrice: number
-    productId: string
+    product: Product
     eventEntries: number
 }) {
     // // Normally you would fetch data here
-
-    const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, currentViperId)
-    const viperRequestData: Promise<boolean> = requestEventParticipation(currentViperId, eventId)
+    const viper_id = currentViper.user._id
+    const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, viper_id)
+    const viperRequestData: Promise<boolean> = requestEventParticipation(viper_id, eventId)
     const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
-        currentViperId,
+        viper_id,
         eventId
     )
 
@@ -46,13 +50,13 @@ export async function EventInfo({
     }
     // RE-check this one, make it GET request and figure it out well.
     // Cheers
-    const productId_numbers = productId.match(/\d+/g)
+    const productId_numbers = product._id.match(/\d+/g)
     const productInventoryData = await fetch(
         `http://localhost:3000/api/product/inventory/${productId_numbers}`,
         {
             method: "GET",
             headers: {
-                "Content-Type": "application/json",
+                "content-type": "application/json; charset=utf-8",
             },
             next: { revalidate: 60 },
         }
@@ -90,8 +94,9 @@ export async function EventInfo({
                 </button>
             ) : (
                 <Participate
+                    // currentViper={currentViper}
                     eventId={eventId}
-                    productId={productId}
+                    product={product}
                     viperOnList={viperOnList}
                     viperRequest={viperRequest}
                     isCheckoutPaid={checkoutFulfillment?.financialStatus}

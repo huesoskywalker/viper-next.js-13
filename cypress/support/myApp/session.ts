@@ -1,6 +1,6 @@
 import { Shopify } from "@/types/viper"
 
-type SessionViper = {
+export type Session = {
     _id: string
     name: string
     image: string
@@ -10,7 +10,7 @@ type SessionViper = {
     shopify: Shopify
 }
 
-export const sessionViper: SessionViper = {
+export const rawSession: Session = {
     _id: "",
     name: "",
     email: "",

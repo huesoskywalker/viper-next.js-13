@@ -38,11 +38,11 @@ export interface Follow {
     readonly _id: ObjectId | string
 }
 export interface Address {
-    phone: number | null
+    phone: number | null | string
     address: string
     province: string
     country: string
-    zip: number | null
+    zip: number | null | string
     city: string
 }
 

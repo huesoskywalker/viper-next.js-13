@@ -28,9 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 variables: CUSTOMER_INPUT,
             },
         })
-
+        const customerCreate = newCustomer.body.data.customerCreate
+        console.log(`------customerCreate------api`)
+        console.log(customerCreate)
         return res.status(200).json({
-            newCustomerCreate: newCustomer.body.data.customerCreate,
+            customer: customerCreate.customer,
+            userErrors: customerCreate.userErrors,
         })
     } catch (error) {
         return res.status(400).json(error)

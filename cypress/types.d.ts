@@ -11,13 +11,15 @@
 /// <reference path="../../../node_modules/cypress/types/cypress-global-vars.d.ts" />
 
 declare namespace Cypress {
-    // add custom Cypress command to the interface Chainable<Subject>
-
     interface Chainable<Subject = any> {
         getByData(selector: string): Cypress.Chainable
+
         dataInContainer(selector: string, value: string): Cypress.Chainable
+
         clickButton(selector: string, contains: string, href?: string): Cypress.Chainable
+
         inputType(selector: string, value: string): Cypress.Chainable
+
         inputSelect(selector: string, value: string): Cypress.Chainable
 
         signInWithCredential(username: string, password: string): Cypress.Chainable
@@ -33,15 +35,17 @@ declare namespace Cypress {
                 status: number
                 expectRequest?: {
                     keys: string[]
-                    object?: object | Alias
+                    object?: object | Alias<string>
                     path?: string
                 }
                 build?: {
-                    object: object | Alias
-                    alias?: Alias
+                    object: object | Alias<string>
+                    alias?: Alias<string>
                 }
             }
         ): Cypress.Chainable
+
+        expectBodyKeyEqualObjectKey(body: BodyType, object: object | Alias<string>): void
 
         verifyInterceptionRequestAndResponse(
             interception: Interception,
@@ -49,31 +53,146 @@ declare namespace Cypress {
                 reqUrl: string
                 reqHeaders: object
                 reqMethod: string
-                reqBody: object | string
+                reqBody: object | Alias<string> | (object | Alias<string>)[]
+                reqKeys: (string | number)[]
             },
             responseOptions: {
                 resStatus: number
-                resBody: object | string
                 resHeaders: object
-                resKeys?: string[]
+                resKeys: (string | number)[] | (string | number)[][]
+                resBody?: object | Alias<string> | (object | Alias<string>)[]
             },
-            dataOptions: {
-                source: "mongodb" | "shopify"
-                action?: "create" | "edit"
-            },
-            buildProperty?: {
-                propKeys: {
-                    reqKey: string
-                    objKey: string
-                }
-                propPath?: string
-                alias?: string
-            }
+            dataOptions:
+                | {
+                      source: "mongodb" | "shopify"
+                      action?: "create" | "edit"
+                  }
+                | {
+                      source: "mongodb" | "shopify"
+                      action?: "create" | "edit"
+                  }[],
+            buildProperty?:
+                | {
+                      body: "response" | "request"
+                      propKeys:
+                          | {
+                                reqKey: string
+                                objKey: string
+                            }
+                          | {
+                                reqKey: string
+                                objKey: string
+                            }[]
+                      object: object | Alias<string> | (object | Alias<string>)[]
+                      objPath?: string | (string | undefined)[]
+                      alias?: Alias<string> | (Alias<string> | undefined)[]
+                  }
+                | ({
+                      body: "response" | "request"
+                      propKeys:
+                          | {
+                                reqKey: string
+                                objKey: string
+                            }
+                          | {
+                                reqKey: string
+                                objKey: string
+                            }[]
+                      object: object | Alias<string> | (object | Alias<string>)[]
+                      objPath?: string | (string | undefined)[]
+                      alias?: Alias<string> | (Alias<string> | undefined)[]
+                  } | null)[]
         ): Cypress.Chainable
 
-        checkEventComponentProps(event: EventInterface): Cypress.Chainable
-    }
+        expectInterceptionEqualRequestOptions(
+            interception: Interception,
+            requestOptions: {
+                reqUrl: string
+                reqHeaders: object
+                reqMethod: string
+                reqBody: object | Alias<string> | (object | Alias<string>)[]
+                reqKeys: (string | number)[]
+            }
+        ): void
 
+        expectMongoDBResponse(response: Response, action?: "edit" | "create")
+
+        checkEventComponentProps(event: EventInterface): Cypress.Chainable
+
+        handleBuildProperty(
+            body: BodyType,
+            buildProperty: {
+                propKeys:
+                    | {
+                          reqKey: string
+                          objKey: string
+                      }
+                    | {
+                          reqKey: string
+                          objKey: string
+                      }[]
+                realObject: object | Alias<string> | (object | Alias<string>)[]
+                expectProperty: "response" | "request"
+                objPath?: string | (string | undefined)[]
+                alias?: Alias<string> | (Alias<string> | undefined)[]
+            }
+        )
+
+        handleAndExpectKeys(
+            body: BodyType,
+            propKeys: { reqKey: string; objKey: string } | { reqKey: string; objKey: string }[]
+        )
+
+        buildObjectProperties(
+            body: BodyType,
+            object: object | Alias<string>,
+            properties: {
+                propKeys?:
+                    | {
+                          reqKey: string
+                          objKey: string
+                      }
+                    | {
+                          reqKey: string
+                          objKey: string
+                      }[]
+                objPath?: string
+                alias?: Alias<string>
+            }
+        )
+
+        isAliasObject(object: BodyType | Alias<string>): Cypress.Chainable
+
+        buildProps(
+            body: BodyType,
+            object: object,
+            properties: {
+                propKeys?:
+                    | {
+                          reqKey: string
+                          objKey: string
+                      }
+                    | {
+                          reqKey: string
+                          objKey: string
+                      }[]
+                objPath?: string | undefined
+            }
+        )
+
+        handleKeys(
+            body: object,
+            object: object,
+            keys: { reqKey: string; objKey: string } | { reqKey: string; objKey: string }[],
+            path: string | undefined
+        )
+
+        handlePath(object: object, path: string, value: object)
+
+        handleObject(object: object, value: object)
+
+        // =================
+    }
     // add properties the application adds to its "window" object
     // by adding them to the interface ApplicationWindow
     interface ApplicationWindow {

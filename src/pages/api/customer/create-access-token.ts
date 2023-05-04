@@ -22,9 +22,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     variables: CUSTOMER_ACCESS_TOKEN_INPUT,
                 },
             })
+
+            const customerAccessTokenCreate =
+                customerAccessToken.body.data.customerAccessTokenCreate
+
             return res.status(200).json({
-                customerAccessToken:
-                    customerAccessToken.body.data.customerAccessTokenCreate.customerAccessToken,
+                customerAccessToken: customerAccessTokenCreate.customerAccessToken,
+                accessTokenUserErrors: customerAccessTokenCreate.customerUserErrors,
             })
         } catch (error) {
             return res.status(400).json(error)

@@ -79,16 +79,19 @@ export const getViperCollection = cache(async (id: string): Promise<Collection[]
                 $match: { _id: new ObjectId(id) },
             },
             {
-                $unwind: "$collection",
+                $unwind: "$myEvents.collection",
             },
             {
                 $project: {
-                    _id: "$collection._id",
-                    checkoutId: "$collection.checkoutId",
+                    _id: "$myEvents.collection._id",
+                    checkoutId: "$myEvents.collection.checkoutId",
                 },
             },
         ])
         .toArray()
+
+    console.log(`-------isViperCollection ? `)
+    console.log(events)
 
     return events
 })
@@ -272,7 +275,7 @@ export async function requestEventParticipation(
     try {
         const request = await viperCollection.findOne({
             _id: new ObjectId(viperId),
-            "collection._id": new ObjectId(eventId),
+            "myEvents.collection._id": new ObjectId(eventId),
         })
 
         if (!request) return false

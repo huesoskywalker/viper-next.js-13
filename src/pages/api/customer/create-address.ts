@@ -3,24 +3,35 @@ import { CUSTOMER_ADDRESS_CREATE } from "@/graphql/mutation/customerAddressCreat
 import { storefrontClient } from "@/lib/storefrontApi"
 import { CustomerAddress } from "@shopify/shopify-api/rest/admin/2023-01/customer_address"
 import { RequestReturn } from "@shopify/shopify-api"
+import { Address } from "@/types/viper"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const accessToken: string = body.accessToken
+
     const lastName: string = body.lastName
     const firstName: string = body.firstName
-    const phone: string = body.phone
-    const address: string = body.address
-    const province: string = body.province
-    const country: string = body.country
-    const zip: string = body.zip
-    const city: string = body.city
+    // const address = {
+    //     phone: body.address.phone,
+    //     address: body.address.address,
+    //     province: body.address.province,
+    //     country: body.address.country,
+    //     zip: body.address.zip,
+    //     city: body.address.city,
+    // }
+    const accessToken: string = body.shopify.customerAccessToken
+    const phone: string = body.address.phone
+    const address: string = body.address.address
+    const province: string = body.address.province
+    const country: string = body.address.country
+    const zip: string = body.address.zip
+    const city: string = body.address.city
     try {
         const CUSTOMER_ADDRESS_INPUT = {
             customerAccessToken: accessToken,
             address: {
                 lastName: firstName,
                 firstName: lastName,
+                // ...address,
                 phone: phone,
                 address1: address,
                 province: province,
@@ -37,9 +48,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         })
 
-        return res
-            .status(200)
-            .json({ newAddress: customerAddress.body.data.customerAddressCreate })
+        const customerAddressCreate = customerAddress.body.data.customerAddressCreate
+
+        return res.status(200).json({
+            customerAddress: customerAddressCreate.customerAddress,
+            addressUserErrors: customerAddressCreate.customerUserErrors,
+        })
     } catch (error) {
         return res.status(400).json(error)
     }

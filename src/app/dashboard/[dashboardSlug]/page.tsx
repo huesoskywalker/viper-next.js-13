@@ -17,7 +17,7 @@ export default async function MyEventsPage() {
     preloadViperCreatedEvents(viper._id)
     const fetchViperEvents = await fetch(`http://localhost:3000/api/viper/events/created`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "content-type": "application/json; charset=utf-8" },
         body: JSON.stringify({
             viperId: viper._id,
         }),

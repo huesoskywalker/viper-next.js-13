@@ -71,7 +71,7 @@ export function EditEventForm({
             const response = await fetch(`/api/event/create/submit`, {
                 method: "PUT",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     _id: eventId,
@@ -80,7 +80,8 @@ export function EditEventForm({
                     location,
                     date,
                     category,
-                    price,
+                    price: Number(price),
+                    dateNow: Date.now(),
                     // imageUrl,
                 }),
             })
@@ -110,7 +111,7 @@ export function EditEventForm({
             const response = await fetch(`/api/event/create/submit`, {
                 method: "DELETE",
                 headers: {
-                    "Content-type": "application/json",
+                    "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
                     eventId: eventId,

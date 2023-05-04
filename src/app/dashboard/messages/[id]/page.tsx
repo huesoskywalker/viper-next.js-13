@@ -13,7 +13,7 @@ export default async function chatIdPage({ params }: PageProps) {
     const messengerData = await fetch(`http://localhost:3000/api/messages/${id}`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            "content-type": "application/json; charset=utf-8",
         },
         body: JSON.stringify({
             id,
