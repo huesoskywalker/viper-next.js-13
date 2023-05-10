@@ -5,9 +5,9 @@ import { EventInterface } from "@/types/event"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const id: string = body.id
-    const commentId: string = body.commentId
-    const viperId: string = body.viperId
+    const eventId: string = body.event._id
+    const commentId: string = body.comment._id
+    const viperId: string = body.viper._id
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<EventInterface>("events")
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .aggregate([
                 {
                     $match: {
-                        _id: new ObjectId(id),
+                        _id: new ObjectId(eventId),
                     },
                 },
                 {
@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 const likeComment = await db.findOneAndUpdate(
                     {
-                        _id: new ObjectId(id),
+                        _id: new ObjectId(eventId),
                         comments: {
                             $elemMatch: {
                                 _id: new ObjectId(commentId),
@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 const disLikeComment = await db.findOneAndUpdate(
                     {
-                        _id: new ObjectId(id),
+                        _id: new ObjectId(eventId),
                         comments: {
                             $elemMatch: {
                                 _id: new ObjectId(commentId),

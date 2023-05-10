@@ -2,7 +2,7 @@ import { getCurrentViper } from "@/lib/session"
 import { getViperFollows } from "@/lib/vipers"
 import { ReactNode, Suspense } from "react"
 import { Follow } from "@/types/viper"
-import { ViperContacts } from "./ViperContatcs"
+import { ViperContacts } from "./ViperContacts"
 import { Session } from "next-auth"
 
 export default async function Layout({ children }: { children: ReactNode }) {

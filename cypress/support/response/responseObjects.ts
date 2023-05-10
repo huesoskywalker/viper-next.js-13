@@ -1,5 +1,6 @@
+import { Comments } from "@/types/event"
 import { ID } from "../myApp/viper"
-import { requestCreateEvent } from "../request/requestObjects"
+import { requestCommentEvent, requestCreateEvent } from "../request/requestObjects"
 import { CustomerShopify, NewCustomer, ProductMedia, PublishProduct } from "./responseTypes"
 
 export const responseProductMedia: ProductMedia = {
@@ -40,4 +41,13 @@ export const responseCheckoutId: ID = {
 
 export const responseCheckoutWebUrl: ID = {
     webUrl: "",
+}
+
+export const responseCommentEvent: Comments = {
+    _id: "",
+    viperId: "",
+    text: requestCommentEvent.content,
+    likes: [],
+    replies: [],
+    timestamp: 0,
 }

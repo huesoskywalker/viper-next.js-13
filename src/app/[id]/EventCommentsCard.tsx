@@ -1,4 +1,4 @@
-import { getViperBasicsProps } from "@/lib/vipers"
+import { getViperBasicProps } from "@/lib/vipers"
 import Image from "next/image"
 import { cookies } from "next/headers"
 import AddComment from "@/components/AddComment"
@@ -9,7 +9,7 @@ import OrganizerInfo from "./OrganizerInfo"
 import ShowViper from "./ShowViper"
 import { EventDate } from "./EventDate"
 import { delay } from "@/lib/delay"
-import { Viper } from "@/types/viper"
+import { Viper, ViperBasicProps } from "@/types/viper"
 
 export async function EventCommentsCard({
     eventId,
@@ -36,20 +36,24 @@ export async function EventCommentsCard({
 }) {
     const viper_id: string = viperId.replace(/['"]+/g, "")
     const comment_id: string = commentId.replace(/['"]+/g, "")
-    const viper: Viper | null = await getViperBasicsProps(viper_id)
+    const viper: ViperBasicProps | null = await getViperBasicProps(viper_id)
 
     if (!viper) throw new Error("No viper bro")
     const likedCookie = cookies().get(`_${reply ? replyId : comment_id}_is_liked`)?.value || "none"
 
     await delay(1500)
     return (
-        <div className=" space-y-2 lg:border-b lg:border-gray-800 pb-3 ml-5">
+        <div
+            data-test="event-comment-card"
+            className=" space-y-2 lg:border-b lg:border-gray-800 pb-3 ml-5"
+        >
             <div className="flex items-center w-full max-w-lg  mx-auto ">
                 <div className=" text-center sm:ml-4 sm:text-left">
                     <div className="grid grid-cols-9 gap-3 space-x-4">
                         <div className="col-start-1 col-span-1 ">
                             <Link href={`/dashboard/vipers/${viper_id}`}>
                                 <Image
+                                    data-test="viper-image"
                                     src={`${
                                         firstLogin(viper.image)
                                             ? viper.image
@@ -65,6 +69,7 @@ export async function EventCommentsCard({
                         <div className="col-start-2 col-span-7 border-[1px] border-slate-600 rounded-xl bg-gray-700/50 p-[6px] h-[7rem] w-[22rem]  space-y-2">
                             <div className="flex justify-between  max-h-auto">
                                 <ShowViper viperName={viper.name} event={false} blog={false}>
+                                    {/* tests not done in Organizer Info */}
                                     {/* @ts-expect-error Async Server Component */}
                                     <OrganizerInfo
                                         key={JSON.stringify(viper._id)}
@@ -80,9 +85,15 @@ export async function EventCommentsCard({
                                 className="space-y-2"
                             >
                                 {!reply ? (
-                                    <span className="text-gray-400/70 text-xs flex align-top">
+                                    <span
+                                        // data-test="comment-on"
+                                        className="text-gray-400/70 text-xs flex align-top"
+                                    >
                                         Commenting on{" "}
-                                        <span className="text-blue-500/80 text-xs ml-[5px]">
+                                        <span
+                                            data-test="comment-on"
+                                            className="text-blue-500/80 text-xs ml-[5px]"
+                                        >
                                             {" "}
                                             {replyTo}
                                         </span>

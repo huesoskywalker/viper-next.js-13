@@ -3,14 +3,12 @@ import clientPromise from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
 import { Chats } from "@/types/viper"
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const viperId: string = body.viperId
-    const id: string = body.id
+    const viperId: string = body.viper._id
+    const contactId: string = body.contact._id
     const message: string = body.message
+    const timestamp: number = body.timestamp
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<Chats>("chats")
@@ -21,29 +19,30 @@ export default async function handler(
                 {
                     $or: [
                         {
-                            members: [new ObjectId(viperId), new ObjectId(id)],
+                            members: [new ObjectId(viperId), new ObjectId(contactId)],
                         },
                         {
-                            members: [new ObjectId(id), new ObjectId(viperId)],
+                            members: [new ObjectId(contactId), new ObjectId(viperId)],
                         },
                     ],
                 },
                 {
                     $setOnInsert: {
-                        members: [new ObjectId(viperId), new ObjectId(id)],
+                        members: [new ObjectId(viperId), new ObjectId(contactId)],
+                        messages: [],
                     },
                 },
                 { upsert: true }
             )
-
+            // This, should return a new mongodb doc, initChat one.
             const messenger = await db.findOneAndUpdate(
                 {
                     $or: [
                         {
-                            members: [new ObjectId(viperId), new ObjectId(id)],
+                            members: [new ObjectId(viperId), new ObjectId(contactId)],
                         },
                         {
-                            members: [new ObjectId(id), new ObjectId(viperId)],
+                            members: [new ObjectId(contactId), new ObjectId(viperId)],
                         },
                     ],
                 },
@@ -53,11 +52,14 @@ export default async function handler(
                             _id: new ObjectId(),
                             sender: new ObjectId(viperId),
                             message: message,
-                            timestamp: Date.now(),
+                            timestamp: timestamp,
                         },
                     },
                 }
             )
+            console.log(`----messenger from chat endpoint`)
+
+            console.log(messenger)
             return res.status(200).json(messenger)
         } catch (error) {
             return res.status(400).json(error)

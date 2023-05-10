@@ -8,6 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const blogOwner_id: string = body.blogOwner_id
     const _id: string = body._id
     const viper_id: string = body.viper_id
+    const timestamp: number = body.timestamp
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
@@ -44,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const likeMyBlog = await db.findOneAndUpdate(
                 {
+                    _id: new ObjectId(blogOwner_id),
                     "blog.myBlog._id": new ObjectId(_id),
                 },
                 {
@@ -61,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             blogOwner_id: new ObjectId(blogOwner_id),
                             _id: new ObjectId(_id),
                             viper_id: new ObjectId(viper_id),
-                            timestamp: Date.now(),
+                            timestamp: timestamp,
                         },
                     },
                 }
@@ -74,6 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             const disLikeMyBlog = await db.findOneAndUpdate(
                 {
+                    _id: new ObjectId(blogOwner_id),
                     "blog.myBlog._id": new ObjectId(_id),
                 },
                 {

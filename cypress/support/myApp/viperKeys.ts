@@ -7,6 +7,7 @@ import {
     Viper,
     ExternalBlog,
     Collection,
+    ViperBasicProps,
 } from "@/types/viper"
 
 import { ID } from "./viper"
@@ -62,3 +63,15 @@ export const collectionKeys: (keyof Collection)[] = ["_id", "checkoutId"]
 export const myEventsKeys: (keyof MyEvents)[] = ["_id", "created", "collection", "likes"]
 
 export const shopifyKeys: (keyof Shopify)[] = ["customerAccessToken", "customerId"]
+
+export const viperBasicKeys: (keyof ViperBasicProps)[] = [
+    "_id",
+    "name",
+    "image",
+    "backgroundImage",
+    "email",
+    "location",
+    "biography",
+    "followers",
+    "follows",
+]

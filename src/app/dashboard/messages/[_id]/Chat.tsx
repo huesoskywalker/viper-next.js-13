@@ -19,11 +19,13 @@ export default async function Chat({
     if (!viper) throw new Error("No Viper bro")
     return (
         <div key={messageId} className="mr-20 my-2">
-            <h1>{viper.name}</h1>
+            <h1 data-test="viper-name">{viper.name}</h1>
             <div className="bg-blue-400/75 rounded-[14px]">
-                <p className="py-1.5 px-2 text-gray-50">{message}</p>
+                <p data-test="viper-message" className="py-1.5 px-2 text-gray-50">
+                    {message}
+                </p>
             </div>
-            <p className="text-[13px]">
+            <p data-test="chat-timestamp" className="text-[13px]">
                 {" "}
                 {formatDistanceToNow(new Date(timestamp))} ago
             </p>

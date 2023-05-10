@@ -44,19 +44,19 @@ export default function AddComment({
     const submitComment = async (e: any): Promise<void> => {
         e.preventDefault()
         if (event && !reply && !blog) {
-            const response = await fetch(`/api/comment`, {
+            const eventComment = await fetch(`/api/event/comment/post`, {
                 method: "POST",
                 headers: {
                     "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    id: id,
-                    viperId: viperId,
+                    event: { _id: id },
+                    viper: { _id: viperId },
                     comment: comment,
                 }),
             })
 
-            await response.json()
+            const newComment: Comment = await eventComment.json()
         } else if (!event && reply && !blog) {
             const response = await fetch(`/api/comment-comment`, {
                 method: "POST",
@@ -212,13 +212,17 @@ export default function AddComment({
             )}
             <div>
                 {openCommentInput ? (
-                    <div className="fixed  inset-0 z-30 overflow-x-auto ">
+                    <div
+                        className="fixed  inset-0 z-30 overflow-x-auto "
+                        data-test="comment-input"
+                    >
                         <div className="flex items-center min-h-screen px-4 py-4">
                             <div className="relative w-full max-w-md p-4  mx-auto bg-gray-900 rounded-xl shadow-lg">
                                 <div className="space-x-2">
                                     <div className=" text-center sm:ml-2 sm:text-left ">
                                         <div className="grid grid-cols-9 space-y-2">
                                             <button
+                                                data-test="close-input"
                                                 className="absolute left-2 top-2 text-gray-300 hover:text-red-700"
                                                 onClick={() => setOpenCommentInput(false)}
                                             >
@@ -239,6 +243,7 @@ export default function AddComment({
                                             </button>
                                             <div className="col-start-1 col-span-2  self-center">
                                                 <Image
+                                                    data-test="viper-image"
                                                     src={`${
                                                         firstLogin(viperImage!)
                                                             ? viperImage
@@ -249,11 +254,15 @@ export default function AddComment({
                                                     height={50}
                                                     className="rounded-full h-fit w-fit"
                                                 />
-                                                <span className="text-gray-300/90 text-xs flex justify-center ">
+                                                <span
+                                                    data-test="viper-name"
+                                                    className="text-gray-300/90 text-xs flex justify-center "
+                                                >
                                                     {viperIdName}
                                                 </span>
                                             </div>
                                             <textarea
+                                                data-test="write-comment"
                                                 className="h-20 p-2 col-start-3 col-span-7 text-gray-300 bg-black/30 border-[2px] rounded-lg border-transparent sm:text-xs outline-none focus:border-yellow-700/80"
                                                 value={comment}
                                                 onChange={(e) => setComment(e.target.value)}
@@ -267,6 +276,7 @@ export default function AddComment({
                                                 required
                                             ></textarea>
                                             <button
+                                                data-test="post-comment"
                                                 className="col-start-5 col-span-2 relative w-full items-center space-x-2 rounded-lg bg-gray-800 px-3 py-1  text-sm font-medium text-white hover:bg-yellow-900/80 disabled:text-white/70"
                                                 onClick={(e) => submitComment(e)}
                                             >

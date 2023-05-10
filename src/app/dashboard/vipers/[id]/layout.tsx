@@ -11,8 +11,8 @@ export default async function Layout({ children, params }: PageProps) {
     preloadViperById(viperId)
 
     return (
-        <div className="flex justify-center ">
-            <div className="lg:border-r  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-2">
+        <div className="flex justify-between ">
+            <div className="lg:border-r  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-8">
                 {/* @ts-expect-error Async Server Component */}
 
                 <Profile viperId={viperId} profile={false} />

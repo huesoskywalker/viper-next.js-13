@@ -42,9 +42,7 @@ async function findSubDashboard(
     dashboard: Dashboard | undefined,
     subDashboardSlug: string | undefined
 ) {
-    return dashboard?.items.find(
-        (dashboard) => dashboard.slug === subDashboardSlug
-    )
+    return dashboard?.items.find((dashboard) => dashboard.slug === subDashboardSlug)
 }
 
 export async function fetchSubDashboard(

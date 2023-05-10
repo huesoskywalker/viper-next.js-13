@@ -68,17 +68,15 @@ export interface ExternalBlog {
     comment?: string
     timestamp: number
 }
-// export interface CommentedBlog {
-//     readonly bloggerId: ObjectId | string
-//     readonly blogId: ObjectId | string
-//     readonly viperId: ObjectId | string
-//     comment: string
-//     timestamp: number
-// }
 
 export interface Chats {
     readonly _id: ObjectId | string
-    sender: string
+    members: (ObjectId | string)[]
+    messages: Message[]
+}
+export interface Message {
+    readonly _id: ObjectId | string
+    sender: ObjectId | string
     message: string
     timestamp: number
 }
@@ -87,3 +85,16 @@ export interface Shopify {
     customerAccessToken: string
     customerId: string
 }
+
+export type ViperBasicProps = Pick<
+    Viper,
+    | "_id"
+    | "name"
+    | "image"
+    | "backgroundImage"
+    | "email"
+    | "location"
+    | "biography"
+    | "followers"
+    | "follows"
+>

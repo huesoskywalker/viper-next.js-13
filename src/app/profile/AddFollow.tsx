@@ -24,14 +24,14 @@ export function AddFollow({
 
     const follow = async (): Promise<void> => {
         setIsFetching(true)
-        const response = await fetch(`/api/follow-viper`, {
+        const response = await fetch(`/api/viper/follow`, {
             method: "PUT",
             headers: {
                 "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
-                viperId: viperId,
-                id: id,
+                currentViper: { _id: viperId },
+                viper: { _id: id },
             }),
         })
         setIsFetching(false)
@@ -46,6 +46,7 @@ export function AddFollow({
         <div>
             {event ? (
                 <button
+                    data-test="display-add-follow"
                     className={
                         isFollowed
                             ? `${

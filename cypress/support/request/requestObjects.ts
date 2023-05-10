@@ -1,6 +1,7 @@
 import { rawProduct } from "../myApp/event"
+import { ID } from "../myApp/viper"
 import {
-    BlogRequest,
+    Comment,
     CreateEvent,
     EditEventRequest,
     File,
@@ -47,8 +48,8 @@ export const requestEditEvent: EditEventRequest = {
     price: 34,
 }
 
-export const requestCreateBlog: BlogRequest = {
-    content: "Cypress is a pretty cool feature",
+export const requestCreateBlog: Comment = {
+    comment: "Cypress is a pretty cool feature",
 }
 
 export const requestLikeBlog: LikeBlog = {
@@ -93,4 +94,12 @@ export const requestProductShopify: ProductShopify = {
     category: requestCreateEvent.category,
     price: requestCreateEvent.price.toString(),
     entries: requestCreateEvent.entries.toString(),
+}
+
+export const requestCommentEvent: Comment = {
+    comment: "see y'all there",
+}
+
+export const requestChatContact: ID = {
+    message: "Hey pal, bla bla bla",
 }

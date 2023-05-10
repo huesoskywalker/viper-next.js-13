@@ -20,15 +20,9 @@ export const CollectionEventCard = async ({
     const link: string = href.slice(1, -1)
     const eventData: Promise<EventInterface | null> = getEventById(event_id)
 
-    const eventCardAvailableData: Promise<boolean> = isEventCardAvailable(
-        event_id,
-        viperId
-    )
+    const eventCardAvailableData: Promise<boolean> = isEventCardAvailable(event_id, viperId)
 
-    const [event, eventCardAvailable] = await Promise.all([
-        eventData,
-        eventCardAvailableData,
-    ])
+    const [event, eventCardAvailable] = await Promise.all([eventData, eventCardAvailableData])
 
     return (
         <>
@@ -36,6 +30,7 @@ export const CollectionEventCard = async ({
                 <Link href={link} className="group block">
                     <div className="space-y-1">
                         <Image
+                            data-test="event-image"
                             src={`/upload/${event?.image}`}
                             width={400}
                             height={400}
@@ -44,10 +39,13 @@ export const CollectionEventCard = async ({
                             placeholder="blur"
                             blurDataURL={"product.imageBlur"}
                         />
-                        <h2 className="flex justify-start font-semibold text-sm text-gray-100">
+                        <h2
+                            data-test="event-title"
+                            className="flex justify-start font-semibold text-sm text-gray-100"
+                        >
                             {event?.title}
                         </h2>
-                        <p className="text-xs text-gray-300">
+                        <p data-test="event-location" className="text-xs text-gray-300">
                             {event?.location}
                         </p>
                         <EventDate date={event!.date} collection={true} />

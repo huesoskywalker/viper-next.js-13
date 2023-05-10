@@ -1,7 +1,7 @@
 "use client"
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useSelectedLayoutSegment } from "next/navigation"
-import { data, type Item } from "../lib/data"
+import { data, type Item } from "../lib/getNavData"
 import Link from "next/link"
 import clsx from "clsx"
 
@@ -45,7 +45,7 @@ export default function GlobalNav() {
     }
     // if (!session) throw new Error("Something wrong bro")
     return (
-        <div className="fixed top-0 z-10 flex w-48 flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-auto lg:w-48 lg:border-r lg:border-gray-800">
+        <div className="fixed top-0 z-auto flex w-34 bottom-0 flex-col border-b border-gray-800 bg-black lg:bottom-0 lg:z-auto lg:w-44 lg:border-r lg:border-gray-800">
             <div className="group flex h-14 items-center py-4 px-4 lg:h-auto">
                 <Link
                     data-test="viper"

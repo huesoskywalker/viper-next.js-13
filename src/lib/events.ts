@@ -96,6 +96,9 @@ function sortBy(field: string) {
     }
 }
 
+export const preloadEventComments = (eventId: string): void => {
+    void getEventComments(eventId)
+}
 export async function getEventComments(eventId: string): Promise<Comments[] | null> {
     const eventComments = await eventCollection
         .aggregate<Comments>([
@@ -106,19 +109,30 @@ export async function getEventComments(eventId: string): Promise<Comments[] | nu
                 $unwind: "$comments",
             },
             {
+                // $project: {
+                //     _id: "$comments._id",
+                //     eventTitle: "$title",
+                //     viperId: "$comments.viperId",
+                //     text: "$comments.text",
+                //     likes: "$comments.likes",
+                //     replies: "$comments.replies",
+                //     timestamp: "$comments.timestamp",
+                // },
                 $project: {
-                    _id: "$comments._id",
-                    eventTitle: "$title",
-                    viperId: "$comments.viperId",
-                    text: "$comments.text",
-                    likes: "$comments.likes",
-                    replies: "$comments.replies",
-                    timestamp: "$comments.timestamp",
+                    _id: 1,
+                    title: 1,
+                    comment: {
+                        _id: "$comments._id",
+                        viperId: "$comments.viperId",
+                        text: "$comments.text",
+                        likes: "$comments.likes",
+                        replies: "$comments.replies",
+                        timestamp: "$comments.timestamp",
+                    },
                 },
             },
         ])
         .toArray()
-
     return eventComments
 }
 

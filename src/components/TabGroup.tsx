@@ -9,7 +9,12 @@ export const TabGroup = ({ path, items }: { path: string; items: Item[] }) => {
     return (
         <div className="-mt-2 space-x-2 flex flex-wrap items-center">
             {items.map((item) => (
-                <Tab key={path + item.slug} item={item} path={path} />
+                <Tab
+                    // data-test={`tab-${item.slug}`}
+                    key={path + item.slug}
+                    item={item}
+                    path={path}
+                />
             ))}
         </div>
     )

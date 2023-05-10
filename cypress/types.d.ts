@@ -16,7 +16,11 @@ declare namespace Cypress {
 
         dataInContainer(selector: string, value: string): Cypress.Chainable
 
+        dataInImage(selector: string, src: string): Cypress.Chainable
+
         clickButton(selector: string, contains: string, href?: string): Cypress.Chainable
+
+        navigate(selector: string, contains: string, href: string): Cypress.Chainable
 
         inputType(selector: string, value: string): Cypress.Chainable
 
@@ -40,12 +44,18 @@ declare namespace Cypress {
                 }
                 build?: {
                     object: object | Alias<string>
-                    alias?: Alias<string>
+                    alias?: string
                 }
             }
         ): Cypress.Chainable
 
         expectBodyKeyEqualObjectKey(body: BodyType, object: object | Alias<string>): void
+
+        buildEventFromUrlAndCheckComponent(alias: string): Cypress.Chainable
+
+        likeEventAndVerifyEndpoints(
+            resBody: (EventInterface | Alias<string>) & (Viper | Alias<string>)[]
+        )
 
         verifyInterceptionRequestAndResponse(
             interception: Interception,
@@ -85,7 +95,7 @@ declare namespace Cypress {
                             }[]
                       object: object | Alias<string> | (object | Alias<string>)[]
                       objPath?: string | (string | undefined)[]
-                      alias?: Alias<string> | (Alias<string> | undefined)[]
+                      alias?: string | (stringa | undefined)[]
                   }
                 | ({
                       body: "response" | "request"
@@ -100,7 +110,7 @@ declare namespace Cypress {
                             }[]
                       object: object | Alias<string> | (object | Alias<string>)[]
                       objPath?: string | (string | undefined)[]
-                      alias?: Alias<string> | (Alias<string> | undefined)[]
+                      alias?: string | (string | undefined)[]
                   } | null)[]
         ): Cypress.Chainable
 
@@ -119,6 +129,21 @@ declare namespace Cypress {
 
         checkEventComponentProps(event: EventInterface): Cypress.Chainable
 
+        checkCollectionEventCard(event: EventInterface | Alias<string>): Cypress.Chainable
+
+        checkProfileComponent(
+            viper: Viper | ViperBasicProps | Alias<string>,
+            button: "Edit Profile" | "Follow" | "Following"
+        )
+
+        checkCommentCardComponent(
+            viper: Viper | ViperBasicProps | Session,
+            blog: MyBlog,
+            request?: string
+        )
+
+        likeCommentCard(blog: MyBlog, profiles: (Viper | Alias<string>)[])
+
         handleBuildProperty(
             body: BodyType,
             buildProperty: {
@@ -134,7 +159,7 @@ declare namespace Cypress {
                 realObject: object | Alias<string> | (object | Alias<string>)[]
                 expectProperty: "response" | "request"
                 objPath?: string | (string | undefined)[]
-                alias?: Alias<string> | (Alias<string> | undefined)[]
+                alias?: string | (string | undefined)[]
             }
         )
 
@@ -157,7 +182,7 @@ declare namespace Cypress {
                           objKey: string
                       }[]
                 objPath?: string
-                alias?: Alias<string>
+                alias?: string
             }
         )
 

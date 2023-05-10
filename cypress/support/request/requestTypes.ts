@@ -30,8 +30,8 @@ export type EditEventRequest = {
     price: number
 }
 
-export type BlogRequest = {
-    content: string
+export type Comment = {
+    comment: string
 }
 
 export type LikeBlog = {

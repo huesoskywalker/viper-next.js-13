@@ -1,3 +1,4 @@
+import { Comments } from "@/types/event"
 import { ID } from "../myApp/viper"
 import {
     CustomerAddress,
@@ -35,6 +36,15 @@ export const responseCheckoutCustomerAssociateKeys: (keyof checkoutCustomerAssoc
     "associateCheckout",
     "associateUserErrors",
     "customer",
+]
+
+export const responseCommentEventKeys: (keyof Comments)[] = [
+    "_id",
+    "viperId",
+    "text",
+    "likes",
+    "replies",
+    "timestamp",
 ]
 // ==========================================
 export const responseStageUploadKeys = ["stageUpload"]

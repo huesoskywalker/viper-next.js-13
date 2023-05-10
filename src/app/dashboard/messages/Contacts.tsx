@@ -12,21 +12,21 @@ export default async function Contacts({ id }: { id: string }) {
     return (
         <div>
             <Link
+                data-test="contact-name"
                 href={`/dashboard/messages/${viperId}`}
-                className="flex justify-start items-center space-x-1"
+                className="flex justify-start items-center space-x-1 text-xs text-white "
             >
                 <Image
-                    src={`${
-                        firstLogin(viper.image)
-                            ? viper.image
-                            : `/vipers/${viper.image}`
-                    }`}
+                    data-test="contact-image"
+                    src={`${firstLogin(viper.image) ? viper.image : `/vipers/${viper.image}`}`}
                     alt={`/vipers/${viper?.image}`}
                     width={50}
                     height={50}
                     className="h-6 w-6 rounded-full"
                 />
-                <span className="text-xs text-white ">{viper.name}</span>
+                {/* <span data-test="contact-name" className=""> */}
+                {viper.name}
+                {/* </span> */}
             </Link>
         </div>
     )

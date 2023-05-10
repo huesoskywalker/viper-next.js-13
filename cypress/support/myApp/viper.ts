@@ -10,6 +10,7 @@ import {
     Created,
     Collection,
     Likes,
+    ViperBasicProps,
 } from "@/types/viper"
 
 export type ID = {
@@ -96,4 +97,16 @@ export const rawViper: Viper = {
 
 export const rawViperId: ID = {
     _id: "",
+}
+
+export const rawViperBasicProps: ViperBasicProps = {
+    _id: "",
+    name: "",
+    image: "",
+    backgroundImage: "",
+    email: "",
+    location: "",
+    biography: "",
+    followers: [],
+    follows: [],
 }

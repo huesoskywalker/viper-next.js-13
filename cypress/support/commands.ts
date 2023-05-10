@@ -2,11 +2,19 @@
 
 import { format } from "date-fns"
 import _ from "lodash"
-import { rawSession } from "./myApp/session"
-import { ProductInventory, productInventory } from "./myApp/event"
+import { Session, rawSession } from "./myApp/session"
+import { ProductInventory, productInventory, rawEvent, rawEventId } from "./myApp/event"
 import { sessionKeys } from "./myApp/sessionKeys"
 import { eventKeys, productInventoryKeys } from "./myApp/eventKeys"
 import { EventInterface } from "@/types/event"
+import { content_type } from "./entryPoint"
+import { ID } from "./myApp/viper"
+import { viperKeys } from "./myApp/viperKeys"
+import { Viper, ViperBasicProps, MyBlog } from "@/types/viper"
+import { requestLikeBlogKeys } from "./request/requestKeys"
+import { Interception } from "cypress/types/net-stubbing"
+import { requestLikeBlog } from "./request/requestObjects"
+import { LikeBlog } from "./request/requestTypes"
 
 export {}
 
@@ -92,6 +100,12 @@ Cypress.Commands.add("clickButton", (selector: string, contains: string, href?: 
     }
 })
 
+Cypress.Commands.add("navigate", (selector: string, contains: string, href: string) => {
+    cy.clickButton(selector, contains, href)
+    cy.url().should("include", href)
+    cy.visit(href)
+})
+
 Cypress.Commands.add("inputType", (selector: string, value: string) => {
     return cy.getByData(selector).clear().type(value)
 })
@@ -102,6 +116,11 @@ Cypress.Commands.add("inputSelect", (selector: string, value: string) => {
 
 Cypress.Commands.add("dataInContainer", (selector: string, value: string) => {
     return cy.getByData(selector).contains(value).should("be.visible")
+})
+
+Cypress.Commands.add("dataInImage", (selector: string, src: string) => {
+    cy.getByData(selector).should("have.attr", "src").should("include", src)
+    // .and("be.visible")
 })
 
 Cypress.Commands.add(
@@ -122,7 +141,7 @@ Cypress.Commands.add(
             }
             build?: {
                 object: object | Alias<string>
-                alias?: Alias<string>
+                alias?: string
             }
         }
     ) => {
@@ -186,6 +205,154 @@ Cypress.Commands.add(
     }
 )
 
+Cypress.Commands.add("buildEventFromUrlAndCheckComponent", (alias: string) => {
+    cy.url()
+        .should((url) => {
+            expect(url).to.match(/\/[a-f\d]{24}$/)
+        })
+        .then((url) => {
+            const id = {
+                _id: url.split("/").pop(),
+            }
+            if (id)
+                cy.buildObjectProperties(id, rawEventId, {
+                    propKeys: {
+                        reqKey: "_id",
+                        objKey: "_id",
+                    },
+                    alias: `${alias}Id`,
+                })
+        })
+    cy.get<ID>(`@${alias}Id`).then((event: ID) => {
+        cy.apiRequestAndResponse(
+            {
+                url: `/api/event/${event._id}`,
+                headers: {
+                    "content-type": content_type,
+                },
+                method: "GET",
+            },
+            {
+                status: 200,
+                expectRequest: {
+                    keys: eventKeys,
+                    object: { _id: event._id },
+                },
+                build: {
+                    object: rawEvent,
+                    alias: alias,
+                },
+            }
+        )
+    })
+    cy.get<EventInterface>(`@${alias}`).then((event: EventInterface) => {
+        cy.checkEventComponentProps(event)
+    })
+})
+
+Cypress.Commands.add(
+    "likeEventAndVerifyEndpoints",
+    (resBody: (EventInterface | Alias<string>) & (Viper | Alias<string>)[]) => {
+        const event = resBody[0]
+        const viper = resBody[1]
+        cy.isAliasObject(event).then((event: EventInterface) => {
+            cy.isAliasObject(viper).then((viper: Viper) => {
+                cy.intercept(`/api/event/like`).as("like-event")
+                cy.getByData("like-event").click()
+                cy.wait("@like-event").then((interception) => {
+                    cy.verifyInterceptionRequestAndResponse(
+                        interception,
+                        {
+                            reqUrl: `/api/event/like`,
+                            reqMethod: "POST",
+                            reqHeaders: {
+                                "content-type": content_type,
+                            },
+                            reqBody: [
+                                { event: { _id: event._id } },
+                                { viper: { _id: viper._id } },
+                            ],
+                            reqKeys: ["event", "viper"],
+                        },
+                        {
+                            resStatus: 200,
+                            resHeaders: {
+                                "content-type": content_type,
+                            },
+                            resKeys: [eventKeys, viperKeys],
+                            resBody: [event, viper],
+                        },
+                        [
+                            {
+                                source: "mongodb",
+                                action: "edit",
+                            },
+                            {
+                                source: "mongodb",
+                                action: "edit",
+                            },
+                        ],
+                        [
+                            {
+                                body: "request",
+                                propKeys: {
+                                    reqKey: "viper._id",
+                                    objKey: "_id",
+                                },
+                                object: event,
+                                objPath: "likes[0]",
+                            },
+                            {
+                                body: "request",
+                                propKeys: {
+                                    reqKey: "event._id",
+                                    objKey: "_id",
+                                },
+                                object: viper,
+                                objPath: "myEvents.likes[0]",
+                            },
+                        ]
+                    )
+                })
+                cy.apiRequestAndResponse(
+                    {
+                        url: `/api/event/${event._id}`,
+                        method: "GET",
+                        headers: {
+                            "content-type": content_type,
+                        },
+                    },
+                    {
+                        status: 200,
+                        expectRequest: {
+                            keys: ["_id"],
+                            object: { _id: viper._id },
+                            path: "likes[0]",
+                        },
+                    }
+                )
+                cy.apiRequestAndResponse(
+                    {
+                        url: `/api/viper/${viper._id}`,
+                        method: "GET",
+                        headers: {
+                            "content-type": content_type,
+                        },
+                    },
+                    {
+                        status: 200,
+                        expectRequest: {
+                            keys: ["_id"],
+                            object: { _id: event._id },
+                            path: "myEvents.likes[0]",
+                        },
+                    }
+                )
+            })
+        })
+    }
+)
+
 Cypress.Commands.add(
     "verifyInterceptionRequestAndResponse",
     (
@@ -226,7 +393,7 @@ Cypress.Commands.add(
                         }[]
                   object: object | Alias<string> | (object | Alias<string>)[]
                   objPath?: string | (string | undefined)[]
-                  alias?: Alias<string> | (Alias<string> | undefined)[]
+                  alias?: string | (string | undefined)[]
               }
             | ({
                   body: "response" | "request"
@@ -241,7 +408,7 @@ Cypress.Commands.add(
                         }[]
                   object: object | Alias<string> | (object | Alias<string>)[]
                   objPath?: string | (string | undefined)[]
-                  alias?: Alias<string> | (Alias<string> | undefined)[]
+                  alias?: string | (string | undefined)[]
               } | null)[]
     ) => {
         const {
@@ -373,7 +540,7 @@ Cypress.Commands.add("checkEventComponentProps", (event: EventInterface) => {
         {
             url: `/api/event/${event._id}`,
             headers: {
-                "content-type": "application/json",
+                "content-type": content_type,
             },
             method: "GET",
         },
@@ -385,7 +552,7 @@ Cypress.Commands.add("checkEventComponentProps", (event: EventInterface) => {
             },
         }
     )
-    cy.getByData("image").should("be.visible")
+    cy.dataInImage("image", event.image)
     cy.dataInContainer("title", event.title)
     cy.dataInContainer("content", event.content)
     cy.dataInContainer("address", event.address)
@@ -394,7 +561,7 @@ Cypress.Commands.add("checkEventComponentProps", (event: EventInterface) => {
         {
             url: `/api/product/inventory/${event.product._id.toString().match(/\d+/g)}`,
             headers: {
-                "content-type": "application/json",
+                "content-type": content_type,
             },
             method: "POST",
         },
@@ -412,18 +579,233 @@ Cypress.Commands.add("checkEventComponentProps", (event: EventInterface) => {
 
     const checkDate = format(new Date(event.date.split("T")[0]), "MMM do, yyyy")
     const checkSchedule = format(new Date(event.date.split("T")[0]), "cccc p")
-    cy.dataInContainer("date", checkDate)
-    cy.dataInContainer("schedule", checkSchedule)
-    cy.dataInContainer("location", event.location)
-    cy.dataInContainer("price", `$${event.price}`)
+    cy.dataInContainer("event-date", checkDate)
+    cy.dataInContainer("event-schedule", checkSchedule)
+    cy.dataInContainer("event-location", event.location)
+    cy.dataInContainer("event-price", `$${event.price}`)
     cy.get<ProductInventory>("@productInventory").then((product) => {
         cy.dataInContainer("inventory-of-entries", `${product.totalInventory} of ${event.entries}`)
     })
 
-    cy.dataInContainer("participate", "Participate")
+    cy.getByData("participate").should("exist").and("be.visible")
     cy.dataInContainer("show-viper", `Organized by:${event.organizer.name}`)
     cy.getByData("like-event").should("exist").and("be.visible")
     cy.getByData("comment-event").should("exist").and("be.visible")
+})
+
+Cypress.Commands.add("checkCollectionEventCard", (event: EventInterface | Alias<string>) => {
+    cy.isAliasObject(event).then((realEvent: EventInterface) => {
+        cy.dataInImage("event-image", realEvent.image)
+        cy.dataInContainer("event-title", realEvent.title)
+        cy.dataInContainer("event-location", realEvent.location)
+        const checkDate = format(new Date(realEvent.date.split("T")[0]), "MMM do, yyyy")
+        cy.dataInContainer("event-date", checkDate)
+    })
+})
+
+Cypress.Commands.add(
+    "checkProfileComponent",
+    (
+        viper: Viper | ViperBasicProps | Alias<string>,
+        button: "Edit Profile" | "Follow" | "Following"
+    ) => {
+        cy.isAliasObject(viper).then((realViper: Viper | ViperBasicProps) => {
+            cy.dataInImage("profile-image", realViper.image)
+            cy.dataInImage("background-image", realViper.backgroundImage)
+            cy.dataInContainer("viper-name", realViper.name)
+            cy.dataInContainer("viper-location", realViper.location)
+            cy.dataInContainer("viper-biography", realViper.biography)
+            cy.getByData("display-show-follow").eq(0).should("exist").and("be.visible")
+            cy.getByData("display-show-follow").eq(1).should("exist").and("be.visible")
+            cy.dataInContainer("display-add-follow", button)
+        })
+    }
+)
+
+Cypress.Commands.add(
+    "checkCommentCardComponent",
+    (viper: Viper | ViperBasicProps | Session, blog: MyBlog, request?: string) => {
+        const value = request ? request : blog.content
+        cy.dataInImage("blog-viper-image", viper.image)
+        cy.dataInContainer("blog-viper-name", viper.name)
+        cy.dataInContainer("comment-timestamp", format(blog.timestamp, "MMM d, yyyy"))
+        cy.getByData("blog-comment").eq(0).should("contain", value)
+    }
+)
+
+Cypress.Commands.add("likeCommentCard", (blog: MyBlog, profiles: (Viper | Alias<string>)[]) => {
+    const regex = /\/[a-f\d]{24}$/
+    cy.intercept("POST", `/api/viper/blog/like`).as("like-blog")
+    cy.getByData("like-blog").eq(0).click()
+
+    cy.url().then((url) => {
+        cy.get<Session>("@session").then((session: Session) => {
+            if (regex.test(url)) {
+                const id = url.split("/").pop()
+                cy.wrap<LikeBlog>(requestLikeBlog)
+                    .then((likeRequest: LikeBlog) => {
+                        likeRequest._id = blog._id
+                        likeRequest.blogOwner_id = id
+                        likeRequest.viper_id = session._id
+                        return likeRequest
+                    })
+                    .as("requestLikeBlog")
+            } else {
+                cy.wrap<LikeBlog>(requestLikeBlog)
+                    .then((likeRequest: LikeBlog) => {
+                        likeRequest._id = blog._id
+                        likeRequest.blogOwner_id = session._id
+                        likeRequest.viper_id = session._id
+                        return likeRequest
+                    })
+                    .as("requestLikeBlog")
+            }
+        })
+
+        const blogOwner = profiles[0]
+        const viper = profiles[1]
+        cy.wait("@like-blog").then((interception: Interception) => {
+            cy.verifyInterceptionRequestAndResponse(
+                interception,
+                {
+                    reqUrl: `/api/viper/blog/like`,
+                    reqHeaders: {
+                        "content-type": content_type,
+                    },
+                    reqMethod: "POST",
+                    reqBody: "@requestLikeBlog",
+                    reqKeys: [...requestLikeBlogKeys, "timestamp"],
+                },
+                {
+                    resStatus: 200,
+                    resHeaders: {
+                        "content-type": content_type,
+                    },
+                    resKeys: [viperKeys, viperKeys],
+                    resBody: [blogOwner, viper],
+                },
+                [
+                    {
+                        source: "mongodb",
+                        action: "edit",
+                    },
+                    {
+                        source: "mongodb",
+                        action: "edit",
+                    },
+                ],
+                [
+                    {
+                        body: "request",
+                        propKeys: {
+                            reqKey: "viper_id",
+                            objKey: "_id",
+                        },
+                        object: blogOwner,
+                        objPath: `blog.myBlog[0].likes[0]`,
+                    },
+                    {
+                        body: "request",
+                        propKeys: [
+                            {
+                                reqKey: "blogOwner_id",
+                                objKey: "blogOwner_id",
+                            },
+                            {
+                                reqKey: "_id",
+                                objKey: "_id",
+                            },
+                            {
+                                reqKey: "viper_id",
+                                objKey: "viper_id",
+                            },
+                            {
+                                reqKey: "timestamp",
+                                objKey: "timestamp",
+                            },
+                        ],
+                        object: viper,
+                        objPath: "blog.likes[0]",
+                    },
+                ]
+            )
+        })
+        // type RequestOrResponse = "request" | "response"
+
+        // type PropKeys =
+        //     | {
+        //           reqKey: string
+        //           objKey: string
+        //       }
+        //     | {
+        //           reqKey: string
+        //           objKey: string
+        //       }[]
+        // type BuildProfileItem = {
+        //     body: RequestOrResponse
+        //     propKeys: PropKeys
+        //     object: Viper | Alias<string>
+        //     objPath?: string | (string | undefined)[] | undefined
+        //     alias?: string
+        // }
+
+        // type BuildProfile = (BuildProfileItem | null)[]
+        // const buildProfile: BuildProfile = regex.test(url)
+        //     ? [
+        //           {
+        //               body: "request",
+        //               propKeys: {
+        //                   reqKey: "viper_id",
+        //                   objKey: "_id",
+        //               },
+        //               object: blogOwner,
+        //               objPath: `blog.myBlog[0].likes[0]`,
+        //           },
+        //           {
+        //               body: "request",
+        //               propKeys: {
+        //                   reqKey: "viper_id",
+        //                   objKey: "_id",
+        //               },
+        //               object: "@profile",
+        //               objPath: `blog.myBlog[0].likes[0]`,
+        //           },
+        //       ]
+        //     : [
+        //           {
+        //               body: "request",
+        //               propKeys: {
+        //                   reqKey: "viper_id",
+        //                   objKey: "_id",
+        //               },
+        //               object: blogOwner,
+        //               objPath: `blog.myBlog[0].likes[0]`,
+        //           },
+        //           {
+        //               body: "request",
+        //               propKeys: [
+        //                   {
+        //                       reqKey: "blogOwner_id",
+        //                       objKey: "blogOwner_id",
+        //                   },
+        //                   {
+        //                       reqKey: "_id",
+        //                       objKey: "_id",
+        //                   },
+        //                   {
+        //                       reqKey: "viper_id",
+        //                       objKey: "viper_id",
+        //                   },
+        //                   {
+        //                       reqKey: "timestamp",
+        //                       objKey: "timestamp",
+        //                   },
+        //               ],
+        //               object: viper,
+        //               objPath: "blog.likes[0]",
+        //           },
+        //       ]
+    })
 })
 
 Cypress.Commands.add(
@@ -443,7 +825,7 @@ Cypress.Commands.add(
             realObject: object | Alias<string> | (object | Alias<string>)[]
             expectProperty: "response" | "request"
             objPath?: string | (string | undefined)[]
-            alias?: Alias<string> | (Alias<string> | undefined)[]
+            alias?: string | (string | undefined)[]
         }
     ) => {
         const { propKeys, realObject, expectProperty, objPath, alias } = buildProperty
@@ -528,7 +910,7 @@ Cypress.Commands.add(
                       objKey: string
                   }[]
             objPath?: string
-            alias?: Alias<string>
+            alias?: string
         }
     ) => {
         const { propKeys, objPath, alias } = properties
@@ -657,6 +1039,29 @@ Cypress.Commands.add("handleObject", (object: object, value: object) => {
     Object.assign(object, value)
     return object
 })
+
+// Cypress.Commands.add("buildViperBasicProps", (_id: string, alias: string) => {
+// cy.apiRequestAndResponse(
+// {
+// url: `/api/viper/${_id}?props=basic-props`,
+// method: "GET",
+// headers: {
+// "content-type": content_type,
+// },
+// },
+// {
+// status: 200,
+// expectRequest: {
+// keys: viperBasicKeys,
+// object: { _id: _id },
+// },
+// build: {
+// object: rawViperBasicProps,
+// alias: alias,
+// },
+// }
+// )
+// })
 
 //     // Set the cookie for cypress.
 //     // It has to be a valid cookie so next-auth can decrypt it and confirm its validity.

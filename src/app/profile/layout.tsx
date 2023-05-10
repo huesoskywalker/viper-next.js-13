@@ -19,7 +19,7 @@ export default async function Layout({ children }: PageProps) {
     if (!viper) throw new Error("No viper bro")
     return (
         <div className="grid grid-cols-7 gap-4 ">
-            <div className="col-start-2 col-span-5 mx-2 max-w-6xl  lg:border-x  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-2">
+            <div className="col-start-2 col-span-5 mx-2 max-w-6xl  lg:border-x  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-8">
                 {/* @ts-expect-error Async Server Component */}
                 <Profile viperId={viper.user._id} profile={true} />
                 <div className="flex justify-center lg:border-b lg:border-gray-800 pb-3 mr-10">

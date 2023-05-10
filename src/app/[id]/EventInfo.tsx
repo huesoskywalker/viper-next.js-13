@@ -33,10 +33,8 @@ export async function EventInfo({
     const viper_id = currentViper.user._id
     const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, viper_id)
     const viperRequestData: Promise<boolean> = requestEventParticipation(viper_id, eventId)
-    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
-        viper_id,
-        eventId
-    )
+    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> =
+        isCheckoutFulFilled(viper_id)
 
     const [viperOnList, viperRequest, checkoutFulfillment] = await Promise.all([
         viperOnListData,

@@ -38,7 +38,6 @@ export interface Likes {
 }
 export interface Comments {
     readonly _id: ObjectId | string
-    eventTitle?: string
     viperId: ObjectId | string
     text: string
     likes: Likes[]

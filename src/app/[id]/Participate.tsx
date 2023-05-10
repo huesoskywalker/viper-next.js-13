@@ -8,10 +8,8 @@ import { Checkout } from "@shopify/shopify-api/rest/admin/2023-01/checkout"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
 import { Shopify, Viper } from "@/types/viper"
 import { EventInterface, Product } from "@/types/event"
-import { Session } from "next-auth"
 
 export function Participate({
-    // currentViper,
     eventId,
     product,
     viperOnList,
@@ -20,7 +18,6 @@ export function Participate({
     eventEntries,
     totalInventory,
 }: {
-    // currentViper: Session
     eventId: string
     product: Product
     viperOnList: boolean
@@ -42,8 +39,6 @@ export function Participate({
     if (!viper) return <div>Loading</div>
     const viperShopify: Shopify | null = viper.shopify
     const viperAccessToken: string | null = viper.shopify.customerAccessToken
-    console.log(`---------viperAccessToken`)
-    console.log(viperAccessToken)
 
     // --------------------------------------------------------------------------------
     const addParticipant = async (): Promise<void> => {
@@ -63,8 +58,6 @@ export function Participate({
         const { checkout, checkoutUserErrors }: { checkout: Checkout; checkoutUserErrors: [] } =
             await requestCheckout.json()
         const checkoutId: string = checkout.id
-        console.log(`--------checkout------`)
-        console.log(checkout)
 
         // --------------------------------------------------------------------------
         const checkoutCustomerAssociate = await fetch(`/api/customer/associate-checkout`, {
@@ -75,8 +68,6 @@ export function Participate({
             body: JSON.stringify({
                 checkoutId: checkoutId,
                 shopify: viperShopify,
-                // we are sending the full shopify
-                // customerAccessToken: viperAccessToken,
             }),
         })
         const {
@@ -86,9 +77,6 @@ export function Participate({
         }: { associateCheckout: Checkout; associateUserErrors: []; customer: Customer } =
             await checkoutCustomerAssociate.json()
         const webUrl: string = associateCheckout.webUrl
-        console.log(`------------webUrl`)
-        console.log(`------------webUrl`)
-        console.log(webUrl)
         setIsCheckout(webUrl)
 
         // ------------------------------------------------------------------------------------------- //
@@ -100,14 +88,10 @@ export function Participate({
             body: JSON.stringify({
                 viper: { _id: viper?._id },
                 event: { _id: eventId },
-                // _id: viper?._id,
-                // eventId,
                 checkoutId,
             }),
         })
         const requestResponse: Viper = await requestParticipation.json()
-        console.log(`----requestParticipation`)
-        console.log(requestResponse)
         setIsFetching(false)
 
         startTransition(() => {
@@ -124,14 +108,12 @@ export function Participate({
                 "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
-                eventId,
-                viperId: viper?._id,
+                event: { _id: eventId },
+                viper: { _id: viper?._id },
             }),
         })
 
         const eventCard: EventInterface = await addCardToViper.json()
-        console.log(`------------eventCard------------`)
-        console.log(eventCard)
 
         setIsFetching(false)
         startTransition(() => {
@@ -165,6 +147,7 @@ export function Participate({
                         !viperOnList ? (
                             !viperAccessToken ? (
                                 <Link
+                                    data-test="participate-customer"
                                     href={`/${eventId}/customer`}
                                     className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
                                 >
@@ -172,6 +155,7 @@ export function Participate({
                                 </Link>
                             ) : !viperRequest ? (
                                 <button
+                                    data-test="participate-checkout"
                                     className={`${
                                         isMutating
                                             ? "bg-opacity-60 animate-pulse"
@@ -193,6 +177,7 @@ export function Participate({
                                 </button>
                             ) : !isCheckoutPaid ? (
                                 <a
+                                    data-test="participate-payment"
                                     href={isCheckout}
                                     target="_blank"
                                     className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
@@ -208,6 +193,7 @@ export function Participate({
                                 </button>
                             ) : (
                                 <button
+                                    data-test="participate-claim"
                                     onClick={claimCard}
                                     className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-xs font-medium  bg-black text-green-600 hover:animate-pulse hover:cursor-grab disabled:text-white/70"
                                 >
@@ -225,6 +211,7 @@ export function Participate({
                             )
                         ) : (
                             <button
+                                data-test="viper"
                                 disabled={true}
                                 className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
                             >

@@ -46,6 +46,7 @@ export async function CommentCard({
                         <div className="col-start-1 col-span-1 ">
                             <Link href={`/dashboard/vipers/${viper_id}`}>
                                 <Image
+                                    data-test="blog-viper-image"
                                     src={`${
                                         firstLogin(viper.image)
                                             ? viper.image
@@ -72,7 +73,7 @@ export async function CommentCard({
                             <Link href={`/dashboard/vipers/${viper_id}`} className="space-y-2">
                                 <div className="flex justify-between">
                                     <span
-                                        data-test="blog-viperName"
+                                        data-test="blog-viper-name"
                                         className="flex justify-start text-yellow-500/80 text-xs ml-[5px]"
                                     >
                                         {viper.name}
@@ -80,7 +81,7 @@ export async function CommentCard({
                                     <EventDate date={timestamp} collection={false} />
                                 </div>
                                 <span
-                                    data-test="success-blog"
+                                    data-test="blog-comment"
                                     className="flex justify-start text-gray-300 text-sm mx-2  "
                                 >
                                     {text}

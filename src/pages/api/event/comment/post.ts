@@ -5,15 +5,15 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const id: string = body.id
-    const viperId: string = body.viperId
+    const eventId: string = body.event._id
+    const viperId: string = body.viper._id
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<EventInterface>("events")
     if (body.comment !== "") {
-        const response = await db.findOneAndUpdate(
+        const newComment = await db.findOneAndUpdate(
             {
-                _id: new ObjectId(id),
+                _id: new ObjectId(eventId),
             },
 
             {
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             }
         )
-        return res.status(200).json(response)
+        return res.status(200).json(newComment)
     }
     return res.status(400)
 }

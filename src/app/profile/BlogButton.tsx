@@ -32,7 +32,7 @@ export function BlogButton({
             },
             body: JSON.stringify({
                 _id: viperId,
-                content: comment,
+                comment: comment,
             }),
         })
         const freshComment = await response.json()

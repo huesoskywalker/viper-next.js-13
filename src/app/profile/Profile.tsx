@@ -16,7 +16,7 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
         <div className="grid grid-cols-4">
             <div className="col-span-4 overflow-hidden">
                 <Image
-                    data-test="backgroundImage"
+                    data-test="background-image"
                     src={
                         fullViper.backgroundImage !== undefined
                             ? `/vipers/${fullViper.backgroundImage}`
@@ -31,7 +31,7 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                 ></Image>
                 <div className="z-10 relative bottom-9 left-7">
                     <Image
-                        data-test="profileImage"
+                        data-test="profile-image"
                         src={`${
                             firstLogin(fullViper.image)
                                 ? fullViper.image
@@ -46,12 +46,12 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                         loading="lazy"
                     />
                     <div className="grid grid-cols-2">
-                        <h1 data-test="name" className="text-sm text-yellow-700 mt-4">
+                        <h1 data-test="viper-name" className="text-sm text-yellow-700 mt-4">
                             {fullViper.name}
                             <p className="text-xs text-gray-300 mt-1">{fullViper.email}</p>
                             <p className="text-xs text-gray-400 mt-2">
                                 Settled in{" "}
-                                <span data-test="location" className="text-gray-200 ">
+                                <span data-test="viper-location" className="text-gray-200 ">
                                     {fullViper.location ?? "Planet Earth"}
                                 </span>
                             </p>
@@ -64,7 +64,7 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                         )}
                     </div>
                     <div className="break-after-column">
-                        <h1 data-test="biography" className="text-gray-300 text-sm mt-5">
+                        <h1 data-test="viper-biography" className="text-gray-300 text-sm mt-5">
                             {fullViper.biography}
                         </h1>
                     </div>

@@ -1,5 +1,5 @@
 import {
-    BlogRequest,
+    Comment,
     CreateEvent,
     CustomerAddress,
     EditEventRequest,
@@ -42,7 +42,7 @@ export const requestEditEventKeys: string[] = [
     "title",
 ]
 
-export const requestCreateBlogKeys: (keyof BlogRequest)[] = ["content"]
+export const requestCommentKeys: (keyof Comment)[] = ["comment"]
 
 export const requestLikeBlogKeys: (keyof LikeBlog)[] = ["_id", "blogOwner_id", "viper_id"]
 

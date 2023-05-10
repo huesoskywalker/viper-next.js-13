@@ -19,10 +19,14 @@ export async function DisplayEvents({
     }
     return (
         <>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
                 {events.map((event: EventInterface) => {
                     return (
-                        <div data-test="display-events" key={JSON.stringify(event._id)}>
+                        <div
+                            data-test="display-events"
+                            className="w-full lg:w-auto"
+                            key={JSON.stringify(event._id)}
+                        >
                             {dashboard ? (
                                 <EditEventLink href={`/dashboard/myevents/${event._id}`} />
                             ) : null}

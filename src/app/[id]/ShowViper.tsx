@@ -33,11 +33,15 @@ export default function ShowViper({
             onMouseLeave={closeOrganizer}
         >
             {event ? (
-                <div className="relative grid grid-flow-row z-0 w-full h-full ">
+                <div
+                    data-test="organizer-name"
+                    className="relative grid grid-flow-row z-0 w-full h-full "
+                >
                     <h1 className="text-gray-300 text-xs ">
                         Organized by:
                         <span className="text-yellow-700/80 text-xs px-1  hover:text-yellow-400 hover:underline">
                             <button
+                                data-test="hover-organizer"
                                 onMouseEnter={displayOrganizer}
                                 className="max-h-fit max-w-fit"
                             >
@@ -47,8 +51,12 @@ export default function ShowViper({
                     </h1>
                 </div>
             ) : blog ? null : (
-                <div className="relative grid grid-flow-row z-0 w-full h-full p-0.5">
+                <div
+                    data-test="blogger-name"
+                    className="relative grid md:grid-flow-row z-0 w-full h-full p-0.5"
+                >
                     <button
+                        data-test="hover-blogger"
                         onMouseEnter={displayOrganizer}
                         className="max-h-fit max-w-fit font-normal flex justify-end text-yellow-800/90 text-xs  hover:text-yellow-400 "
                     >
@@ -59,6 +67,7 @@ export default function ShowViper({
 
             {isDisplay ? (
                 <div
+                    data-test="display-viper"
                     className={
                         event
                             ? "absolute top-[1rem] left-[1rem] z-20 overflow-y-hidden  max-h-[14rem]"

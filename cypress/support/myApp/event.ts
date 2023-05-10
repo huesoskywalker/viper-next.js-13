@@ -20,7 +20,7 @@ export const like: ID = {
 
 export const comment: Comments = {
     _id: "",
-    eventTitle: "",
+    // eventTitle: "",
     viperId: "",
     text: "",
     likes: [],

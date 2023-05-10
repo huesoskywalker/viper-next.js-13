@@ -5,8 +5,8 @@ import { EventInterface } from "@/types/event"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const viperId: string = body.viperId
-    const eventId: string = body.eventId
+    const viperId: string = body.viper._id
+    const eventId: string = body.event._id
     const client = await clientPromise
     const db = client.db("viperDb")
     if (req.method === "POST") {

@@ -45,28 +45,33 @@ export function AddLike({
 
     const likeEvent = async (): Promise<void> => {
         if (event && !reply && !blog) {
-            const response = await fetch(`/api/like-event`, {
+            const response = await fetch(`/api/event/like`, {
                 method: "POST",
                 headers: {
                     "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    id: eventId,
-                    viperId: viperId,
+                    event: { _id: eventId },
+                    viper: { _id: viperId },
                 }),
             })
 
-            await response.json()
+            const eventLiked = await response.json()
+            console.log(`-----------eventLiked`)
+            console.log(eventLiked)
         } else if (!event && !reply && !blog) {
-            const response = await fetch(`/api/like-comment`, {
+            const response = await fetch(`/api/event/comment/like`, {
                 method: "POST",
                 headers: {
                     "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    id: eventId,
-                    commentId: commentId,
-                    viperId: viperId,
+                    event: { _id: eventId },
+                    comment: { _id: commentId },
+                    viper: { _id: viperId },
+                    // id: eventId,
+                    // commentId: commentId,
+                    // viperId: viperId,
                 }),
             })
 
@@ -95,11 +100,10 @@ export function AddLike({
                     _id: commentId,
                     blogOwner_id: eventId,
                     viper_id: viperId,
+                    timestamp: Date.now(),
                 }),
             })
             const freshLikedBlog = await response.json()
-            console.log(`-----freshLikedBlog-AddLike----`)
-            console.log(freshLikedBlog)
         }
 
         toggleLike()
@@ -168,6 +172,7 @@ export function AddLike({
                         </svg>
                     ) : (
                         <svg
+                            data-test="like-comment"
                             xmlns="http://www.w3.org/2000/svg"
                             fill={` ${isPending ? "rgb(64,0,0)" : isLiked}`}
                             fillOpacity="0.77"

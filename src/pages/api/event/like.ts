@@ -6,8 +6,8 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
-    const id: string = body.id
-    const viperId: string = body.viperId
+    const eventId: string = body.event._id
+    const viperId: string = body.viper._id
 
     const client = await clientPromise
     const db = client.db("viperDb")
@@ -15,15 +15,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const eventCollection = db.collection<EventInterface>("events")
 
     const isLiked = await eventCollection.findOne({
-        _id: new ObjectId(id),
+        _id: new ObjectId(eventId),
         "likes._id": new ObjectId(viperId),
     })
 
     if (!isLiked) {
         try {
-            const like = await eventCollection.findOneAndUpdate(
+            const likeEvent = await eventCollection.findOneAndUpdate(
                 {
-                    _id: new ObjectId(id),
+                    _id: new ObjectId(eventId),
                 },
                 {
                     $push: {
@@ -40,21 +40,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
                 {
                     $push: {
-                        likes: {
-                            _id: new ObjectId(id),
+                        "myEvents.likes": {
+                            _id: new ObjectId(eventId),
                         },
                     },
                 }
             )
-            return res.status(200).json(like)
+            return res.status(200).json([likeEvent, viperLike])
         } catch (error) {
             return res.status(400).json(error)
         }
     } else {
         try {
-            const disLike = await eventCollection.findOneAndUpdate(
+            const disLikeEvent = await eventCollection.findOneAndUpdate(
                 {
-                    _id: new ObjectId(id),
+                    _id: new ObjectId(eventId),
                 },
                 {
                     $pull: {
@@ -70,13 +70,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
                 {
                     $pull: {
-                        likes: {
-                            _id: new ObjectId(id),
+                        "myEvents.likes": {
+                            _id: new ObjectId(eventId),
                         },
                     },
                 }
             )
-            return res.status(200).json(disLike)
+            return res.status(200).json(disLikeEvent)
         } catch (error) {
             return res.status(400).json(error)
         }

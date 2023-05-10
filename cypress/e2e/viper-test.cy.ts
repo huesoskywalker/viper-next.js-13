@@ -10,10 +10,11 @@ import {
     lastName,
 } from "../support/entryPoint"
 import { rawEvent, rawEventId, rawProduct } from "../support/myApp/event"
-import { rawViper, myBlog, rawViperId, ID } from "../support/myApp/viper"
+import { rawViper, myBlog, rawViperId, ID, rawViperBasicProps, blog } from "../support/myApp/viper"
 import {
     responseCheckoutId,
     responseCheckoutWebUrl,
+    responseCommentEvent,
     responseCustomerShopify,
     responseProductMedia,
     responsePublishProduct,
@@ -25,19 +26,19 @@ import {
     requestEditProfile,
     requestEditEvent,
     requestCreateBlog,
-    requestLikeBlog,
     requestEventImage,
     requestProductMedia,
     requestCustomerAddress,
     requestProductShopify,
+    requestCommentEvent,
+    requestChatContact,
 } from "../support/request/requestObjects"
 import {
-    requestLikeBlogKeys,
     requestEditProfileKeys,
     requestCreateEventKeys,
     requestEventImageKeys,
     requestProductMediaKeys,
-    requestCreateBlogKeys,
+    requestCommentKeys,
     requestEditEventKeys,
     requestProductShopifyKeys,
 } from "../support/request/requestKeys"
@@ -51,16 +52,20 @@ import {
     responseCheckoutCreateKeys,
     responseCheckoutCustomerAssociateKeys,
     responseCustomerShopifyKeys,
+    responseCommentEventKeys,
 } from "../support/response/responseKeys"
-import { _idKey, externalBlogKeys, myBlogKeys, viperKeys } from "../support/myApp/viperKeys"
+import { viperBasicKeys, _idKey, myBlogKeys, viperKeys } from "../support/myApp/viperKeys"
 import { eventKeys } from "../support/myApp/eventKeys"
 import { sessionKeys } from "../support/myApp/sessionKeys"
 import { CustomerShopify } from "../support/response/responseTypes"
 import { Session } from "../support/myApp/session"
-import { MyBlog, Viper } from "@/types/viper"
-import { EventInterface, Product } from "@/types/event"
+import { Chats, MyBlog, Viper, ViperBasicProps } from "@/types/viper"
+import { Comments, EventInterface, Product } from "@/types/event"
 import { Interception } from "cypress/types/net-stubbing"
-import { LikeBlog } from "../support/request/requestTypes"
+import { format, formatDistanceToNow } from "date-fns"
+import { Alias } from "../support/commands"
+import { rawChatKeys } from "../support/myApp/chatsKeys"
+import { rawChat } from "../support/myApp/chats"
 
 export {}
 
@@ -69,14 +74,11 @@ describe("Profile Page", () => {
         cy.signInWithCredential(username, password)
         cy.visit("/")
     })
-    context("Interacts in  the Profile Page", () => {
+    context("Interacts with the viper App", () => {
         it("Creates a blog", () => {
             cy.log(`Profile`)
 
             cy.get<Session>("@session").then((session: Session) => {
-                console.log(`==========session`)
-                console.log(session._id)
-                console.log(session)
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/${session._id}`,
@@ -105,10 +107,13 @@ describe("Profile Page", () => {
                     },
                     alias: "viperId",
                 })
-                cy.clickButton("nav-item", session.name)
-                cy.url().should("include", "/profile")
-                cy.clickButton("edit-profile", "Edit Profile")
-                cy.url().should("include", `/profile/edit/${session._id}`)
+                cy.navigate("nav-item", session.name, `/profile`)
+                cy.checkProfileComponent("@profile" as Alias<string>, "Edit Profile")
+                // cy.clickButton("nav-item", session.name)
+                // cy.url().should("include", "/profile")
+                cy.navigate("edit-profile", "Edit Profile", `/profile/edit/${session._id}`)
+                // cy.clickButton("edit-profile", "Edit Profile")
+                // cy.url().should("include", `/profile/edit/${session._id}`)
             })
             cy.inputType("new-name", requestEditProfile.name)
             cy.inputType("new-biography", requestEditProfile.biography)
@@ -213,18 +218,29 @@ describe("Profile Page", () => {
             })
             cy.url().should("include", "/profile")
             cy.get<Viper>("@profile").then((viper: Viper) => {
-                cy.getByData("profileImage").should("be.visible")
-                cy.getByData("backgroundImage").should("be.visible")
-                cy.dataInContainer("name", viper.name)
-                cy.dataInContainer("location", viper.location)
-                cy.dataInContainer("biography", viper.biography)
+                // =============== Profile make a silly command and use it twice
+                // mce the add follow for edit
+                cy.checkProfileComponent(viper as Viper, "Edit Profile")
+                // cy.getByData("profile-image")
+                //     .should("have.attr", "src", `/vipers/${viper.image}`)
+                //     .and("be.visible")
+                // cy.getByData("background-image")
+                //     .should("have.attr", "src", `/vipers/${viper.backgroundImage}`)
+                //     .and("be.visible")
+                // cy.dataInContainer("viper-name", viper.name)
+                // cy.dataInContainer("viper-location", viper.location)
+                // cy.dataInContainer("viper-biography", viper.biography)
+                // cy.getByData("display-show-follow").eq(0).should("exist").and("be.visible")
+                // cy.getByData("display-show-follow").eq(1).should("exist").and("be.visible")
+                // // this one check if profile or viper Following or follow
+                // cy.dataInContainer("edit-profile", "Edit Profile")
             })
 
             // ======================BLOG=====================TEST CAN BE PERFORM BETTER IN HERE============================
 
             cy.clickButton("blog-button", "Let's Blog")
             cy.getByData("commentInput").should("exist")
-            cy.inputType("add-comment", requestCreateBlog.content)
+            cy.inputType("add-comment", requestCreateBlog.comment)
             cy.intercept("POST", `/api/viper/blog/create`).as("create-blog")
             cy.clickButton("post-blog", "Comment")
             cy.wait("@create-blog").then((interception: Interception) => {
@@ -237,7 +253,7 @@ describe("Profile Page", () => {
                         },
                         reqMethod: "POST",
                         reqBody: ["@viperId", requestCreateBlog],
-                        reqKeys: [..._idKey, ...requestCreateBlogKeys],
+                        reqKeys: [..._idKey, ...requestCommentKeys],
                     },
                     {
                         resStatus: 200,
@@ -303,107 +319,122 @@ describe("Profile Page", () => {
                         },
                     }
                 )
-                cy.dataInContainer("blog-viperName", session.name)
-            })
-            cy.getByData("success-blog").eq(0).should("contain", requestCreateBlog.content)
-            cy.log("Success creating a Blog")
-            cy.intercept("POST", `/api/viper/blog/like`).as("like-blog")
-            cy.getByData("like-blog").eq(0).click()
-
-            cy.url().then((url) => {
-                cy.get<MyBlog>("@myBlog").then((blog: MyBlog) => {
-                    cy.get<Session>("@session").then((session: Session) => {
-                        const regex = /\/[a-f\d]{24}$/
-                        if (regex.test(url)) {
-                            const id = url.split("/").pop()
-                            cy.wrap<LikeBlog>(requestLikeBlog)
-                                .then((likeRequest: LikeBlog) => {
-                                    likeRequest._id = blog._id
-                                    likeRequest.blogOwner_id = id
-                                    likeRequest.viper_id = session._id
-                                    return likeRequest
-                                })
-                                .as("requestLikeBlog")
-                        } else {
-                            cy.wrap<LikeBlog>(requestLikeBlog)
-                                .then((likeRequest: LikeBlog) => {
-                                    likeRequest._id = blog._id
-                                    likeRequest.blogOwner_id = session._id
-                                    likeRequest.viper_id = session._id
-                                    return likeRequest
-                                })
-                                .as("requestLikeBlog")
-                        }
-                    })
+                cy.get<MyBlog>("@myBlog").then((blog) => {
+                    cy.checkCommentCardComponent(
+                        session as Session,
+                        blog as MyBlog,
+                        requestCreateBlog.comment
+                    )
+                    // cy.getByData("blog-viper-image")
+                    //     .should("have.attr", "src", `/vipers/${session.image}`)
+                    //     .and("be.visible")
+                    // cy.dataInContainer("blog-viper-name", session.name)
+                    // cy.dataInContainer("comment-timestamp", format(blog.timestamp, "MMM d, yyyy"))
+                    // cy.getByData("blog-comment").eq(0).should("contain", requestCreateBlog.content)
                 })
             })
-            cy.wait("@like-blog").then((interception: Interception) => {
-                cy.verifyInterceptionRequestAndResponse(
-                    interception,
-                    {
-                        reqUrl: `/api/viper/blog/like`,
-                        reqHeaders: {
-                            "content-type": content_type,
-                        },
-                        reqMethod: "POST",
-                        reqBody: "@requestLikeBlog",
-                        reqKeys: requestLikeBlogKeys,
-                    },
-                    {
-                        resStatus: 200,
-                        resHeaders: {
-                            "content-type": content_type,
-                        },
-                        resKeys: [viperKeys, viperKeys],
-                        resBody: ["@profile", "@profile"],
-                    },
-                    [
-                        {
-                            source: "mongodb",
-                            action: "edit",
-                        },
-                        {
-                            source: "mongodb",
-                            action: "edit",
-                        },
-                    ],
-                    [
-                        {
-                            body: "request",
-                            propKeys: {
-                                reqKey: "viper_id",
-                                objKey: "_id",
-                            },
-                            object: "@profile",
-                            objPath: `blog.myBlog[0].likes[0]`,
-                        },
-                        null,
-                    ]
-                )
+            cy.log("Success creating a Blog")
+            cy.get<MyBlog>("@myBlog").then((blog: MyBlog) => {
+                cy.likeCommentCard(blog as MyBlog, ["@profile", "@profile"])
+                // we might be able to recheck the component since the results were updated,... and ,add the followers count
             })
+            // cy.intercept("POST", `/api/viper/blog/like`).as("like-blog")
+            // cy.getByData("like-blog").eq(0).click()
 
-            cy.get<Session>("@session").then((session: Session) => {
-                cy.apiRequestAndResponse(
-                    {
-                        url: `/api/viper/${session._id}`,
-                        headers: {
-                            "content-type": content_type,
-                        },
-                        method: "GET",
-                    },
-                    {
-                        status: 200,
-                        expectRequest: {
-                            keys: externalBlogKeys,
-                            object: "@requestLikeBlog",
-                            path: "blog.likes[0]",
-                        },
-                        build: {
-                            object: "@profile",
-                        },
-                    }
-                )
-            })
+            // cy.url().then((url) => {
+            //     cy.get<MyBlog>("@myBlog").then((blog: MyBlog) => {
+            //         cy.get<Session>("@session").then((session: Session) => {
+            //             const regex = /\/[a-f\d]{24}$/
+            //             if (regex.test(url)) {
+            //                 const id = url.split("/").pop()
+            //                 cy.wrap<LikeBlog>(requestLikeBlog)
+            //                     .then((likeRequest: LikeBlog) => {
+            //                         likeRequest._id = blog._id
+            //                         likeRequest.blogOwner_id = id
+            //                         likeRequest.viper_id = session._id
+            //                         return likeRequest
+            //                     })
+            //                     .as("requestLikeBlog")
+            //             } else {
+            //                 cy.wrap<LikeBlog>(requestLikeBlog)
+            //                     .then((likeRequest: LikeBlog) => {
+            //                         likeRequest._id = blog._id
+            //                         likeRequest.blogOwner_id = session._id
+            //                         likeRequest.viper_id = session._id
+            //                         return likeRequest
+            //                     })
+            //                     .as("requestLikeBlog")
+            //             }
+            //         })
+            //     })
+            // })
+            // cy.wait("@like-blog").then((interception: Interception) => {
+            //     cy.verifyInterceptionRequestAndResponse(
+            //         interception,
+            //         {
+            //             reqUrl: `/api/viper/blog/like`,
+            //             reqHeaders: {
+            //                 "content-type": content_type,
+            //             },
+            //             reqMethod: "POST",
+            //             reqBody: "@requestLikeBlog",
+            //             reqKeys: [...requestLikeBlogKeys, "timestamp"],
+            //         },
+            //         {
+            //             resStatus: 200,
+            //             resHeaders: {
+            //                 "content-type": content_type,
+            //             },
+            //             resKeys: [viperKeys, viperKeys],
+            //             resBody: ["@profile", "@profile"],
+            //         },
+            //         [
+            //             {
+            //                 source: "mongodb",
+            //                 action: "edit",
+            //             },
+            //             {
+            //                 source: "mongodb",
+            //                 action: "edit",
+            //             },
+            //         ],
+            //         [
+            //             {
+            //                 body: "request",
+            //                 propKeys: {
+            //                     reqKey: "viper_id",
+            //                     objKey: "_id",
+            //                 },
+            //                 object: "@profile",
+            //                 objPath: `blog.myBlog[0].likes[0]`,
+            //             },
+            //             null,
+            //         ]
+            //     )
+            // })
+
+            // cy.get<Session>("@session").then((session: Session) => {
+            //     cy.apiRequestAndResponse(
+            //         {
+            //             url: `/api/viper/${session._id}`,
+            //             headers: {
+            //                 "content-type": content_type,
+            //             },
+            //             method: "GET",
+            //         },
+            //         {
+            //             status: 200,
+            //             expectRequest: {
+            //                 keys: externalBlogKeys,
+            //                 object: "@requestLikeBlog",
+            //                 path: "blog.likes[0]",
+            //             },
+            //             build: {
+            //                 object: "@profile",
+            //             },
+            //         }
+            //     )
+            // })
 
             cy.getByData("like-blog")
                 .eq(0)
@@ -417,13 +448,16 @@ describe("Profile Page", () => {
 
             cy.log(`Dashboard`)
 
-            cy.clickButton("nav-item", "Dashboard", "/dashboard")
-            cy.url().should("include", "/dashboard")
-            cy.clickButton("tab-item", "My Events", "/dashboard/myevents")
-            cy.url().should("include", "/dashboard/myevents")
-            cy.clickButton("tab-item", "Create Event", `${"/dashboard/myevents/create"}`)
+            cy.navigate("nav-item", "Dashboard", `/dashboard`)
+            // cy.clickButton("nav-item", "Dashboard", "/dashboard")
+            // cy.url().should("include", "/dashboard")
+            cy.navigate("dast-myevents", "My Events", `/dashboard/myevents`)
+            // cy.clickButton("dash-myevents", "My Events", "/dashboard/myevents")
+            // cy.url().should("include", "/dashboard/myevents")
+            cy.navigate("tab-create", "Create Event", `/dashboard/myevents/create`)
+            // cy.clickButton("dash-create", "Create Event", "/dashboard/myevents/create")
+            // cy.url().should("include", "/dashboard/myevents/create")
 
-            cy.url().should("include", "/dashboard/myevents/create")
             cy.inputType("title", requestCreateEvent.title)
             cy.inputType("content", requestCreateEvent.content)
             cy.inputSelect("category", requestCreateEvent.category)
@@ -701,8 +735,9 @@ describe("Profile Page", () => {
                 cy.checkEventComponentProps(event)
             })
             cy.window().scrollTo("top")
-            cy.clickButton("tab-item", "My Events", "/dashboard/myevents")
-            cy.url().should("include", "/dashboard/myevents")
+            cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
+            // cy.clickButton("dash-myevents", "My Events", "/dashboard/myevents")
+            // cy.url().should("include", "/dashboard/myevents")
             cy.log("Event Card")
             cy.getByData("display-events").should("exist")
             cy.get<Session>("@session").then((session: Session) => {
@@ -735,8 +770,9 @@ describe("Profile Page", () => {
                 cy.dataInContainer("event-card-content", event.content).eq(0)
                 cy.dataInContainer("event-card-location", event.location).eq(0)
                 cy.getByData("event-show-time").should("exist").and("be.visible").eq(0)
-                cy.clickButton("edit", "Edit", `/dashboard/myevents/${event._id}`).eq(0)
-                cy.url().should("include", `/dashboard/myevents/${event._id}`)
+                cy.navigate("edit", "Edit", `/dashboard/myevents/${event._id}`)
+                // cy.clickButton("edit", "Edit", `/dashboard/myevents/${event._id}`).eq(0)
+                // cy.url().should("include", `/dashboard/myevents/${event._id}`)
             })
 
             cy.inputType("event-title", `${requestEditEvent.title}`)
@@ -827,59 +863,69 @@ describe("Profile Page", () => {
                 cy.url().should("include", event._id)
                 cy.checkEventComponentProps(event)
             })
-            cy.clickButton("viper", "viper", `/`)
+            cy.navigate("viper", "viper", "/")
+            // cy.clickButton("viper", "viper", `/`)
 
             cy.wait(500)
-            cy.clickButton("nav-item", "Events", `/events`)
-            cy.url().should("include", `/events`)
-            cy.clickButton("tab-item", "Music", `/events/Music`)
-            cy.url().should("include", `/events/Music`)
+            cy.navigate("nav-item", "Events", `/events`)
+            // cy.clickButton("nav-item", "Events", `/events`)
+            // cy.url().should("include", `/events`)
+            cy.navigate("tab-Music", "Music", `/events/Music`)
+            // cy.clickButton("tab-Music", "Music", `/events/Music`)
+            // cy.url().should("include", `/events/Music`)
             cy.getByData("display-events").should("exist").eq(0)
             cy.getByData("select-event").click()
-            cy.url()
-                .should((url) => {
-                    expect(url).to.match(/\/[a-f\d]{24}$/)
-                })
-                .then((url) => {
-                    const id = {
-                        _id: url.split("/").pop(),
-                    }
-                    if (id)
-                        cy.buildObjectProperties(id, rawEventId, {
-                            propKeys: {
-                                reqKey: "_id",
-                                objKey: "_id",
-                            },
-                            alias: "selectedEventId",
-                        })
-                })
-            cy.get<ID>("@selectedEventId").then((event: ID) => {
-                cy.apiRequestAndResponse(
-                    {
-                        url: `/api/event/${event._id}`,
-                        headers: {
-                            "content-type": content_type,
-                        },
-                        method: "GET",
-                    },
-                    {
-                        status: 200,
-                        expectRequest: {
-                            keys: eventKeys,
-                            object: { _id: event._id },
-                        },
-                        build: {
-                            object: rawEvent,
-                            alias: "selectedEvent",
-                        },
-                    }
-                )
-            })
 
-            cy.get<EventInterface>("@selectedEvent").then((event: EventInterface) => {
-                cy.checkEventComponentProps(event)
-                cy.clickButton("participate", "Participate", `/${event._id}/customer`)
-                cy.url().should("contain", `/${event._id}/customer`)
+            cy.buildEventFromUrlAndCheckComponent("selectedEvent")
+
+            // cy.url()
+            //     .should((url) => {
+            //         expect(url).to.match(/\/[a-f\d]{24}$/)
+            //     })
+            //     .then((url) => {
+            //         const id = {
+            //             _id: url.split("/").pop(),
+            //         }
+            //         if (id)
+            //             cy.buildObjectProperties(id, rawEventId, {
+            //                 propKeys: {
+            //                     reqKey: "_id",
+            //                     objKey: "_id",
+            //                 },
+            //                 alias: "selectedEventId",
+            //             })
+            //     })
+            // cy.get<ID>("@selectedEventId").then((event: ID) => {
+            //     cy.apiRequestAndResponse(
+            //         {
+            //             url: `/api/event/${event._id}`,
+            //             headers: {
+            //                 "content-type": content_type,
+            //             },
+            //             method: "GET",
+            //         },
+            //         {
+            //             status: 200,
+            //             expectRequest: {
+            //                 keys: eventKeys,
+            //                 object: { _id: event._id },
+            //             },
+            //             build: {
+            //                 object: rawEvent,
+            //                 alias: "selectedEvent",
+            //             },
+            //         }
+            //     )
+            // })
+
+            // cy.get<EventInterface>("@selectedEvent").then((event: EventInterface) => {
+            //     cy.checkEventComponentProps(event)
+            // })
+
+            cy.get<ID>("selectedEventId").then((event) => {
+                // cy.clickButton("participate-customer", "Participate", `/${event._id}/customer`)
+                // cy.url().should("contain", `/${event._id}/customer`)
+                cy.navigate("participate-customer", "Participate", `/${event._id}/customer`)
             })
 
             cy.inputType("password", password)
@@ -1109,7 +1155,7 @@ describe("Profile Page", () => {
             cy.intercept("POST", `/api/shopify/create-checkout`).as("create-checkout")
             cy.intercept("POST", `/api/customer/associate-checkout`).as("associate-checkout")
             cy.intercept("PUT", `/api/event/request-participation`).as("request-participation")
-            cy.clickButton("participate", "Participate")
+            cy.clickButton("participate-checkout", "Participate")
 
             cy.wait("@create-checkout").then((interception: Interception) => {
                 cy.verifyInterceptionRequestAndResponse(
@@ -1234,7 +1280,7 @@ describe("Profile Page", () => {
                 cy.get<CustomerShopify>("@responseCustomerShopify").then(
                     (response: CustomerShopify) => {
                         cy.get<Product>("@selectedProduct").then((product: Product) => {
-                            cy.clickButton("participate", "VIPER GO", checkout.webUrl)
+                            cy.clickButton("participate-payment", "VIPER GO", checkout.webUrl)
                             cy.request({
                                 method: "POST",
                                 url: "https://api.shopify.com/checkout",
@@ -1274,6 +1320,513 @@ describe("Profile Page", () => {
                         })
                     }
                 )
+            })
+        })
+
+        it.only("Second round pa", () => {
+            // // ===================================================================
+            // // This build property should be removed if we manage to pause and continue, i guess if we want to
+            // // take track of a lot of green lines
+            // const _id: string = "6453cd3cd1ad94317450eabe"
+            // cy.buildObjectProperties({ _id: _id }, rawEventId, {
+            //     propKeys: {
+            //         reqKey: "_id",
+            //         objKey: "_id",
+            //     },
+            //     // I we built the same alias so we could delete
+            //     alias: "selectedEventId",
+            // })
+            // cy.apiRequestAndResponse(
+            //     {
+            //         url: `/api/event/${_id}`,
+            //         method: "GET",
+            //         headers: {
+            //             "content-type": content_type,
+            //         },
+            //     },
+            //     {
+            //         status: 200,
+            //         build: {
+            //             object: rawEvent,
+            //             alias: "selectedEvent",
+            //         },
+            //     }
+            // )
+            // // delete this as well on the full run
+            // cy.get<Session>("@session").then((session: Session) => {
+            //     cy.buildObjectProperties(session, rawViperId, {
+            //         propKeys: {
+            //             reqKey: "_id",
+            //             objKey: "_id",
+            //         },
+            //         alias: "viperId",
+            //     })
+            //     cy.apiRequestAndResponse(
+            //         {
+            //             url: `/api/viper/${session._id}`,
+            //             method: "GET",
+            //             headers: {
+            //                 "content-type": content_type,
+            //             },
+            //         },
+            //         {
+            //             status: 200,
+            //             build: {
+            //                 object: rawViper,
+            //                 alias: "profile",
+            //             },
+            //         }
+            //     )
+            // })
+            // // ========================================================
+            cy.log(`hello`)
+            cy.get<EventInterface>("@selectedEvent").then((event: EventInterface) => {
+                cy.visit(`/${event._id}`)
+                cy.url().should("contain", `/${event._id}`)
+
+                cy.checkEventComponentProps(event)
+
+                cy.intercept(`/api/event/claim-card`).as("claim-card")
+                cy.clickButton("participate-claim", "CLAIM CARD")
+
+                cy.wait("@claim-card").then((interception) => {
+                    cy.verifyInterceptionRequestAndResponse(
+                        interception,
+                        {
+                            reqUrl: `/api/event/claim-card`,
+                            reqHeaders: {
+                                "content-type": content_type,
+                            },
+                            reqMethod: "POST",
+                            reqBody: [{ event: "@selectedEventId" }, { viper: "@viperId" }],
+                            reqKeys: ["event", "viper"],
+                        },
+                        {
+                            resStatus: 200,
+                            resHeaders: {
+                                "content-type": content_type,
+                            },
+                            resKeys: eventKeys,
+                            resBody: event,
+                        },
+                        {
+                            source: "mongodb",
+                            action: "edit",
+                        },
+                        {
+                            body: "request",
+                            propKeys: {
+                                reqKey: "viper._id",
+                                objKey: "_id",
+                            },
+                            object: event,
+                            objPath: "participants",
+                        }
+                    )
+                })
+            })
+            cy.dataInContainer("viper", "ViPER")
+            // =====================READ==========================
+
+            cy.navigate("nav-item", "Dashboard", `/dashboard`)
+            cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
+            cy.navigate("tab-collection", "Collection", `/dashboard/myevents/collection`)
+            cy.checkCollectionEventCard("@selectedEvent")
+            // ===========================In here we start with a new event,
+            // Let's grab a new event, wrap it as likedEvent
+            cy.navigate("nav-item", "Events", `/events`)
+            cy.navigate("tab-Bars", "Bars", `/events/Bars`)
+            cy.getByData("display-events").should("exist").eq(0)
+            cy.getByData("select-event").click()
+            // ===================================== TILL HERE WE ARE COOL YO
+            cy.buildEventFromUrlAndCheckComponent("likedEvent")
+            // ---------
+            cy.likeEventAndVerifyEndpoints(["@likedEvent", "@profile"])
+            // =================================================
+            cy.getByData("comment-event").click()
+            cy.getByData("comment-input").should("exist").and("be.visible")
+            cy.getByData("close-input").should("exist").and("be.visible")
+            cy.getByData("viper-image").should("exist").and("be.visible")
+            cy.inputType("write-comment", requestCommentEvent.comment)
+            cy.intercept(`/api/event/comment/post`).as("comment-event")
+            cy.clickButton("post-comment", "Comment")
+            cy.wait("@comment-event").then((interception) => {
+                cy.verifyInterceptionRequestAndResponse(
+                    interception,
+                    {
+                        reqUrl: `/api/event/comment`,
+                        reqMethod: "POST",
+                        reqHeaders: {
+                            "content-type": content_type,
+                        },
+                        reqBody: [
+                            {
+                                event: "@likedEventId",
+                            },
+                            {
+                                viper: "@viperId",
+                            },
+
+                            requestCommentEvent,
+                        ],
+                        reqKeys: ["event", "viper", ...requestCommentKeys],
+                    },
+                    {
+                        resStatus: 200,
+                        resHeaders: {
+                            "content-type": content_type,
+                        },
+                        resKeys: eventKeys,
+                        resBody: "@likedEvent",
+                    },
+                    {
+                        source: "mongodb",
+                        action: "edit",
+                    }
+                )
+            })
+            cy.get<ID>("@likedEventId").then((event: ID) => {
+                cy.get<ID>("@viperId").then((viper: ID) => {
+                    cy.apiRequestAndResponse(
+                        {
+                            url: `/api/event/comment/${event._id}`,
+                            method: "GET",
+                            headers: {
+                                "content-type": content_type,
+                            },
+                        },
+                        {
+                            status: 200,
+                            expectRequest: {
+                                keys: responseCommentEventKeys,
+                                object: {
+                                    viperId: viper._id,
+                                    text: requestCommentEvent.comment,
+                                },
+                                path: "comment",
+                            },
+                            build: {
+                                object: responseCommentEvent,
+                                alias: "responseCommentEvent",
+                            },
+                        }
+                    )
+                })
+                cy.apiRequestAndResponse(
+                    {
+                        url: `/api/event/${event._id}`,
+                        method: "GET",
+                        headers: {
+                            "content-type": content_type,
+                        },
+                    },
+                    {
+                        status: 200,
+                        expectRequest: {
+                            keys: responseCommentEventKeys,
+                            object: "@responseCommentEvent",
+                            path: "comments[0]",
+                        },
+                        build: {
+                            object: "@likedEvent",
+                        },
+                    }
+                )
+            })
+            cy.getByData("comment-input").should("not.exist")
+            cy.getByData("event-comment-card").should("exist").and("be.visible")
+            // ===================================Above is comment event
+            cy.get<Session>("@session").then((session: Session) => {
+                // ==============READ MAKE A COMPONENT FOR THIS ONE AS WELL
+                cy.dataInImage("viper-image", session.image)
+                cy.dataInContainer("blogger-name", session.name)
+                cy.get<Comments>("@responseCommentEvent").then((comment) => {
+                    cy.dataInContainer(
+                        "comment-timestamp",
+                        format(comment.timestamp, "MMM d, yyyy")
+                    )
+                    cy.get<EventInterface>("@likedEvent").then((event) => {
+                        cy.dataInContainer("comment-on", `${event.title}`)
+                    })
+                    cy.intercept(`/api/event/comment/like`).as("like-comment")
+                    cy.getByData("like-comment").click()
+                    cy.wait("@like-comment").then((interception) => {
+                        cy.verifyInterceptionRequestAndResponse(
+                            interception,
+                            {
+                                reqUrl: `/api/event/comment/like`,
+                                reqHeaders: {
+                                    "content-type": content_type,
+                                },
+                                reqMethod: "POST",
+                                reqBody: [
+                                    {
+                                        viper: { _id: session._id },
+                                    },
+                                    {
+                                        event: "@likedEventId",
+                                    },
+                                    {
+                                        comment: { _id: comment._id },
+                                    },
+                                ],
+                                reqKeys: ["viper", "event", "comment"],
+                            },
+                            {
+                                resStatus: 200,
+                                resHeaders: {
+                                    "content-type": content_type,
+                                },
+                                resKeys: eventKeys,
+                            },
+                            {
+                                source: "mongodb",
+                                action: "edit",
+                            },
+                            {
+                                body: "request",
+                                propKeys: {
+                                    reqKey: "viper._id",
+                                    objKey: "_id",
+                                },
+                                object: "@likedEvent",
+                                objPath: "comments[0].likes[0]",
+                            }
+                        )
+                    })
+                })
+            })
+
+            // =============READ READ READ===========
+            cy.get<EventInterface>("@likedEvent").then((event: EventInterface) => {
+                cy.apiRequestAndResponse(
+                    {
+                        url: `/api/viper/${event.organizer._id}?props=basic-props`,
+                        method: "GET",
+                        headers: {
+                            "content-type": content_type,
+                        },
+                    },
+                    {
+                        status: 200,
+                        expectRequest: {
+                            keys: viperBasicKeys,
+                            object: { _id: event.organizer._id },
+                        },
+                        build: {
+                            object: rawViperBasicProps,
+                            alias: "likedEventOrganizer",
+                        },
+                    }
+                )
+            })
+            // TILL HERE WE ARE COOL YO
+            // ===========READ MAKE A COMPONENT FOR THIS ONE
+            cy.getByData("hover-organizer").trigger("mouseover")
+            cy.getByData("display-viper").should("exist").and("be.visible")
+            cy.get<ViperBasicProps>("@likedEventOrganizer").then((organizer: ViperBasicProps) => {
+                cy.dataInImage("display-organizer-image", organizer.image)
+                cy.getByData("display-add-follow")
+                    .should("exist")
+                    .should("be.visible")
+                    .and("contain", "Follow")
+                cy.getByData("display-organizer-name")
+                    .should("have.attr", "href", `/dashboard/vipers/${organizer._id}`)
+                    .should("contain", organizer.name)
+                cy.dataInContainer("display-organizer-location", organizer.location)
+                cy.dataInContainer("display-organizer-biography", organizer.biography)
+                cy.getByData("display-show-follow").eq(0).should("exist").and("be.visible")
+                cy.getByData("display-show-follow").eq(1).should("exist").and("be.visible")
+
+                // -follow
+                cy.intercept(`/api/viper/follow`).as("follow-viper")
+                cy.clickButton("display-add-follow", "Follow")
+                cy.wait("@follow-viper").then((interception) => {
+                    console.log(`-------are we intercepting bro?-- follow-viper`)
+                    cy.verifyInterceptionRequestAndResponse(
+                        interception,
+                        {
+                            reqUrl: `/api/viper/follow`,
+                            reqMethod: "PUT",
+                            reqHeaders: {
+                                "content-type": content_type,
+                            },
+                            reqBody: [
+                                {
+                                    currentViper: "@viperId",
+                                },
+                                {
+                                    viper: { _id: organizer._id },
+                                },
+                            ],
+                            reqKeys: ["currentViper", "viper"],
+                        },
+                        {
+                            resStatus: 200,
+                            resHeaders: {
+                                "content-type": content_type,
+                            },
+                            resKeys: [viperKeys, viperKeys],
+                            resBody: [organizer, "@profile"],
+                        },
+                        [
+                            {
+                                source: "mongodb",
+                                action: "edit",
+                            },
+                            {
+                                source: "mongodb",
+                                action: "edit",
+                            },
+                        ],
+                        [
+                            {
+                                body: "request",
+                                propKeys: {
+                                    reqKey: "currentViper._id",
+                                    objKey: "_id",
+                                },
+                                object: organizer,
+                                objPath: "followers[0]",
+                            },
+                            {
+                                body: "request",
+                                propKeys: {
+                                    reqKey: "viper._id",
+                                    objKey: "_id",
+                                },
+                                object: "@profile",
+                                objPath: "follows[0]",
+                            },
+                        ]
+                    )
+                })
+
+                cy.wait(300)
+                cy.navigate(
+                    "display-organizer-name",
+                    organizer.name,
+                    `/dashboard/vipers/${organizer._id}`
+                )
+                // ===============PROFILE
+                cy.checkProfileComponent(organizer as ViperBasicProps, "Following")
+
+                cy.apiRequestAndResponse(
+                    {
+                        url: `/api/viper/${organizer._id}`,
+                        method: "GET",
+                        headers: {
+                            "content-type": content_type,
+                        },
+                    },
+                    {
+                        status: 200,
+                        expectRequest: {
+                            keys: viperKeys,
+                            object: organizer,
+                        },
+                        build: {
+                            object: organizer,
+                            alias: "organizerProfile",
+                        },
+                    }
+                )
+            })
+            cy.get<Viper>("@organizerProfile").then((organizer) => {
+                cy.checkCommentCardComponent(organizer, organizer.blog.myBlog[0])
+                cy.likeCommentCard(organizer.blog.myBlog[0], [organizer, "@profile"])
+
+                cy.navigate("nav-item", "Dashboard", `/dashboard`)
+                cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
+                cy.navigate("tab-likes", "Likes", `/dashboard/myevents/likes`)
+                cy.checkCollectionEventCard("@likedEvent")
+
+                cy.navigate("tab-messages", "Messages", `/dashboard/messages`)
+                cy.dataInImage("contact-image", organizer.image)
+                cy.dataInContainer("contact-name", organizer.name)
+                cy.navigate("contact-name", organizer.name, `/dashboard/messages/${organizer._id}`)
+
+                // =========================Chats
+                cy.inputType("message", requestChatContact.message)
+                cy.intercept(`/api/messages/chat`).as("messenger")
+                cy.getByData("send-message").click()
+                cy.get<Session>("@session").then((session: Session) => {
+                    cy.wait("@messenger").then((interception) => {
+                        cy.verifyInterceptionRequestAndResponse(
+                            interception,
+                            {
+                                reqUrl: `/api/messages/chat`,
+                                reqMethod: "POST",
+                                reqHeaders: {
+                                    "content-type": content_type,
+                                },
+                                reqBody: [
+                                    {
+                                        contact: {
+                                            _id: organizer._id,
+                                        },
+                                    },
+                                    {
+                                        viper: {
+                                            _id: session._id,
+                                        },
+                                    },
+                                    {
+                                        message: requestChatContact.message,
+                                    },
+                                ],
+                                reqKeys: ["contact", "viper", "message", "timestamp"],
+                            },
+                            {
+                                resStatus: 200,
+                                resHeaders: {
+                                    "content-type": content_type,
+                                },
+                                resKeys: ["_id", "members", "messages"],
+                                resBody: {
+                                    members: [session._id, organizer._id],
+                                },
+                            },
+                            {
+                                source: "mongodb",
+                                action: "edit",
+                            }
+                        )
+                    })
+                    cy.apiRequestAndResponse(
+                        {
+                            url: `/api/messages/${organizer._id}`,
+                            method: "POST",
+                            headers: {
+                                "content-type": content_type,
+                            },
+                            body: { viper: { _id: session._id } },
+                        },
+                        {
+                            status: 200,
+                            // change name for expect Response
+                            expectRequest: {
+                                keys: rawChatKeys,
+                                object: { members: [session._id, organizer._id] },
+                            },
+                            build: {
+                                object: rawChat,
+                                alias: "newChat",
+                            },
+                        }
+                    )
+
+                    cy.get<Chats>("@newChat").then((chat: Chats) => {
+                        cy.dataInContainer("viper-name", session.name)
+                        cy.dataInContainer("viper-message", requestChatContact.message)
+                        cy.dataInContainer(
+                            "chat-timestamp",
+                            `${formatDistanceToNow(new Date(chat.messages[0].timestamp))} ago`
+                        )
+                    })
+                })
+                cy.navigate("viper", "viper", `/`)
+                cy.log(`Hope you enjoyed the ride`)
             })
         })
     })

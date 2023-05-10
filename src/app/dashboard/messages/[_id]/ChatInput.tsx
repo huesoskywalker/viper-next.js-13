@@ -2,7 +2,7 @@
 import { FormEvent, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
-export default function ChatInput({ id, viperId }: { id: string; viperId: string }) {
+export default function ChatInput({ contactId, viperId }: { contactId: string; viperId: string }) {
     const [message, setMessage] = useState<string>("")
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState(false)
@@ -16,19 +16,22 @@ export default function ChatInput({ id, viperId }: { id: string; viperId: string
         setIsFetching(true)
         setMessage("")
 
-        const response = await fetch(`/api/messenger`, {
+        const response = await fetch(`/api/messages/chat`, {
             method: "POST",
             headers: {
                 "content-type": "application/json; charset=utf-8",
             },
             body: JSON.stringify({
-                id: id,
-                viperId: viperId,
+                contact: { _id: contactId },
+                viper: { _id: viperId },
                 message: message,
+                timestamp: Date.now(),
             }),
         })
 
-        await response.json()
+        const freshChat = await response.json()
+        console.log(`-----------freshChat`)
+        console.log(freshChat)
         setIsFetching(false)
         startTransition(() => {
             router.refresh()
@@ -39,13 +42,14 @@ export default function ChatInput({ id, viperId }: { id: string; viperId: string
             <form onSubmit={(e) => sendMessage(e)}>
                 <label className="flex items-stretch ">
                     <input
+                        data-test="message"
                         type="text"
                         className="p-[6px] w-full rounded-lg border-[2px] border-transparent sm:text-xs outline-none dark:bg-gray-700 dark:border-gray-800 dark:placeholder-gray-400 dark:text-white focus:border-yellow-600"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         required
                     />
-                    <button type="submit">
+                    <button data-test="send-message" type="submit">
                         {isMutating ? (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"

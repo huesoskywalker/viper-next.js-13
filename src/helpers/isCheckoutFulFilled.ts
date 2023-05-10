@@ -6,15 +6,13 @@ import { Collection } from "@/types/viper"
 import { Checkout } from "@shopify/shopify-api/rest/admin/2023-01/checkout"
 import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfillment_order"
 import { RequestReturn } from "@shopify/shopify-api"
-import { getViperCollection } from "@/lib/vipers"
+import { getViperCollectionEvents } from "@/lib/vipers"
 
 const isCheckoutFulFilled = async (
-    currentViperId: string,
+    // currentViperId: string,
     eventId: string
 ): Promise<FulfillmentOrder | undefined> => {
-    const viperCollection: Collection[] = await getViperCollection(currentViperId)
-    console.log(`----------viperCollection`)
-    console.log(viperCollection)
+    const viperCollection: Collection[] = await getViperCollectionEvents()
     if (!viperCollection) return
     const map: Collection[] = viperCollection.map((collection: Collection) => {
         return {
@@ -22,13 +20,9 @@ const isCheckoutFulFilled = async (
             checkoutId: collection.checkoutId,
         }
     })
-    console.log(`----------map`)
-    console.log(map)
     const find: Collection | undefined = map.find(
         (collection) => JSON.stringify(collection._id).replace(/['"]+/g, "") === eventId
     )
-    console.log(`---------find`)
-    console.log(find)
     if (!find) return
 
     const CHECKOUT_INPUT = {
