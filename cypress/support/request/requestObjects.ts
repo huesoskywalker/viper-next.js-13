@@ -3,7 +3,7 @@ import { ID } from "../myApp/viper"
 import {
     Comment,
     CreateEvent,
-    EditEventRequest,
+    EditEvent,
     File,
     LikeBlog,
     ProfileEdit,
@@ -17,20 +17,20 @@ export const requestEditProfile: ProfileEdit = {
     biography: "Hey ho, let's go",
     image: "",
     backgroundImage: "",
-    location: "Greece",
+    location: "Argentina",
 }
 
 export const typeDate: string = "2023-08-28"
 export const typeTime: string = "20:00:00"
 
 export const requestCreateEvent: CreateEvent = {
-    title: "Rook's Paper's Scissor's",
-    content: "Let's go an play, best of three for a Pizza Slice",
+    title: "Le Femmes",
+    content: "Baila como una serpiente antes de tentar a un profeta",
     category: "Art",
     date: `${typeDate}T${typeTime}.000Z`,
     location: "Argentina",
-    address: "St. German Boulevard, 34",
-    price: 3,
+    address: "Carrer de Petons, 3, Barcelona, 08001",
+    price: 23,
     entries: 100,
     organizer: {
         _id: "",
@@ -41,15 +41,15 @@ export const requestCreateEvent: CreateEvent = {
     product: rawProduct,
 }
 
-export const requestEditEvent: EditEventRequest = {
-    title: "Cypress hill",
+export const requestEditEvent: EditEvent = {
+    title: "Le Femmes, Fatale",
     content: "Groove till the moon",
-    location: "Italy",
+    location: "Spain",
     price: 34,
 }
 
-export const requestCreateBlog: Comment = {
-    comment: "Cypress is a pretty cool feature",
+export const requestCreateBlog: ID = {
+    content: "Cypress is a pretty cool feature",
 }
 
 export const requestLikeBlog: LikeBlog = {

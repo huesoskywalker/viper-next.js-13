@@ -52,7 +52,7 @@ export default function ShowViper({
                 </div>
             ) : blog ? null : (
                 <div
-                    data-test="blogger-name"
+                    data-test="commentator-name"
                     className="relative grid md:grid-flow-row z-0 w-full h-full p-0.5"
                 >
                     <button

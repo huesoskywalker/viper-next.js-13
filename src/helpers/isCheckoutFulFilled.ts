@@ -8,11 +8,9 @@ import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfil
 import { RequestReturn } from "@shopify/shopify-api"
 import { getViperCollectionEvents } from "@/lib/vipers"
 
-const isCheckoutFulFilled = async (
-    // currentViperId: string,
-    eventId: string
-): Promise<FulfillmentOrder | undefined> => {
+const isCheckoutFulFilled = async (eventId: string): Promise<FulfillmentOrder | undefined> => {
     const viperCollection: Collection[] = await getViperCollectionEvents()
+
     if (!viperCollection) return
     const map: Collection[] = viperCollection.map((collection: Collection) => {
         return {
@@ -37,6 +35,7 @@ const isCheckoutFulFilled = async (
     })
 
     const checkoutOrder: FulfillmentOrder = checkout.body.data.node.order
+
     if (!checkoutOrder) return
 
     return checkoutOrder

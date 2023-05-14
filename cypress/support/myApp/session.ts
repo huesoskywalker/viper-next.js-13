@@ -5,6 +5,7 @@ export type Session = {
     name: string
     image: string
     email: string
+    biography: string
     location: string
     address: string
     shopify: Shopify
@@ -15,6 +16,7 @@ export const rawSession: Session = {
     name: "",
     email: "",
     image: "",
+    biography: "",
     location: "",
     address: "",
     shopify: {

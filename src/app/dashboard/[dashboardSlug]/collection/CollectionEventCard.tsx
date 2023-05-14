@@ -34,7 +34,9 @@ export const CollectionEventCard = async ({
                             src={`/upload/${event?.image}`}
                             width={400}
                             height={400}
-                            className="rounded-xl  group-hover:opacity-80"
+                            // className="rounded-xl max-h-[96px] max-auto group-hover:opacity-80"
+
+                            className="rounded-xl max-h-36 max-w-auto group-hover:opacity-80"
                             alt={event?.title ?? "none"}
                             placeholder="blur"
                             blurDataURL={"product.imageBlur"}

@@ -190,7 +190,10 @@ export function AddLike({
                             />
                         </svg>
                     )}
-                    <span className=" text-sm text-gray-400 flex justify-start self-end ml-2">
+                    <span
+                        data-test="like-count"
+                        className=" text-sm text-gray-400 flex justify-start self-end ml-2"
+                    >
                         {likes ?? "0"}
                     </span>
                 </div>

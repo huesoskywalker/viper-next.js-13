@@ -30,7 +30,9 @@ export const EventCard = ({
                         objectFit: "contain",
                         objectPosition: "center",
                     }}
-                    className="rounded-xl group-hover:opacity-80 max-h-44 "
+                    // className="rounded-lg  lg:block max-h-24 max-w-auto object-cover object-center"
+                    className="rounded-xl max-h-36 max-w-auto group-hover:opacity-80"
+                    // className="rounded-xl group-hover:opacity-80 max-h-44 "
                     alt={title}
                     placeholder="blur"
                     blurDataURL={`/upload/${image}`}

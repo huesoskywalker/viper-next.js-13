@@ -46,7 +46,7 @@ export const responseCheckoutWebUrl: ID = {
 export const responseCommentEvent: Comments = {
     _id: "",
     viperId: "",
-    text: requestCommentEvent.content,
+    text: requestCommentEvent.comment,
     likes: [],
     replies: [],
     timestamp: 0,

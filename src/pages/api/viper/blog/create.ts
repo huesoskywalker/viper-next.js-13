@@ -6,7 +6,7 @@ import { Viper } from "@/types/viper"
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const body = req.body
     const viperId: string = body._id
-    const comment: string = body.comment
+    const comment: string = body.content
     const client = await clientPromise
     const db = client.db("viperDb").collection<Viper>("users")
 

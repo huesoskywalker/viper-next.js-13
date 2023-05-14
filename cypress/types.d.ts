@@ -37,25 +37,43 @@ declare namespace Cypress {
             },
             responseOptions: {
                 status: number
-                expectRequest?: {
+                expectResponse?: {
                     keys: string[]
                     object?: object | Alias<string>
                     path?: string
                 }
                 build?: {
                     object: object | Alias<string>
+                    path?: string
                     alias?: string
                 }
             }
         ): Cypress.Chainable
 
-        expectBodyKeyEqualObjectKey(body: BodyType, object: object | Alias<string>): void
+        expectBodyKeyEqualObjectKey(
+            body: BodyType,
+            object: object | Alias<string>,
+            path?: string
+        ): void
 
-        buildEventFromUrlAndCheckComponent(alias: string): Cypress.Chainable
-
-        likeEventAndVerifyEndpoints(
-            resBody: (EventInterface | Alias<string>) & (Viper | Alias<string>)[]
+        checkProfileComponent(
+            viper: Viper | ViperBasicProps | Alias<string>,
+            button: "Edit Profile" | "Follow" | "Following"
         )
+
+        buildEventFromUrl(alias: string): Cypress.Chainable
+
+        likeEvent(resBody: (EventInterface | Alias<string>) & (Viper | Alias<string>)[])
+
+        commentEvent(requestComment: string, event: EventInterface | Alias<string>, viper: _ID)
+
+        checkEventCommentCard(session: Session | Alias<string>, comment: Comments, title: string)
+
+        likeEventCommentCard(viper: _ID, event: EventInterface | Alias<string>)
+
+        displayViper(viper: Session | ViperBasicProps)
+
+        addFollow(currentViper: Viper | Alias<string>, viper: Viper | Alias<string>)
 
         verifyInterceptionRequestAndResponse(
             interception: Interception,
@@ -127,20 +145,33 @@ declare namespace Cypress {
 
         expectMongoDBResponse(response: Response, action?: "edit" | "create")
 
-        checkEventComponentProps(event: EventInterface): Cypress.Chainable
+        checkEventComponentProps(event: EventInterface | Alias<string>): Cypress.Chainable
+
+        checkEventCard(
+            event: EventInterface | Alias<string>,
+            editEvent?: EditEvent
+        ): Cypress.Chainable
+
+        // editEvent(event: EventInterface | Alias<string>, requestEdit: EditEvent)
+
+        createCustomer(
+            password: string,
+            customerAddress: CustomerAddress,
+            session: Session | Alias<string>,
+            viper: Viper | Alias<string>
+        )
 
         checkCollectionEventCard(event: EventInterface | Alias<string>): Cypress.Chainable
-
-        checkProfileComponent(
-            viper: Viper | ViperBasicProps | Alias<string>,
-            button: "Edit Profile" | "Follow" | "Following"
-        )
 
         checkCommentCardComponent(
             viper: Viper | ViperBasicProps | Session,
             blog: MyBlog,
             request?: string
         )
+
+        participateEvent(event: EventInterface | Alias<string>, viper: Viper | Alias<string>)
+
+        claimEventCard(event: EventInterface | Alias<string>, viper: _ID)
 
         likeCommentCard(blog: MyBlog, profiles: (Viper | Alias<string>)[])
 
@@ -216,6 +247,19 @@ declare namespace Cypress {
 
         handleObject(object: object, value: object)
 
+        buildFullViper(object: Session | ViperBasicProps | Organizer, alias: string)
+
+        editProfile(requestEdit: ProfileEdit, viper: Viper | Alias<string>, _id: Hex24String)
+
+        createBlog(requestComment: string, _id: _ID, viper: Viper | Alias<string>)
+
+        createEvent(
+            requestEvent: CreateEvent,
+            organizer: Session | Alias<string>,
+            viper: Viper | Alias<string>,
+            eventAlias: string
+        )
+        buildFullEvent(event: ID, alias: string)
         // =================
     }
     // add properties the application adds to its "window" object

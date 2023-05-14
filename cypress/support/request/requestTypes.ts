@@ -23,7 +23,7 @@ export type CreateEvent = {
     product: Product
 }
 
-export type EditEventRequest = {
+export type EditEvent = {
     title: string
     content: string
     location: string

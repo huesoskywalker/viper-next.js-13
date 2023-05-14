@@ -13,6 +13,7 @@ declare module "next-auth" {
             name: string
             email: string
             image: string
+            biography: string
             location: string
             address: Address
             shopify: Shopify
@@ -33,6 +34,7 @@ declare module "next-auth" {
         name: string
         email: string
         image: string
+        biography: string
         location: string
         address: Address
         shopify: Shopify
@@ -45,6 +47,7 @@ declare module "next-auth" {
         name: string
         email: string
         image: string
+        biography: string
         location: string
         shopify: Shopify
         address: Address

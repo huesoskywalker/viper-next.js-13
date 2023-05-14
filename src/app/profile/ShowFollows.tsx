@@ -21,7 +21,9 @@ export default function ShowFollows({
         <span>
             <button data-test="display-show-follow" onClick={showFollows}>
                 <span>
-                    <span className="text-sm">{follows ?? "0"}</span>{" "}
+                    <span data-test="follow-count" className="text-sm">
+                        {follows ?? "0"}
+                    </span>{" "}
                     {followers ? "Followers" : "Following"}
                 </span>
             </button>

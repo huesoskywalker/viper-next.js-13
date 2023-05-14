@@ -7,6 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const body = req.body
     const eventId: string = body.event._id
     const viperId: string = body.viper._id
+    const comment: string = body.comment
 
     const client = await clientPromise
     const db = client.db("viperDb").collection<EventInterface>("events")
@@ -21,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     comments: {
                         _id: new ObjectId(),
                         viperId: new ObjectId(viperId),
-                        text: body.comment,
+                        text: comment,
                         likes: [],
                         replies: [],
                         timestamp: Date.now(),

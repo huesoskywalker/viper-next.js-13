@@ -46,7 +46,7 @@ export function AddFollow({
         <div>
             {event ? (
                 <button
-                    data-test="display-add-follow"
+                    data-test="add-follow"
                     className={
                         isFollowed
                             ? `${

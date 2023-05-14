@@ -11,10 +11,15 @@ import {
     Collection,
     Likes,
     ViperBasicProps,
+    Hex24String,
 } from "@/types/viper"
 
 export type ID = {
     [key: string]: string
+}
+
+export type _ID = {
+    _id: Hex24String
 }
 
 export const address: Address = {

@@ -87,6 +87,13 @@ export const authOptions: NextAuthOptions = {
             if (trigger === "update" && session.shopify) {
                 token.shopify = session.shopify
             }
+            if (trigger === "update" && session.image) {
+                console.log(`---------jwt if trigger?`)
+                token.name = session.name
+                token.image = session.image
+                token.biography = session.biography
+                token.location = session.location
+            }
             return { ...token, ...user }
         },
 
@@ -98,18 +105,32 @@ export const authOptions: NextAuthOptions = {
                 session.user.name = token.name
                 session.user.email = token.email
                 session.user.image = token.image
+                session.user.biography = token.biography
                 session.user.location = token.location
                 session.user.address = token.address
                 session.user.shopify = token.shopify
                 if (trigger === "update" && newSession?.shopify) {
                     session.user.shopify = newSession.shopify
+                } else if (
+                    // i think this one in here does not work because it is on jwt
+                    trigger === "update" &&
+                    newSession?.image &&
+                    newSession?.location &&
+                    newSession?.image
+                ) {
+                    console.log(`------something happening here?`)
+                    session.user.name = newSession.name
+                    session.user.location = newSession.location
+                    session.user.image = newSession.image
                 }
+
                 return session
             } else {
                 session.user._id = user._id
                 session.user.name = user.name
                 session.user.email = user.email
                 session.user.image = user.image
+                session.user.biography = user.biography
                 session.user.location = user.location
                 session.user.address = user.address
                 session.user.shopify = user.shopify

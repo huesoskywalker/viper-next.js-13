@@ -12,7 +12,6 @@ import { Session } from "next-auth"
 
 export async function EventInfo({
     currentViper,
-    // currentViperId,
     eventId,
     eventDate,
     eventLocation,
@@ -21,7 +20,6 @@ export async function EventInfo({
     eventEntries,
 }: {
     currentViper: Session
-    // currentViperId: string
     eventId: string
     eventDate: string
     eventLocation: string
@@ -34,7 +32,7 @@ export async function EventInfo({
     const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, viper_id)
     const viperRequestData: Promise<boolean> = requestEventParticipation(viper_id, eventId)
     const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> =
-        isCheckoutFulFilled(viper_id)
+        isCheckoutFulFilled(eventId)
 
     const [viperOnList, viperRequest, checkoutFulfillment] = await Promise.all([
         viperOnListData,
@@ -56,6 +54,7 @@ export async function EventInfo({
             headers: {
                 "content-type": "application/json; charset=utf-8",
             },
+            cache: "no-cache",
             next: { revalidate: 60 },
         }
     )

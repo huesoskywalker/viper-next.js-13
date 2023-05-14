@@ -21,15 +21,15 @@ export default async function uploadProfileImage(
         const form = new Formidable({
             multiples: false,
             keepExtensions: true,
-            maxFiles: 1,
         })
         form.on("file", (name: string, file: File) => {
             const data = fs.readFileSync(file.filepath)
             file.filepath = file.newFilename
             fs.writeFileSync(`public/vipers/${file.newFilename}`, data)
             let url: string = file.filepath
+            console.log(url)
             console.log(`-----stop the looping here---------`)
-            res.status(200).json({
+            return res.status(200).json({
                 data: {
                     url: url,
                 },

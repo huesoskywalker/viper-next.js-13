@@ -32,7 +32,7 @@ export function BlogButton({
             },
             body: JSON.stringify({
                 _id: viperId,
-                comment: comment,
+                content: comment,
             }),
         })
         const freshComment = await response.json()
@@ -50,7 +50,7 @@ export function BlogButton({
             <button
                 data-test="blog-button"
                 onClick={commentInput}
-                className="relative right-16 text-sm text-gray-300 bg-yellow-800/70 rounded-3xl py-2 px-3 hover:bg-yellow-600/70"
+                className="relative right-16 text-sm text-gray-200 bg-yellow-700/70 rounded-3xl py-2 px-3 hover:bg-yellow-500/70"
             >
                 Let's Blog
             </button>

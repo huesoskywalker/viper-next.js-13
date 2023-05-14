@@ -311,11 +311,11 @@ export default function CreateEvent(): JSX.Element {
                             {createObjectURL !== "" ? (
                                 <Image
                                     src={createObjectURL}
-                                    className="hidden rounded-lg lg:block"
                                     alt={createObjectURL}
                                     height={400}
                                     width={400}
                                     loading="lazy"
+                                    className="hidden rounded-lg  lg:block max-h-36 max-w-auto object-cover object-center"
                                 />
                             ) : null}
                         </div>

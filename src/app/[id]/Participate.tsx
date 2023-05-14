@@ -26,6 +26,8 @@ export function Participate({
     eventEntries: number
     totalInventory: number
 }): JSX.Element {
+    console.log(`----isCheckoutPaid / Participate`)
+    console.log(isCheckoutPaid)
     const [isCheckout, setIsCheckout] = useState<string>("")
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -182,7 +184,7 @@ export function Participate({
                                     target="_blank"
                                     className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
                                 >
-                                    <span>VIPER GO</span>
+                                    VIPER GO
                                 </a>
                             ) : isCheckoutPaid !== "PAID" ? (
                                 <button

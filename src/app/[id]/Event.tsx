@@ -27,7 +27,7 @@ export async function Event({ eventId }: { eventId: string }) {
             <div className="col-span-full lg:col-span-1">
                 <div className="space-y-2">
                     <Image
-                        data-test="image"
+                        data-test="event-image"
                         src={`/upload/${selectedEvent.image}`}
                         alt={selectedEvent.title}
                         height={400}
@@ -39,16 +39,16 @@ export async function Event({ eventId }: { eventId: string }) {
 
             <div className="col-span-full space-y-4 lg:col-span-2">
                 <div
-                    data-test="title"
+                    data-test="event-title"
                     className="truncate text-xl font-medium text-white lg:text-2xl"
                 >
                     {selectedEvent.title}
                 </div>
-                <div data-test="content" className="space-y-4 text-sm text-gray-200">
+                <div data-test="event-content" className="space-y-4 text-sm text-gray-200">
                     {selectedEvent.content}
                 </div>
                 <div
-                    data-test="address"
+                    data-test="event-address"
                     className="space-y-4 text-sm text-gray-200 flex justify-start"
                 >
                     <svg

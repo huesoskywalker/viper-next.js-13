@@ -23,7 +23,7 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                             : fullViper.image
                     }
                     width={580}
-                    height={80}
+                    height={100}
                     className="-z-10 rounded-xl  group-hover:opacity-80 max-h-44 max-w-auto object-cover object-center -mb-2"
                     alt={fullViper.name}
                     placeholder="blur"
@@ -70,11 +70,11 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                     </div>
                     <div className="mt-5 space-x-8 text-gray-300 text-xs">
                         <ShowFollows
-                            follows={fullViper.follows?.length}
+                            follows={fullViper.follows.length}
                             followers={false}
                             profile={true}
                         >
-                            {fullViper.follows?.map((follows: Follow) => {
+                            {fullViper.follows.map((follows: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo
@@ -86,11 +86,11 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
                         </ShowFollows>
 
                         <ShowFollows
-                            follows={fullViper.followers?.length}
+                            follows={fullViper.followers.length}
                             followers={true}
                             profile={true}
                         >
-                            {fullViper.followers?.map((followers: Follow) => {
+                            {fullViper.followers.map((followers: Follow) => {
                                 return (
                                     /* @ts-expect-error Async Server Component */
                                     <ViperInfo

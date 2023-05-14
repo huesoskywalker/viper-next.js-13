@@ -3,29 +3,34 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition, FormEvent, useEffect } from "react"
 import Image from "next/image"
+import { useSession } from "next-auth/react"
+import Loading from "./loading"
 
-export default function EditProfile({
-    viperId,
-    name,
-    // image,
-    // backgroundImage,
-    biography,
-    location,
-}: {
-    viperId: string
-    name: string
+export default function EditProfile({}: // viperId,
+// name,
+// image,
+// backgroundImage,
+// biography,
+// location,
+{
+    // viperId: string
+    // name: string
     // image: string
     // backgroundImage: string
-    biography: string
-    location: string
+    // biography: string
+    // location: string
 }) {
-    const [newName, setNewName] = useState<string>(name)
-    const [newBiography, setNewBiography] = useState<string>(biography)
-    const [newLocation, setNewLocation] = useState<string>(location)
+    const { data: session, status, update } = useSession()
+    const viper = session?.user
+    // if (!viper) return <div className="text-gray-300 text-sm"> Loading... </div>
+    const [newName, setNewName] = useState<string | undefined>()
+    const [newBiography, setNewBiography] = useState<string>()
+    const [newLocation, setNewLocation] = useState<string | undefined>()
     const [profileImageFile, setProfileImageFile] = useState<File>()
     const [backgroundImageFile, setBackgroundImageFile] = useState<File>()
     const [createObjectURL, setCreateObjectURL] = useState<string>("")
-    const [showProfileImg, setShowProfileImg] = useState<boolean>(false)
+    const [showImage, setShowImage] = useState<boolean>(false)
+    const [displayImage, setDisplayImage] = useState<string>("profile" || "background" || "")
 
     const router = useRouter()
 
@@ -40,6 +45,8 @@ export default function EditProfile({
 
         try {
             const profileImage = new FormData()
+            console.log(`---formData profileImage`)
+            console.log(profileImage)
             if (profileImageFile) profileImage.append("file", profileImageFile)
             const uploadImage = await fetch(`/api/viper/profile-image`, {
                 method: "PUT",
@@ -79,7 +86,7 @@ export default function EditProfile({
                     "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    _id: viperId,
+                    _id: viper?._id,
                     name: newName,
                     biography: newBiography,
                     location: newLocation,
@@ -88,7 +95,12 @@ export default function EditProfile({
                 }),
             })
             const freshViper = await response.json()
-
+            update({
+                name: newName,
+                biography: newBiography,
+                location: newLocation,
+                image: imageUrl,
+            })
             setIsFetching(false)
 
             startTransition(() => {
@@ -111,7 +123,8 @@ export default function EditProfile({
             const profileFile = event.target.files[0]
             setProfileImageFile(profileFile)
             setCreateObjectURL(URL.createObjectURL(profileFile))
-            setShowProfileImg(!showProfileImg)
+            setDisplayImage("profile")
+            setShowImage(!showImage)
         }
     }
     const uploadBackgroundImage = async (event: any) => {
@@ -119,14 +132,16 @@ export default function EditProfile({
             const backgroundFile = event.target.files[0]
             setBackgroundImageFile(backgroundFile)
 
-            // setCreateObjectURL(URL.createObjectURL(j))
-            // setShowProfileImg(!showProfileImg)
+            setCreateObjectURL(URL.createObjectURL(backgroundFile))
+            setDisplayImage("background")
+            setShowImage(!showImage)
         }
     }
 
     const acceptProfileImg = (): void => {
-        setShowProfileImg(!showProfileImg)
+        setShowImage(!showImage)
         setCreateObjectURL("")
+        setDisplayImage("")
     }
 
     return (
@@ -179,58 +194,6 @@ export default function EditProfile({
                                             ></textarea>
                                         </label>
                                         <label className="block py-1">
-                                            <span className="text-gray-300">Profile Image</span>
-                                            <input
-                                                data-test="new-profile-image"
-                                                className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
-                                                type={"file"}
-                                                onChange={(e) => uploadProfileImage(e)}
-                                            />
-                                        </label>
-                                        {showProfileImg ? (
-                                            <div className="fixed inset-auto">
-                                                <div className="flex justify-end">
-                                                    <button
-                                                        data-test="accept-profile-image"
-                                                        onClick={acceptProfileImg}
-                                                        className="fixed j rounded-full bg-black z-10"
-                                                    >
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 20 20"
-                                                            fill="currentColor"
-                                                            className="w-5 h-5 text-yellow-300 hover:text-yellow-300/80"
-                                                        >
-                                                            <path
-                                                                fillRule="evenodd"
-                                                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                                                clipRule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                    <Image
-                                                        src={createObjectURL}
-                                                        className="hidden rounded-full border-solid border-2 border-yellow-600 lg:block"
-                                                        alt={createObjectURL}
-                                                        width={100}
-                                                        height={100}
-                                                        placeholder="blur"
-                                                        blurDataURL={"image"}
-                                                        loading="lazy"
-                                                    />
-                                                </div>
-                                            </div>
-                                        ) : null}
-                                        <label className="block py-1">
-                                            <span className="text-gray-300">Background Image</span>
-                                            <input
-                                                data-test="new-background-image"
-                                                className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
-                                                type={"file"}
-                                                onChange={(e) => uploadBackgroundImage(e)}
-                                            ></input>
-                                        </label>
-                                        <label className="block py-1">
                                             <span className="text-gray-300">
                                                 Where are you located?
                                             </span>
@@ -248,6 +211,29 @@ export default function EditProfile({
                                                 <option value={"Greece"}>Greece</option>
                                                 <option value={"New Zealand"}>New Zealand</option>
                                             </select>
+                                            <label className="block py-1">
+                                                <span className="text-gray-300">
+                                                    Profile Image
+                                                </span>
+                                                <input
+                                                    data-test="new-profile-image"
+                                                    className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
+                                                    type={"file"}
+                                                    onChange={(e) => uploadProfileImage(e)}
+                                                />
+                                            </label>
+
+                                            <label className="block py-1">
+                                                <span className="text-gray-300">
+                                                    Background Image
+                                                </span>
+                                                <input
+                                                    data-test="new-background-image"
+                                                    className="block p-1 w-full hover:cursor-pointer  rounded-lg border    sm:text-xs outline-none   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:bg-gray-900  dark:focus:border-yellow-500"
+                                                    type={"file"}
+                                                    onChange={(e) => uploadBackgroundImage(e)}
+                                                ></input>
+                                            </label>
                                         </label>
                                         <div className="flex justify-center">
                                             <button
@@ -273,6 +259,53 @@ export default function EditProfile({
                                             </button>
                                         </div>
                                     </form>
+                                    {showImage ? (
+                                        <div className="fixed top-60 left-50 z-10">
+                                            <div className="flex justify-start">
+                                                <button
+                                                    data-test="accept-edit-image"
+                                                    onClick={acceptProfileImg}
+                                                    className="fixed rounded-full bg-black z-10"
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                        className="w-5 h-5 text-yellow-300 hover:text-yellow-300/80"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                                {displayImage === "profile" ? (
+                                                    <Image
+                                                        src={createObjectURL}
+                                                        className={`max-h-24 max-w-24 hidden rounded-full border-solid border-2 border-yellow-600 lg:block`}
+                                                        alt={createObjectURL}
+                                                        width={100}
+                                                        height={100}
+                                                        placeholder="blur"
+                                                        blurDataURL={"image"}
+                                                        loading="lazy"
+                                                    />
+                                                ) : displayImage === "background" ? (
+                                                    <Image
+                                                        src={createObjectURL}
+                                                        className={`max-h-32 max-w-auto hidden rounded-full border-solid border-2 border-yellow-600 lg:block `}
+                                                        alt={createObjectURL}
+                                                        width={580}
+                                                        height={100}
+                                                        placeholder="blur"
+                                                        blurDataURL={"image"}
+                                                        loading="lazy"
+                                                    />
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                    ) : null}
                                 </div>
                             </div>
                         </div>

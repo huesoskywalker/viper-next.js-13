@@ -2,7 +2,7 @@ import {
     Comment,
     CreateEvent,
     CustomerAddress,
-    EditEventRequest,
+    // EditEventRequest,
     File,
     LikeBlog,
     ProductMedia,
@@ -33,7 +33,6 @@ export const requestCreateEventKeys: (keyof CreateEvent)[] = [
 ]
 // : (keyof EditEventRequest)[]
 export const requestEditEventKeys: string[] = [
-    "_id",
     "category",
     "content",
     "date",

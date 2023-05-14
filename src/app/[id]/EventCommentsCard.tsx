@@ -41,7 +41,7 @@ export async function EventCommentsCard({
     if (!viper) throw new Error("No viper bro")
     const likedCookie = cookies().get(`_${reply ? replyId : comment_id}_is_liked`)?.value || "none"
 
-    await delay(1500)
+    await delay(1000)
     return (
         <div
             data-test="event-comment-card"
@@ -81,14 +81,12 @@ export async function EventCommentsCard({
                             </div>
 
                             <Link
+                                // add data test from here and all below
                                 href={`/${eventId}/${comment_id}/${viper_id}`}
                                 className="space-y-2"
                             >
                                 {!reply ? (
-                                    <span
-                                        // data-test="comment-on"
-                                        className="text-gray-400/70 text-xs flex align-top"
-                                    >
+                                    <span className="text-gray-400/70 text-xs flex align-top">
                                         Commenting on{" "}
                                         <span
                                             data-test="comment-on"
@@ -106,7 +104,10 @@ export async function EventCommentsCard({
                                         </span>
                                     </span>
                                 )}
-                                <span className="flex justify-start text-gray-300 text-xs mx-2  ">
+                                <span
+                                    data-test="event-comment"
+                                    className="flex justify-start text-gray-300 text-xs mx-2  "
+                                >
                                     {text}
                                 </span>
                             </Link>

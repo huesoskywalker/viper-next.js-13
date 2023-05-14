@@ -77,6 +77,7 @@ export default async function handler(
         }
     }
     if (req.method === "PUT") {
+        const eventId: string = body._id
         const dateNow: number = body.dateNow
         try {
             const editEvent: ModifyResult<EventInterface> = await eventCollection.findOneAndUpdate(
@@ -86,7 +87,7 @@ export default async function handler(
                     // stringify ObjectId, Want to
                     // check if does not ask me to
                     // replace quotes
-                    _id: new ObjectId(body._id),
+                    _id: new ObjectId(eventId),
                 },
                 {
                     $set: {
