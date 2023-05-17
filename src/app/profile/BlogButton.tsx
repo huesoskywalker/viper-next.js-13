@@ -45,12 +45,12 @@ export function BlogButton({
         // }
     }
     return (
-        <div className="flex justify-start">
+        <div className="flex justify-end">
             {" "}
             <button
                 data-test="blog-button"
                 onClick={commentInput}
-                className="relative right-16 text-sm text-gray-200 bg-yellow-700/70 rounded-3xl py-2 px-3 hover:bg-yellow-500/70"
+                className="relative lg:right-16  text-sm text-gray-200 bg-yellow-700/70 rounded-3xl py-2 px-3 hover:bg-yellow-500/70"
             >
                 Let's Blog
             </button>

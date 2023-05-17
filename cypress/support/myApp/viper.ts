@@ -1,15 +1,9 @@
 import {
     Address,
     Blog,
-    Follow,
     MyEvents,
     Shopify,
-    MyBlog,
     Viper,
-    ExternalBlog,
-    Created,
-    Collection,
-    Likes,
     ViperBasicProps,
     Hex24String,
 } from "@/types/viper"
@@ -30,39 +24,12 @@ export const address: Address = {
     zip: null,
     country: "",
 }
-export const likes: Likes = {
-    _id: "",
-}
-export const myBlog: MyBlog = {
-    _id: "",
-    content: "",
-    likes: [],
-    comments: [],
-    rePosts: [],
-    timestamp: 0,
-}
-
-export const externalBlog: ExternalBlog = {
-    _id: "",
-    blogOwner_id: "",
-    viper_id: "",
-    timestamp: 0,
-    comment: "",
-}
 
 export const blog: Blog = {
     myBlog: [],
     likes: [],
     commented: [],
     rePosts: [],
-}
-
-export const created: Created = {
-    _id: "",
-}
-export const collection: Collection = {
-    _id: "",
-    checkoutId: "",
 }
 
 export const myEvents: MyEvents = {
@@ -75,12 +42,6 @@ export const myEvents: MyEvents = {
 export const shopify: Shopify = {
     customerAccessToken: "",
     customerId: "",
-}
-export const followers: Follow = {
-    _id: "",
-}
-const follows: Follow = {
-    _id: "",
 }
 
 export const rawViper: Viper = {

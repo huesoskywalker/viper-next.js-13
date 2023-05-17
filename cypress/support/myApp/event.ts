@@ -10,17 +10,8 @@ export const organizer: Organizer = {
     email: "",
 }
 
-export const participant: ID = {
-    _id: "",
-}
-
-export const like: ID = {
-    _id: "",
-}
-
 export const comment: Comments = {
     _id: "",
-    // eventTitle: "",
     viperId: "",
     text: "",
     likes: [],
@@ -28,13 +19,6 @@ export const comment: Comments = {
     timestamp: 0,
 }
 
-export const reply: Reply = {
-    _id: "",
-    viperId: "",
-    reply: "",
-    likes: [],
-    timestamp: 0,
-}
 export const rawEventId: ID = {
     _id: "",
 }

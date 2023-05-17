@@ -9,8 +9,9 @@ import OrganizerInfo from "./OrganizerInfo"
 import { EventInterface } from "@/types/event"
 import { getCurrentViper } from "@/lib/session"
 import { Session } from "next-auth"
-import { getEventById } from "@/lib/events"
-import { preloadViperBasicProps } from "@/lib/vipers"
+import { getEventById, preloadIsViperOnTheList } from "@/lib/events"
+import { preloadRequestEventParticipation, preloadViperBasicProps } from "@/lib/vipers"
+import { preloadIsCheckoutFulfilled } from "@/helpers/isCheckoutFulFilled"
 
 export async function Event({ eventId }: { eventId: string }) {
     const likedCookie: string = cookies().get("_is_liked")?.value || "none"
@@ -21,7 +22,11 @@ export async function Event({ eventId }: { eventId: string }) {
     if (!currentViper)
         return <div className="text-yellow-400 text-sm"> remove this from Event</div>
     if (!selectedEvent) return <div className="text-yellow-400 text-sm">Build up, from Event</div>
+    const viperId: string = currentViper.user._id
     preloadViperBasicProps(selectedEvent.organizer._id)
+    // preloadIsViperOnTheList(eventId, viperId)
+    // preloadRequestEventParticipation(viperId, eventId)
+    // preloadIsCheckoutFulfilled(viperId, eventId)
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">
@@ -44,18 +49,21 @@ export async function Event({ eventId }: { eventId: string }) {
                 >
                     {selectedEvent.title}
                 </div>
-                <div data-test="event-content" className="space-y-4 text-sm text-gray-200">
+                <div
+                    data-test="event-content"
+                    className="xl:text-sm lg:text-xs bg-gray-800/80 p-2 rounded-xl text-gray-100"
+                >
                     {selectedEvent.content}
                 </div>
                 <div
                     data-test="event-address"
-                    className="space-y-4 text-sm text-gray-200 flex justify-start"
+                    className="xl:text-xs lg:text-[14px] text-gray-200 flex justify-start"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="w-[18px] h-[18px] mr-1 text-red-500/80"
+                        className="xl:w-[22px] xl:h-[22px] lg:w-[18px] lg:h-[18px] mr-1 text-red-500/80"
                     >
                         <path
                             fillRule="evenodd"
@@ -67,7 +75,7 @@ export async function Event({ eventId }: { eventId: string }) {
                 </div>
             </div>
 
-            <div className="col-span-full lg:col-span-1">
+            <div className="col-span-full md:col-span-1">
                 <Suspense fallback={<InfoSkeleton />}>
                     {/* @ts-expect-error Async Server Component */}
                     <EventInfo

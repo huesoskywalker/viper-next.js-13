@@ -1,7 +1,5 @@
 import { Comments } from "@/types/event"
-import { ID } from "../myApp/viper"
 import {
-    CustomerAddress,
     CustomerShopify,
     NewCustomer,
     NewEventId,

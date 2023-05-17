@@ -31,13 +31,15 @@ export async function EventInfo({
     const viper_id = currentViper.user._id
     const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, viper_id)
     const viperRequestData: Promise<boolean> = requestEventParticipation(viper_id, eventId)
-    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> =
-        isCheckoutFulFilled(eventId)
+    // const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
+    //     viper_id,
+    //     eventId
+    // )
 
-    const [viperOnList, viperRequest, checkoutFulfillment] = await Promise.all([
+    const [viperOnList, viperRequest] = await Promise.all([
         viperOnListData,
         viperRequestData,
-        checkoutFulfillmentData,
+        // checkoutFulfillmentData,
     ])
 
     {
@@ -55,13 +57,34 @@ export async function EventInfo({
                 "content-type": "application/json; charset=utf-8",
             },
             cache: "no-cache",
-            next: { revalidate: 60 },
+
+            next: { revalidate: 15 },
         }
     )
     const productInventory: InventoryItem = await productInventoryData.json()
 
+    const checkoutFulfillmentStatus = await fetch(
+        `http://localhost:3000/api/viper/events/checkout`,
+
+        {
+            method: "POST",
+            headers: {
+                "content-type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({
+                eventId: eventId,
+                viperId: currentViper.user._id,
+            }),
+            cache: "no-cache",
+
+            next: { revalidate: 20 },
+        }
+    )
+    const checkoutStatus = await checkoutFulfillmentStatus.json()
+    // console.log(`-------checkoutStatus from EventInfo`)
+    // console.log(checkoutStatus)
     return (
-        <div className="space-y-1.5 rounded-lg bg-gray-900 p-3">
+        <div className="space-y-2 rounded-lg bg-gray-900 xl:p-3 lg:p-2">
             <EventDate date={eventDate} collection={false} />
             <EventLocation location={eventLocation} />
             <EventPrice price={eventPrice} />
@@ -96,9 +119,9 @@ export async function EventInfo({
                     product={product}
                     viperOnList={viperOnList}
                     viperRequest={viperRequest}
-                    isCheckoutPaid={checkoutFulfillment?.financialStatus}
+                    isCheckoutPaid={checkoutStatus?.financialStatus}
                     eventEntries={eventEntries}
-                    totalInventory={productInventory.totalInventory}
+                    totalInventory={productInventory?.totalInventory}
                 />
             )}
         </div>

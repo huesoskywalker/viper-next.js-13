@@ -25,11 +25,12 @@ export const typeTime: string = "20:00:00"
 
 export const requestCreateEvent: CreateEvent = {
     title: "Le Femmes",
-    content: "Baila como una serpiente antes de tentar a un profeta",
+    content:
+        "Todas tienen algo como que el diablo en los genes Y el poder de poder levantarte el ánimo si quieren. Mujeres, mujeres preciosas nos invaden.",
     category: "Art",
     date: `${typeDate}T${typeTime}.000Z`,
     location: "Argentina",
-    address: "Carrer de Petons, 3, Barcelona, 08001",
+    address: "Carrer de Petons, 5, Barcelona",
     price: 23,
     entries: 100,
     organizer: {
@@ -43,7 +44,8 @@ export const requestCreateEvent: CreateEvent = {
 
 export const requestEditEvent: EditEvent = {
     title: "Le Femmes, Fatale",
-    content: "Groove till the moon",
+    content:
+        "Out of my head it's glowing. Es que son como el aroma de la fresca brisa cuando te asomas. En la orilla de la playa y el aire tomas",
     location: "Spain",
     price: 34,
 }

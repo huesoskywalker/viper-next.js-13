@@ -1,14 +1,4 @@
-import {
-    Address,
-    Blog,
-    MyEvents,
-    Shopify,
-    MyBlog,
-    Viper,
-    ExternalBlog,
-    Collection,
-    ViperBasicProps,
-} from "@/types/viper"
+import { Address, MyBlog, Viper, ViperBasicProps } from "@/types/viper"
 
 import { ID } from "./viper"
 
@@ -32,15 +22,6 @@ export const myBlogKeys: (keyof MyBlog)[] = [
     "timestamp",
 ]
 
-export const externalBlogKeys: (keyof ExternalBlog)[] = [
-    "_id",
-    "blogOwner_id",
-    "timestamp",
-    "viper_id",
-]
-
-export const blogKeys: (keyof Blog)[] = ["myBlog", "likes", "commented", "rePosts"]
-
 export const viperKeys: (keyof Viper)[] = [
     "_id",
     "address",
@@ -57,12 +38,6 @@ export const viperKeys: (keyof Viper)[] = [
     "followers",
     "follows",
 ]
-
-export const collectionKeys: (keyof Collection)[] = ["_id", "checkoutId"]
-
-export const myEventsKeys: (keyof MyEvents)[] = ["_id", "created", "collection", "likes"]
-
-export const shopifyKeys: (keyof Shopify)[] = ["customerAccessToken", "customerId"]
 
 export const viperBasicKeys: (keyof ViperBasicProps)[] = [
     "_id",

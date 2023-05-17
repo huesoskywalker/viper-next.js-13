@@ -10,10 +10,7 @@ export default async function CategoryPage({ params }: PageProps) {
     const property: string = params.sort
     if (!category) throw new Error("No such category bro")
 
-    const events: Promise<EventInterface[]> = sortEventByCategoryAndSlug(
-        category,
-        property
-    )
+    const events: Promise<EventInterface[]> = sortEventByCategoryAndSlug(category, property)
     return (
         <div className="space-y-4">
             <Suspense fallback={<Loading />}>

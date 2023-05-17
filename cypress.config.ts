@@ -4,7 +4,9 @@ export default defineConfig({
         baseUrl: "http://localhost:3000",
         chromeWebSecurity: false,
         viewportWidth: 1024,
-        viewportHeight: 660,
+        viewportHeight: 768,
+        experimentalMemoryManagement: true,
+        numTestsKeptInMemory: 1,
         setupNodeEvents(on, config) {
             // implement node event listeners here
         },

@@ -1,6 +1,7 @@
 import { Chats } from "@/types/viper"
 
 export const rawChat: Chats = {
+    _id: "",
     members: [],
     messages: [
         {

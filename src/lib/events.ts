@@ -215,6 +215,9 @@ export async function getEventCommentReplies(
     return eventReplies
 }
 
+export const preloadIsViperOnTheList = (eventId: string, viperId: string): void => {
+    void isViperOnTheList(eventId, viperId)
+}
 export const isViperOnTheList = cache(
     async (eventId: string, viperId: string): Promise<boolean> => {
         const isParticipant = await eventCollection.findOne({

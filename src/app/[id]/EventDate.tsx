@@ -11,7 +11,10 @@ export const EventDate = ({
         <div>
             {typeof date === "string" ? (
                 <div className="grid">
-                    <strong data-test="event-date" className="font-bold text-sm text-gray-100">
+                    <strong
+                        data-test="event-date"
+                        className="font-bold xl:text-sm lg:text-xs text-gray-100"
+                    >
                         {format(new Date(date.split("T")[0]), " MMM do, yyyy")}
                     </strong>
                     {!collection ? (
@@ -19,7 +22,7 @@ export const EventDate = ({
                             data-test="event-schedule"
                             className="font-semibold text-xs text-gray-100"
                         >
-                            {format(new Date(date.split("T")[0]), " cccc p")}
+                            {format(new Date(date.split("T")[0]), " ccc p")}
                         </strong>
                     ) : null}
                 </div>

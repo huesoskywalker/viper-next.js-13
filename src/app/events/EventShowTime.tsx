@@ -6,7 +6,7 @@ export const EventShowTime = ({ dateTime }: { dateTime: string }) => {
         end: new Date(dateTime.split("T")[0]),
     })
     return (
-        <div className="text-sm text-gray-300">
+        <div className="xl:text-sm lg:text-xs text-gray-300">
             <strong data-test="event-show-time" className="font-bold text-gray-100">
                 {isTomorrow(new Date(dateTime)) ? "Tomorrow, " : null}
                 In{" "}

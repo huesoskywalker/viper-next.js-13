@@ -12,7 +12,7 @@ export default async function LikedPage() {
 
     // const likedEvents: Promise<Likes[]> = getViperLikedEvents()
     // if (!likedEvents) return <div> asdf </div>
-    preloadViperLikedEvents()
+    preloadViperLikedEvents(viper._id)
     // const fetchEvents = await fetch(`http://localhost:3000/api/viper/event/likes`, {
     //     method: "GET",
     //     headers: {

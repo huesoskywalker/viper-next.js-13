@@ -8,6 +8,7 @@ import { Checkout } from "@shopify/shopify-api/rest/admin/2023-01/checkout"
 import { Customer } from "@shopify/shopify-api/rest/admin/2023-01/customer"
 import { Shopify, Viper } from "@/types/viper"
 import { EventInterface, Product } from "@/types/event"
+import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfillment_order"
 
 export function Participate({
     eventId,
@@ -22,7 +23,7 @@ export function Participate({
     product: Product
     viperOnList: boolean
     viperRequest: boolean
-    isCheckoutPaid: string | undefined
+    isCheckoutPaid: any
     eventEntries: number
     totalInventory: number
 }): JSX.Element {
@@ -38,9 +39,9 @@ export function Participate({
 
     const { data: session, status } = useSession()
     const viper = session?.user
-    if (!viper) return <div>Loading</div>
-    const viperShopify: Shopify | null = viper.shopify
-    const viperAccessToken: string | null = viper.shopify.customerAccessToken
+    // if (!viper) return <div>Loading</div>
+    const viperShopify: Shopify | undefined = viper?.shopify
+    const viperAccessToken: string | undefined = viper?.shopify.customerAccessToken
 
     // --------------------------------------------------------------------------------
     const addParticipant = async (): Promise<void> => {
@@ -127,13 +128,13 @@ export function Participate({
         <div className="space-y-2">
             <div
                 data-test="inventory-of-entries"
-                className="flex justify-start items-center text-[16px] text-gray-300"
+                className="flex justify-start items-center xl:text-[18px] lg:text-sm text-gray-300"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
-                    className="w-4 h-4 mr-2 text-yellow-500"
+                    className="xl:w-4 xl:h-4 xl:mr-2 lg:w-3 lg:h-3 lg:mr-1 text-yellow-500"
                 >
                     <path
                         fillRule="evenodd"
@@ -151,7 +152,7 @@ export function Participate({
                                 <Link
                                     data-test="participate-customer"
                                     href={`/${eventId}/customer`}
-                                    className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
+                                    className={` flex w-full justify-center  rounded-lg bg-gray-700  py-1  xl:text-sm lg:text-xs font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
                                 >
                                     Participate
                                 </Link>
@@ -162,7 +163,7 @@ export function Participate({
                                         isMutating
                                             ? "bg-opacity-60 animate-pulse"
                                             : "bg-opacity-100"
-                                    }  relative w-full items-center space-x-2 rounded-lg bg-gray-700 px-3 py-1  text-sm font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
+                                    }  relative w-full items-center space-x-2 rounded-lg bg-gray-700 px-3 py-1  xl:text-sm lg:text-xs font-medium text-white hover:text-black hover:bg-yellow-600 disabled:text-white/70`}
                                     onClick={addParticipant}
                                     disabled={isPending}
                                 >
@@ -182,7 +183,7 @@ export function Participate({
                                     data-test="participate-payment"
                                     href={isCheckout}
                                     target="_blank"
-                                    className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  text-sm font-medium  bg-black text-yellow-600 disabled:text-white/70"
+                                    className="flex w-full justify-center space-x-2 rounded-lg animate-pulse px-3 py-1  xl:text-sm lg:text-xs font-medium  bg-black text-yellow-600 disabled:text-white/70"
                                 >
                                     VIPER GO
                                 </a>
@@ -215,7 +216,7 @@ export function Participate({
                             <button
                                 data-test="viper"
                                 disabled={true}
-                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
+                                className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  xl:text-sm lg:text-xs font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-green-600"
                             >
                                 V<span className="text-yellow-400 hover:animate-none">i</span>
                                 PER
@@ -224,7 +225,7 @@ export function Participate({
                     ) : null
                     // <button
                     //     disabled={true}
-                    //     className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-yellow-400"
+                    //     className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1  xl:text-sm lg:text-xs font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-yellow-400"
                     // >
                     //     full ViPERS
                     // </button>

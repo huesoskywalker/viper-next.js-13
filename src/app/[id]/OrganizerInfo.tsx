@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { getViperBasicProps, getViperFollowById } from "@/lib/vipers"
+import { getViperBasicProps, getViperFollowById, preloadViperById } from "@/lib/vipers"
 import { firstLogin } from "@/lib/utils"
 import { Follow, Viper, ViperBasicProps } from "@/types/viper"
 import ShowFollows from "../profile/ShowFollows"
@@ -34,6 +34,7 @@ export default async function OrganizerInfo({
         isOrganizerFollowedData,
     ])
     if (!organizer) throw new Error("No viper from OrganizerInfo")
+    preloadViperById(organizer._id)
     return (
         <div className="grid grid-cols-3 ">
             <div className="space-y-3 col-span-3 text-xs text-gray-300">

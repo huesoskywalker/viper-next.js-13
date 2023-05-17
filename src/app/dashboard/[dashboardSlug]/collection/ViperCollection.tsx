@@ -14,8 +14,8 @@ export default async function ViperCollection({
     isCollection: boolean
 }) {
     const collection: Collection[] | Likes[] = isCollection
-        ? await getViperCollectionEvents()
-        : await getViperLikedEvents()
+        ? await getViperCollectionEvents(viperId)
+        : await getViperLikedEvents(viperId)
     // const collection: Collection[] | Likes[] = await collectionPromise
 
     collection.map((event: Collection | Likes): void => {

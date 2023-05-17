@@ -8,10 +8,10 @@ import { Session } from "next-auth"
 
 export default async function CollectionPage() {
     const viperSession: Session | null = await getCurrentViper()
-    if (!viperSession) throw new Error("No Viper bro")
+    // if (!viperSession) throw new Error("No Viper bro")
     const viper = viperSession?.user
 
-    preloadViperCollectionEvents()
+    preloadViperCollectionEvents(viper!._id)
     // const collection: Promise<Collection[]> = getViperCollectionEvents()
 
     return (
@@ -21,7 +21,7 @@ export default async function CollectionPage() {
                 <ViperCollection
                     // collectionPromise={collection}
                     isCollection={true}
-                    viperId={viper._id}
+                    viperId={viper!._id}
                 />
             </Suspense>
         </div>

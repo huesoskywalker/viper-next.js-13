@@ -2,7 +2,6 @@ import {
     Comment,
     CreateEvent,
     CustomerAddress,
-    // EditEventRequest,
     File,
     LikeBlog,
     ProductMedia,

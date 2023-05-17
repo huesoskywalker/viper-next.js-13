@@ -10,10 +10,10 @@ const Auth = ({ children }: PageProps) => {
     const router: AppRouterInstance = useRouter()
     const { data: session, status } = useSession()
     const isUser = session?.user
-    useEffect(() => {
-        if (status === "loading") return
-        if (!isUser) router.push("/")
-    }, [isUser, status])
+    // useEffect(() => {
+    //     if (status === "loading") return
+    //     if (!isUser) router.push("/")
+    // }, [isUser, status])
 
     return <>{children}</>
 }

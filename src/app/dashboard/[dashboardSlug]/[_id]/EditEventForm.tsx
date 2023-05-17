@@ -97,7 +97,7 @@ export function EditEventForm({
                 setImage("")
                 setCreateObjectURL("")
                 setPrice("")
-                router.prefetch(`/${eventId}`)
+                // router.prefetch(`/${eventId}`)
             })
             router.push(`/${eventId}`)
         } catch (error) {

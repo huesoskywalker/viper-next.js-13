@@ -85,6 +85,7 @@ export default function CreateCustomer({
                 customerAccessToken: accessToken,
                 customerId: customerId,
             }
+            update({ shopify: shopify })
             // ---------------------------------------------------------------------------------------
             const customerAddressCreate = await fetch(`/api/customer/create-address`, {
                 method: "POST",
@@ -133,7 +134,6 @@ export default function CreateCustomer({
 
             const updatedUser: Viper = await postAccessTokenToUser.json()
             // ---------------------------------------------------------------------------------------
-            update({ shopify: shopify })
 
             setIsFetching(false)
 

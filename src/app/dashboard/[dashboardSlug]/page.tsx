@@ -3,7 +3,7 @@ import { getCurrentViper } from "@/lib/session"
 import { Suspense } from "react"
 import Loading from "./loading"
 import { Session } from "next-auth"
-import { DisplayEvents } from "@/app/events/(main)/DisplayEvents"
+import { DisplayEvents } from "@/app/events/DisplayEvents"
 import { preloadViperById } from "@/lib/vipers"
 import { EventInterface } from "@/types/event"
 

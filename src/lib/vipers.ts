@@ -37,11 +37,11 @@ export const getViperByUsername = cache(async (username: string, password: strin
     }
 })
 
-export const preloadViperById = (viperId: string): void => {
+export const preloadViperById = (viperId: string | ObjectId): void => {
     void getViperById(viperId)
 }
-export const getViperById = cache(async (viperId: string): Promise<Viper | null> => {
-    // if (id === undefined) return undefined
+export const getViperById = cache(async (viperId: string | ObjectId): Promise<Viper | null> => {
+    if (typeof viperId === "object") return null
     const viper = await viperCollection.findOne<Viper>({
         _id: new ObjectId(viperId),
     })
@@ -84,16 +84,14 @@ export async function getVipers(): Promise<Viper[]> {
     if (!vipers) throw new Error("No vipers")
     return vipers
 }
-export const preloadViperCollectionEvents = (): void => {
-    void getViperCollectionEvents()
+export const preloadViperCollectionEvents = (viperId: string): void => {
+    void getViperCollectionEvents(viperId)
 }
-export const getViperCollectionEvents = cache(async (): Promise<Collection[]> => {
-    const viper: Session | null = await getCurrentViper()
-    const viper_id: string | undefined = viper?.user._id
+export const getViperCollectionEvents = cache(async (viperId: string): Promise<Collection[]> => {
     const events = await viperCollection
         .aggregate<Collection>([
             {
-                $match: { _id: new ObjectId(viper_id) },
+                $match: { _id: new ObjectId(viperId) },
             },
             {
                 $unwind: "$myEvents.collection",
@@ -111,16 +109,16 @@ export const getViperCollectionEvents = cache(async (): Promise<Collection[]> =>
 })
 
 // This will be in the api endpoint
-export const preloadViperLikedEvents = (): void => {
-    void getViperLikedEvents()
+export const preloadViperLikedEvents = (viperId: string): void => {
+    void getViperLikedEvents(viperId)
 }
-export async function getViperLikedEvents(): Promise<Likes[]> {
-    const viper: Session | null = await getCurrentViper()
-    const viper_id: string | undefined = viper?.user._id
+export async function getViperLikedEvents(viperId: string): Promise<Likes[]> {
+    // const viper: Session | null = await getCurrentViper()
+    // const viper_id: string | undefined = viper?.user._id
     const likedEvents = await viperCollection
         .aggregate<Likes>([
             {
-                $match: { _id: new ObjectId(viper_id) },
+                $match: { _id: new ObjectId(viperId) },
             },
             {
                 $unwind: "$myEvents.likes",
@@ -268,6 +266,9 @@ export const getViperFollowById = cache(async (viperId: string): Promise<boolean
     return true
 })
 
+export const preloadRequestEventParticipation = (viperId: string, eventId: string): void => {
+    void requestEventParticipation(viperId, eventId)
+}
 export async function requestEventParticipation(
     viperId: string,
     eventId: string

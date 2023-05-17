@@ -33,7 +33,7 @@ export async function ViperBlogs({ viperId }: { viperId: string }) {
 
     return (
         <>
-            <div className="space-y-4 w-full">
+            <div className="space-y-4 w-full flex-wrap">
                 {viperBlogs.map((blog: MyBlog) => {
                     return (
                         /* @ts-expect-error Server Component */

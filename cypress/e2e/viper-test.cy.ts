@@ -24,13 +24,14 @@ import { EditEvent, ProfileEdit } from "../support/request/requestTypes"
 
 export {}
 
-describe("Profile Page", () => {
+describe("Viper App", () => {
     beforeEach(() => {
+        cy.log(`Sign In`)
         cy.signInWithCredential(username, password)
         cy.visit("/")
     })
-    context("Interacts with the viper App", () => {
-        it("Creates a blog", () => {
+    context("Interacts with the App", () => {
+        it("Open the door of the playground", () => {
             cy.log(`Profile`)
             cy.get<Session>("@session").then((session: Session) => {
                 cy.buildFullViper(session as Session, "profile")
@@ -47,10 +48,9 @@ describe("Profile Page", () => {
             cy.get<Viper>("@profile").then((viper: Viper) => {
                 cy.checkProfileComponent(viper as Viper, "Edit Profile")
 
-                cy.createBlog(requestCreateBlog.content, { _id: viper._id }, viper as Viper)
+                cy.createBlog(requestCreateBlog.content, { _id: viper._id } as _ID, viper as Viper)
             })
 
-            // Checking endpoints
             cy.get<Viper>("@profile").then((viper: Viper) => {
                 cy.apiRequestAndResponse(
                     {
@@ -102,7 +102,10 @@ describe("Profile Page", () => {
                         requestCreateBlog.comment
                     )
 
-                    cy.likeCommentCard(viper.blog.myBlog[0] as MyBlog, ["@profile", "@profile"])
+                    cy.likeCommentCard(viper.blog.myBlog[0] as MyBlog, [
+                        "@profile" as Alias<string>,
+                        "@profile" as Alias<string>,
+                    ])
 
                     cy.checkCommentCardComponent(
                         session as Session,
@@ -124,17 +127,20 @@ describe("Profile Page", () => {
             cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
             cy.navigate("tab-create", "Create Event", `/dashboard/myevents/create`)
 
-            cy.createEvent(requestCreateEvent, "@session", "@profile", "newEvent")
+            cy.createEvent(
+                requestCreateEvent,
+                "@session" as Alias<string>,
+                "@profile" as Alias<string>,
+                "newEvent"
+            )
 
             cy.clickButton("preview-button", "Preview")
             cy.window().scrollTo("bottom")
-
-            cy.checkEventComponentProps("@newEvent")
-
+            cy.checkEventComponentProps("@newEvent" as Alias<string>)
             cy.window().scrollTo("top")
 
             cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
-            // Checking endpoint
+
             cy.get<Session>("@session").then((session: Session) => {
                 cy.apiRequestAndResponse(
                     {
@@ -171,13 +177,13 @@ describe("Profile Page", () => {
                         const eventId = url.split("/").pop()
                         expect(eventId).to.deep.equal(event._id)
                     })
-                cy.checkEventComponentProps(event as EventInterface)
             })
 
-            cy.navigate("viper", "viper", "/")
-            // =============Music Event
+            cy.checkEventComponentProps("@newEvent" as Alias<string>)
+
             cy.log(`Music Event`)
 
+            cy.navigate("viper", "viper", "/")
             cy.navigate("nav-item", "Events", `/events`)
             cy.navigate("tab-Music", "Music", `/events/Music`)
 
@@ -186,29 +192,33 @@ describe("Profile Page", () => {
 
             cy.buildEventFromUrl("selectedEvent")
 
-            cy.checkEventComponentProps("@selectedEvent")
+            cy.checkEventComponentProps("@selectedEvent" as Alias<string>)
 
             cy.get<_ID>("@selectedEventId").then((event: _ID) => {
                 cy.navigate("participate-customer", "Participate", `/${event._id}/customer`)
             })
-            cy.createCustomer(password, requestCustomerAddress, "@session", "@profile")
+            cy.createCustomer(
+                password,
+                requestCustomerAddress,
+                "@session" as Alias<string>,
+                "@profile" as Alias<string>
+            )
 
-            cy.participateEvent("@selectedEvent", "@profile")
+            cy.participateEvent("@selectedEvent" as Alias<string>, "@profile" as Alias<string>)
 
             cy.get<EventInterface>("@selectedEvent").then((event: EventInterface) => {
                 cy.reload()
                 cy.url().should("contain", `/${event._id}`)
-
                 cy.checkEventComponentProps(event as EventInterface)
 
-                cy.claimEventCard(event as EventInterface, "@profileId")
+                cy.claimEventCard(event as EventInterface, "@profileId" as Alias<string>)
             })
 
             cy.navigate("nav-item", "Dashboard", `/dashboard`)
             cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
             cy.navigate("tab-collection", "Collection", `/dashboard/myevents/collection`)
-            cy.checkCollectionEventCard("@selectedEvent")
-            // ===========================In here we start with a new event,
+            cy.checkCollectionEventCard("@selectedEvent" as Alias<string>)
+
             cy.navigate("nav-item", "Events", `/events`)
             cy.navigate("tab-Bars", "Bars", `/events/Bars`)
             cy.getByData("display-events").should("exist").eq(0)
@@ -216,7 +226,9 @@ describe("Profile Page", () => {
 
             cy.buildEventFromUrl("likedEvent")
 
-            cy.likeEvent(["@likedEvent", "@profile"])
+            cy.likeEvent(["@likedEvent" as Alias<string>, "@profile" as Alias<string>])
+
+            cy.wait(500)
 
             cy.commentEvent(
                 "seeee y'all there !",
@@ -230,10 +242,9 @@ describe("Profile Page", () => {
                     event.comments[0] as Comments,
                     event.title
                 )
-                cy.likeEventCommentCard("@profileId" as Alias<string>, event)
+                cy.likeEventCommentCard("@profileId" as Alias<string>, event as EventInterface)
             })
 
-            // building the organizer profile
             cy.get<EventInterface>("@likedEvent").then((event: EventInterface) => {
                 cy.apiRequestAndResponse(
                     {
@@ -257,21 +268,19 @@ describe("Profile Page", () => {
                 )
             })
 
-            cy.displayViper("@likedEventOrganizer")
+            cy.displayViper("@likedEventOrganizer" as Alias<string>)
 
-            cy.addFollow("@profile", "@likedEventOrganizer")
+            cy.addFollow("@profile" as Alias<string>, "@likedEventOrganizer" as Alias<string>)
+            cy.wait(500)
 
-            cy.wait(300)
             cy.get<ViperBasicProps>("@likedEventOrganizer").then((organizer: ViperBasicProps) => {
                 cy.navigate(
                     "display-organizer-name",
                     organizer.name,
                     `/dashboard/vipers/${organizer._id}`
                 )
-                // ===============PROFILE
                 cy.checkProfileComponent(organizer as ViperBasicProps, "Following")
 
-                // building full organizer profile
                 cy.apiRequestAndResponse(
                     {
                         url: `/api/viper/${organizer._id}`,
@@ -293,16 +302,13 @@ describe("Profile Page", () => {
                     }
                 )
             })
-            cy.get<Viper>("@organizerProfile").then((organizer) => {
+            cy.get<Viper>("@organizerProfile").then((organizer: Viper) => {
                 cy.checkCommentCardComponent(organizer, organizer.blog.myBlog[0])
 
-                cy.likeCommentCard(organizer.blog.myBlog[0], [organizer, "@profile"])
-
-                cy.navigate("nav-item", "Dashboard", `/dashboard`)
-                cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
-                cy.navigate("tab-likes", "Likes", `/dashboard/myevents/likes`)
-
-                cy.checkCollectionEventCard("@likedEvent")
+                cy.likeCommentCard(organizer.blog.myBlog[0] as MyBlog, [
+                    "@organizerProfile" as Alias<string>,
+                    "@profile" as Alias<string>,
+                ])
 
                 cy.navigate("tab-messages", "Messages", `/dashboard/messages`)
 
@@ -311,7 +317,6 @@ describe("Profile Page", () => {
 
                 cy.navigate("contact-name", organizer.name, `/dashboard/messages/${organizer._id}`)
 
-                // =========================Chats
                 cy.inputType("message", requestChatContact.message)
                 cy.intercept(`/api/messages/chat`).as("messenger")
                 cy.getByData("send-message").click()
@@ -389,7 +394,13 @@ describe("Profile Page", () => {
                         )
                     })
                 })
+
+                cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
+                cy.navigate("tab-likes", "Likes", `/dashboard/myevents/likes`)
+                cy.checkCollectionEventCard("@likedEvent" as Alias<string>)
+
                 cy.navigate("viper", "viper", `/`)
+
                 cy.log(`Hope you enjoyed the ride`)
             })
         })

@@ -12,7 +12,7 @@ import {
 } from "./myApp/event"
 import { sessionKeys } from "./myApp/sessionKeys"
 import { eventKeys, productInventoryKeys } from "./myApp/eventKeys"
-import { Comments, EditEvent, EventInterface, Organizer, Product } from "@/types/event"
+import { Comments, EditEvent, EventInterface, Organizer } from "@/types/event"
 import { content_type } from "./entryPoint"
 import { ID, _ID, rawViper, rawViperId } from "./myApp/viper"
 import { _idKey, viperKeys } from "./myApp/viperKeys"
@@ -115,17 +115,6 @@ Cypress.Commands.add("signInWithCredential", (username: string, password: string
             cy.log("Cypress login successful")
         },
         { cacheAcrossSpecs: true }
-
-        // {
-        //     validate() {
-        //         cy.api("/api/auth/session")
-        //             .its("status")
-        //             .should("eq", 200)
-        //             .then(() => {
-        //                 cy.log("Cypress login successful")
-        //             })
-        //     },
-        // }
     )
 })
 
@@ -144,7 +133,7 @@ Cypress.Commands.add("clickButton", (selector: string, contains: string, href?: 
 Cypress.Commands.add("navigate", (selector: string, contains: string, href: string) => {
     cy.clickButton(selector, contains, href)
     cy.url().should("include", href)
-    // cy.visit(href)
+    cy.wait(700)
 })
 
 Cypress.Commands.add("inputType", (selector: string, value: string) => {
@@ -904,7 +893,7 @@ Cypress.Commands.add("checkEventComponentProps", (event: EventInterface | Alias<
         )
 
         const checkDate = format(new Date(event.date.split("T")[0]), "MMM do, yyyy")
-        const checkSchedule = format(new Date(event.date.split("T")[0]), "cccc p")
+        const checkSchedule = format(new Date(event.date.split("T")[0]), "ccc p")
         cy.dataInContainer("event-date", checkDate)
         cy.dataInContainer("event-schedule", checkSchedule)
         cy.dataInContainer("event-location", event.location)
@@ -1398,7 +1387,6 @@ Cypress.Commands.add(
                 }
             )
 
-            // Update the viper with it's endpoint
             cy.apiRequestAndResponse(
                 {
                     url: `/api/viper/${_id}`,
@@ -1419,8 +1407,7 @@ Cypress.Commands.add(
                     },
                 }
             )
-            // Update session with it's endpoint
-            cy.wait(300)
+            cy.wait(1000)
             cy.apiRequestAndResponse(
                 {
                     url: "/api/auth/session",
@@ -1875,129 +1862,10 @@ Cypress.Commands.add(
                         }
                     )
                 })
-                // })
-                //     cy.url()
-                //         .should((url) => {
-                //             expect(url).to.match(/\/[a-f\d]{24}$/)
-                //         })
-                //         .then((url) => {
-                //             const eventId = url.split("/").pop()
-
-                //             cy.apiRequestAndResponse(
-                //                 {
-                //                     url: `/api/event/${eventId}`,
-                //                     headers: {
-                //                         "content-type": content_type,
-                //                     },
-                //                     method: "GET",
-                //                 },
-                //                 {
-                //                     status: 200,
-                //                     expectResponse: {
-                //                         keys: eventKeys,
-                //                         object: event,
-                //                     },
-                //                 }
-                //             )
-                // console.log(`--------checkEventCard, event`)
-                // console.log(event)
             }
         })
     }
 )
-
-// Cypress.Commands.add(
-//     "editEvent",
-//     (event: EventInterface | Alias<string>, requestEdit: EditEvent) => {
-//         cy.isAliasObject(event).then((event: EventInterface) => {
-//             cy.navigate("edit", "Edit", `/dashboard/myevents/${event._id}`)
-
-//             cy.inputType("event-title", `${requestEdit.title}`)
-//             cy.inputType("event-content", `${requestEdit.content}`)
-//             cy.inputSelect("event-location", `${requestEdit.location}`)
-//             cy.inputType("event-price", `${requestEdit.price}`)
-//             cy.intercept("PUT", `/api/event/create/submit`).as("edit-event")
-//             cy.clickButton("edit-event-button", "Submit Edition")
-
-//             cy.wait("@edit-event").then((interception: Interception) => {
-//                 cy.verifyInterceptionRequestAndResponse(
-//                     interception,
-//                     {
-//                         reqUrl: `/api/event/create/submit`,
-//                         reqHeaders: {
-//                             "content-type": content_type,
-//                         },
-//                         reqMethod: "PUT",
-//                         reqBody: [{ _id: event._id }, requestEdit],
-
-//                         reqKeys: ["_id", ...requestEditEventKeys, "dateNow"],
-//                     },
-//                     {
-//                         resStatus: 200,
-//                         resHeaders: {
-//                             "content-type": content_type,
-//                         },
-//                         resKeys: eventKeys,
-//                         resBody: event,
-//                     },
-//                     {
-//                         source: "mongodb",
-//                         action: "edit",
-//                     },
-//                     {
-//                         body: "request",
-//                         propKeys: [
-//                             {
-//                                 reqKey: "dateNow",
-//                                 objKey: "editionDate",
-//                             },
-//                             {
-//                                 reqKey: "title",
-//                                 objKey: "title",
-//                             },
-//                             {
-//                                 reqKey: "content",
-//                                 objKey: "content",
-//                             },
-//                             {
-//                                 reqKey: "location",
-//                                 objKey: "location",
-//                             },
-//                             {
-//                                 reqKey: "price",
-//                                 objKey: "price",
-//                             },
-//                         ],
-//                         object: event,
-//                     }
-//                 )
-//             })
-//         })
-//         cy.url().should((url) => {
-//             expect(url).to.match(/\/[a-f\d]{24}$/)
-//             // })
-//             // .then((url) => {
-//             const eventId = url.split("/").pop()
-
-//             cy.apiRequestAndResponse(
-//                 {
-//                     url: `/api/event/${eventId}`,
-//                     headers: {
-//                         "content-type": content_type,
-//                     },
-//                     method: "GET",
-//                 },
-//                 {
-//                     status: 200,
-//                     expectResponse: {
-//                         keys: eventKeys,
-//                         object: event,
-//                     },
-//                 }
-//             )
-//         })
-//     }
-// )
 
 Cypress.Commands.add(
     "createCustomer",
@@ -2178,7 +2046,6 @@ Cypress.Commands.add(
                 )
             })
 
-            // cy.get<Session>("@session").then((session: Session) => {
             cy.apiRequestAndResponse(
                 {
                     url: `/api/viper/${session._id}`,
@@ -2195,8 +2062,7 @@ Cypress.Commands.add(
                     },
                 }
             )
-            // })
-            cy.wait(300)
+            cy.wait(1000)
             cy.apiRequestAndResponse(
                 {
                     url: "/api/auth/session",
@@ -2220,8 +2086,6 @@ Cypress.Commands.add(
         })
     }
 )
-// Why the profile does not have the collection when we like the next event it fails in there,
-//  check if we built it once the checkout and everything is paid
 Cypress.Commands.add(
     "participateEvent",
     (event: EventInterface | Alias<string>, viper: Viper | Alias<string>) => {
@@ -2229,7 +2093,6 @@ Cypress.Commands.add(
         cy.isAliasObject(event).then((event: EventInterface) => {
             cy.isAliasObject(viper).then((viper: Viper) => {
                 const [firstName, lastName] = viper.name.split(" ")
-                // cy.get<EventInterface>("@selectedEvent").then((selectedEvent: EventInterface) => {
                 cy.url().should("contain", `${event._id}`)
                 cy.buildObjectProperties(
                     event,
@@ -2364,55 +2227,14 @@ Cypress.Commands.add(
                             object: viper,
                             objPath: "myEvents.collection[0]",
                             alias: eventAlias,
-                            // in here we need to add an alias for this motherfucker
                         }
                     )
                 })
+                cy.wait(1000)
                 cy.get<ID>("@responseCheckoutWebUrl").then((checkout: ID) => {
-                    // cy.get<CustomerShopify>("@responseCustomerShopify").then(
-                    // (response: CustomerShopify) => {
-                    // cy.get<Product>("@selectedProduct").then((product: Product) => {
                     cy.clickButton("participate-payment", "VIPER GO", checkout.webUrl)
-                    // cy.request({
-                    //     method: "POST",
-                    //     url: "https://api.shopify.com/checkout",
-                    //     headers: {
-                    //         "Content-Type": "application/json",
-                    //         "X-Shopify-Access-Token":
-                    //             response.shopify.customerAccessToken,
-                    //     },
-                    //     body: {
-                    //         line_items: [
-                    //             {
-                    //                 variant_id: { product: product.variant_id },
-                    //                 quantity: 1,
-                    //             },
-                    //         ],
-                    //         shipping_address: {
-                    //             first_name: firstName,
-                    //             last_name: lastName,
-                    //             address1: viper.address.address,
-                    //             city: viper.address.city,
-                    //             province: viper.address.province,
-                    //             country: viper.address.country,
-                    //             zip: viper.address.zip,
-                    //         },
-                    //         payment_details: {
-                    //             credit_card: {
-                    //                 number: "1",
-                    //                 name: "Bogus Gateway",
-                    //                 month: "11",
-                    //                 year: "2023",
-                    //                 verification_value: "123",
-                    //             },
-                    //         },
-                    //     },
-                    // }).then((response) => {})
                     cy.pause()
-                    // })
                 })
-                // })
-                // })
             })
         })
     }
@@ -2460,51 +2282,3 @@ Cypress.Commands.add("claimEventCard", (event: EventInterface | Alias<String>, v
         cy.dataInContainer("viper", "ViPER")
     })
 })
-//     // Set the cookie for cypress.
-//     // It has to be a valid cookie so next-auth can decrypt it and confirm its validity.
-//     // This step can probably/hopefully be improved.
-//     // We are currently unsure about this part.
-//     // We need to refresh this cookie once in a while.
-//     // We are unsure if this is true and if true, when it needs to be refreshed.
-//     cy.setCookie(
-//         "next-auth.session-token",
-//         "c2a41b55-5806-44b1-b9a7-0fddeadf6ab8"
-//     )
-//     // Cypress.Cookies.preserveOnce("next-auth.session-token")
-// })
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }

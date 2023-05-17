@@ -1,4 +1,4 @@
-import "server-only"
+// import "server-only"
 
 import { NODE_CHECKOUT_QUERY } from "@/graphql/query/nodeCheckout"
 import { storefrontClient } from "@/lib/storefrontApi"
@@ -8,9 +8,15 @@ import { FulfillmentOrder } from "@shopify/shopify-api/rest/admin/2023-01/fulfil
 import { RequestReturn } from "@shopify/shopify-api"
 import { getViperCollectionEvents } from "@/lib/vipers"
 
-const isCheckoutFulFilled = async (eventId: string): Promise<FulfillmentOrder | undefined> => {
-    const viperCollection: Collection[] = await getViperCollectionEvents()
-
+export const preloadIsCheckoutFulfilled = (viperId: string, eventId: string): void => {
+    void isCheckoutFulFilled(viperId, eventId)
+}
+const isCheckoutFulFilled = async (
+    viperId: string,
+    eventId: string
+): Promise<FulfillmentOrder | undefined> => {
+    const viperCollection: Collection[] = await getViperCollectionEvents(viperId)
+    console.log(viperCollection)
     if (!viperCollection) return
     const map: Collection[] = viperCollection.map((collection: Collection) => {
         return {
@@ -21,6 +27,8 @@ const isCheckoutFulFilled = async (eventId: string): Promise<FulfillmentOrder | 
     const find: Collection | undefined = map.find(
         (collection) => JSON.stringify(collection._id).replace(/['"]+/g, "") === eventId
     )
+    console.log(`/////////////////find`)
+    console.log(find)
     if (!find) return
 
     const CHECKOUT_INPUT = {
@@ -35,8 +43,7 @@ const isCheckoutFulFilled = async (eventId: string): Promise<FulfillmentOrder | 
     })
 
     const checkoutOrder: FulfillmentOrder = checkout.body.data.node.order
-
-    if (!checkoutOrder) return
+    if (!checkoutOrder) return undefined
 
     return checkoutOrder
 }

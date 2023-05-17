@@ -17,9 +17,11 @@ export const EventCard = ({
     date: string
     href: string
 }) => {
+    const words = content.split(" ")
+    const twentyWords = words.slice(0, 27).join(" ")
     return (
         <Link data-test="select-event" href={href} className="group block">
-            <div className="space-y-4 overflow-hidden">
+            <div className="lg:space-y-3 overflow-hidden">
                 <Image
                     data-test="event-card-image"
                     src={`/upload/${image}`}
@@ -42,11 +44,14 @@ export const EventCard = ({
                 </h2>
                 <div
                     data-test="event-card-content"
-                    className="text-sm font-bold leading-snug text-white"
+                    className="xl:text-sm lg:text-xs font-bold leading-snug text-white "
                 >
-                    {content}
+                    {twentyWords}...
                 </div>
-                <p data-test="event-card-location" className="text-sm text-gray-300">
+                <p
+                    data-test="event-card-location"
+                    className="xl:text-base lg:text-sm text-gray-300"
+                >
                     {location}
                 </p>
                 <EventShowTime dateTime={date} />

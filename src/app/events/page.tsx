@@ -10,9 +10,9 @@ export default async function EventsPage({}) {
             "content-type": "application/json; charset=utf-8",
         },
         cache: "no-cache",
-        next: {
-            revalidate: 900,
-        },
+        // next: {
+        //     revalidate: 60,
+        // },
     })
     const events: Promise<EventInterface[]> = fetchEvents.json()
     return (

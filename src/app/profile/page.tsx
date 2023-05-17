@@ -25,7 +25,7 @@ export default async function ProfilePage() {
     preloadViperBlogs(viperId)
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full flex flex-wrap">
             <Suspense fallback={<Loading />}>
                 {/* @ts-expect-error Server Component */}
                 <ViperBlogs viperId={viperId} />
