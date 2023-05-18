@@ -11,7 +11,7 @@ const eventCollection = client.db("viperDb").collection<EventInterface>("events"
 export const preloadAllEvents = (): void => {
     void getAllEvents()
 }
-export async function getAllEvents(): Promise<EventInterface[]> {
+export const getAllEvents = cache(async (): Promise<EventInterface[]> => {
     const events = await eventCollection
         .aggregate<EventInterface>([
             {
@@ -33,7 +33,7 @@ export async function getAllEvents(): Promise<EventInterface[]> {
         .toArray()
 
     return events
-}
+})
 export const preloadEventById = (eventId: string): void => {
     void getEventById(eventId)
 }
@@ -44,7 +44,9 @@ export const getEventById = cache(async (eventId: string): Promise<EventInterfac
     if (!event) return null
     return event
 })
-
+export const preloadEventsByCategory = (category: string): void => {
+    void getEventsByCategory(category)
+}
 export async function getEventsByCategory(category: string): Promise<EventInterface[]> {
     const event = await eventCollection
         .aggregate<EventInterface>([
@@ -109,15 +111,6 @@ export async function getEventComments(eventId: string): Promise<Comments[] | nu
                 $unwind: "$comments",
             },
             {
-                // $project: {
-                //     _id: "$comments._id",
-                //     eventTitle: "$title",
-                //     viperId: "$comments.viperId",
-                //     text: "$comments.text",
-                //     likes: "$comments.likes",
-                //     replies: "$comments.replies",
-                //     timestamp: "$comments.timestamp",
-                // },
                 $project: {
                     _id: 1,
                     title: 1,
@@ -200,8 +193,6 @@ export async function getEventCommentReplies(
             },
             {
                 $project: {
-                    // _id: 0,
-                    // replies: "$comments.replies",
                     _id: "$comments.replies._id",
                     viperId: "$comments.replies.viperId",
                     reply: "$comments.replies.reply",

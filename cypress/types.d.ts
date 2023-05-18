@@ -152,8 +152,6 @@ declare namespace Cypress {
             editEvent?: EditEvent
         ): Cypress.Chainable
 
-        // editEvent(event: EventInterface | Alias<string>, requestEdit: EditEvent)
-
         createCustomer(
             password: string,
             customerAddress: CustomerAddress,

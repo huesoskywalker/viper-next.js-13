@@ -86,6 +86,7 @@ export function EditEventForm({
                 }),
             })
             await response.json()
+
             setIsFetching(false)
 
             startTransition(() => {
@@ -97,8 +98,9 @@ export function EditEventForm({
                 setImage("")
                 setCreateObjectURL("")
                 setPrice("")
-                // router.prefetch(`/${eventId}`)
+                router.refresh()
             })
+            // router.prefetch(`/${eventId}`)
             router.push(`/${eventId}`)
         } catch (error) {
             console.error(error)

@@ -7,8 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === "POST") {
         try {
             const fulfillmentStatus = await isCheckoutFulFilled(viperId, eventId)
-            console.log(`-------checkoutAPI endpoint`)
-            console.log(fulfillmentStatus)
             if (fulfillmentStatus === undefined) {
                 return res.status(200).json({ orderStatus: "No order yet" })
             } else {

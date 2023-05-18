@@ -16,7 +16,6 @@ const isCheckoutFulFilled = async (
     eventId: string
 ): Promise<FulfillmentOrder | undefined> => {
     const viperCollection: Collection[] = await getViperCollectionEvents(viperId)
-    console.log(viperCollection)
     if (!viperCollection) return
     const map: Collection[] = viperCollection.map((collection: Collection) => {
         return {
@@ -27,8 +26,6 @@ const isCheckoutFulFilled = async (
     const find: Collection | undefined = map.find(
         (collection) => JSON.stringify(collection._id).replace(/['"]+/g, "") === eventId
     )
-    console.log(`/////////////////find`)
-    console.log(find)
     if (!find) return
 
     const CHECKOUT_INPUT = {

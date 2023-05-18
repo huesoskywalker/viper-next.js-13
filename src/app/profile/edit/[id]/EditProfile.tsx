@@ -22,7 +22,7 @@ export default function EditProfile({}: // viperId,
 }) {
     const { data: session, status, update } = useSession()
     const viper = session?.user
-    // if (!viper) return <div className="text-gray-300 text-sm"> Loading... </div>
+    if (!viper) return <div className="text-gray-300 text-sm"> Loading... </div>
     const [newName, setNewName] = useState<string | undefined>()
     const [newBiography, setNewBiography] = useState<string>()
     const [newLocation, setNewLocation] = useState<string | undefined>()
@@ -86,7 +86,7 @@ export default function EditProfile({}: // viperId,
                     "content-type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify({
-                    _id: viper?._id,
+                    _id: viper._id,
                     name: newName,
                     biography: newBiography,
                     location: newLocation,
@@ -101,17 +101,16 @@ export default function EditProfile({}: // viperId,
                 location: newLocation,
                 image: imageUrl,
             })
+
             setIsFetching(false)
 
             startTransition(() => {
                 setNewName("")
                 setNewBiography("")
                 setNewLocation("")
-                // check here, refresh is maybe for the new data?
-                // or should the edge fetch revalidate?
                 router.refresh()
-                router.prefetch("/profile")
             })
+            router.prefetch("/profile")
             router.push(`/profile`)
         } catch (error) {
             console.error(error)

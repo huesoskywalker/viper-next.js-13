@@ -26,6 +26,9 @@
 //     )
 // }
 
+import { getCurrentViper } from "@/lib/session"
+import { preloadViperById } from "@/lib/vipers"
+import { Session } from "next-auth"
 import { getCsrfToken } from "next-auth/react"
 
 // Static metadata
@@ -34,6 +37,9 @@ export const metadata = {
 }
 
 export default async function HomePage() {
+    const viper: Session | null = await getCurrentViper()
+    if (!viper) return <div>Should login</div>
+    preloadViperById(viper.user._id)
     // const csrfToken = await getCsrfToken()
     // console.log(csrfToken)
     return (

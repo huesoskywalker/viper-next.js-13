@@ -38,6 +38,7 @@ describe("Viper App", () => {
                 cy.navigate("nav-item", session.name, `/profile`)
                 cy.checkProfileComponent("@profile" as Alias<string>, "Edit Profile")
                 cy.navigate("edit-profile", "Edit Profile", `/profile/edit/${session._id}`)
+
                 cy.editProfile(
                     requestEditProfile as ProfileEdit,
                     "@profile" as Alias<string>,
@@ -182,13 +183,12 @@ describe("Viper App", () => {
             cy.checkEventComponentProps("@newEvent" as Alias<string>)
 
             cy.log(`Music Event`)
-
             cy.navigate("viper", "viper", "/")
             cy.navigate("nav-item", "Events", `/events`)
             cy.navigate("tab-Music", "Music", `/events/Music`)
-
             cy.getByData("display-events").should("exist").eq(0)
             cy.getByData("select-event").click()
+            cy.wait(1500)
 
             cy.buildEventFromUrl("selectedEvent")
 
@@ -207,34 +207,35 @@ describe("Viper App", () => {
             cy.participateEvent("@selectedEvent" as Alias<string>, "@profile" as Alias<string>)
 
             cy.get<EventInterface>("@selectedEvent").then((event: EventInterface) => {
-                cy.reload()
                 cy.url().should("contain", `/${event._id}`)
-                cy.checkEventComponentProps(event as EventInterface)
-
-                cy.claimEventCard(event as EventInterface, "@profileId" as Alias<string>)
+                cy.reload()
             })
+            cy.claimEventCard("@selectedEvent" as Alias<string>, "@profileId" as Alias<string>)
+
+            cy.checkEventComponentProps("@selectedEvent" as Alias<string>)
 
             cy.navigate("nav-item", "Dashboard", `/dashboard`)
             cy.navigate("tab-myevents", "My Events", `/dashboard/myevents`)
             cy.navigate("tab-collection", "Collection", `/dashboard/myevents/collection`)
+
             cy.checkCollectionEventCard("@selectedEvent" as Alias<string>)
 
             cy.navigate("nav-item", "Events", `/events`)
             cy.navigate("tab-Bars", "Bars", `/events/Bars`)
             cy.getByData("display-events").should("exist").eq(0)
             cy.getByData("select-event").click()
+            cy.wait(1500)
 
             cy.buildEventFromUrl("likedEvent")
 
             cy.likeEvent(["@likedEvent" as Alias<string>, "@profile" as Alias<string>])
-
-            cy.wait(500)
 
             cy.commentEvent(
                 "seeee y'all there !",
                 "@likedEvent" as Alias<string>,
                 "@profileId" as Alias<string>
             )
+            cy.wait(500)
 
             cy.get<EventInterface>("@likedEvent").then((event: EventInterface) => {
                 cy.checkEventCommentCard(
@@ -268,11 +269,11 @@ describe("Viper App", () => {
                 )
             })
 
+            cy.wait(1000)
             cy.displayViper("@likedEventOrganizer" as Alias<string>)
 
             cy.addFollow("@profile" as Alias<string>, "@likedEventOrganizer" as Alias<string>)
-            cy.wait(500)
-
+            cy.wait(1500)
             cy.get<ViperBasicProps>("@likedEventOrganizer").then((organizer: ViperBasicProps) => {
                 cy.navigate(
                     "display-organizer-name",
@@ -302,6 +303,7 @@ describe("Viper App", () => {
                     }
                 )
             })
+            cy.wait(1000)
             cy.get<Viper>("@organizerProfile").then((organizer: Viper) => {
                 cy.checkCommentCardComponent(organizer, organizer.blog.myBlog[0])
 
@@ -309,14 +311,13 @@ describe("Viper App", () => {
                     "@organizerProfile" as Alias<string>,
                     "@profile" as Alias<string>,
                 ])
+                cy.wait(1000)
 
                 cy.navigate("tab-messages", "Messages", `/dashboard/messages`)
-
                 cy.dataInImage("contact-image", organizer.image)
                 cy.dataInContainer("contact-name", organizer.name)
 
                 cy.navigate("contact-name", organizer.name, `/dashboard/messages/${organizer._id}`)
-
                 cy.inputType("message", requestChatContact.message)
                 cy.intercept(`/api/messages/chat`).as("messenger")
                 cy.getByData("send-message").click()
@@ -363,6 +364,7 @@ describe("Viper App", () => {
                             }
                         )
                     })
+                    cy.wait(1000)
                     cy.apiRequestAndResponse(
                         {
                             url: `/api/messages/${organizer._id}`,
@@ -384,7 +386,7 @@ describe("Viper App", () => {
                             },
                         }
                     )
-
+                    cy.wait(500)
                     cy.get<Chats>("@newChat").then((chat: Chats) => {
                         cy.dataInContainer("viper-name", session.name)
                         cy.dataInContainer("viper-message", requestChatContact.message)

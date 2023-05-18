@@ -7,6 +7,7 @@ export default defineConfig({
         viewportHeight: 768,
         experimentalMemoryManagement: true,
         numTestsKeptInMemory: 1,
+
         setupNodeEvents(on, config) {
             // implement node event listeners here
         },

@@ -22,7 +22,7 @@ export async function Event({ eventId }: { eventId: string }) {
     if (!currentViper)
         return <div className="text-yellow-400 text-sm"> remove this from Event</div>
     if (!selectedEvent) return <div className="text-yellow-400 text-sm">Build up, from Event</div>
-    const viperId: string = currentViper.user._id
+    // const viperId: string = currentViper.user._id
     preloadViperBasicProps(selectedEvent.organizer._id)
     // preloadIsViperOnTheList(eventId, viperId)
     // preloadRequestEventParticipation(viperId, eventId)

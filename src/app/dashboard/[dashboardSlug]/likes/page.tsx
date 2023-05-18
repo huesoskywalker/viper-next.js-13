@@ -7,8 +7,8 @@ import ViperCollection from "../collection/ViperCollection"
 
 export default async function LikedPage() {
     const viperSession = await getCurrentViper()
-    if (!viperSession) throw new Error("No Viper bro")
-    const viper = viperSession?.user
+    if (!viperSession) return <div>we coming for you brah</div>
+    const viper = viperSession.user
 
     // const likedEvents: Promise<Likes[]> = getViperLikedEvents()
     // if (!likedEvents) return <div> asdf </div>

@@ -6,6 +6,7 @@ import { Follow, Viper, ViperBasicProps } from "@/types/viper"
 import ShowFollows from "../profile/ShowFollows"
 import ViperInfo from "../profile/ViperInfo"
 import { AddFollow } from "../profile/AddFollow"
+import { useRouter } from "next/navigation"
 
 export default async function OrganizerInfo({
     organizerId,

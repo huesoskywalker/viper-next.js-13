@@ -31,15 +31,15 @@ export async function EventInfo({
     const viper_id = currentViper.user._id
     const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, viper_id)
     const viperRequestData: Promise<boolean> = requestEventParticipation(viper_id, eventId)
-    // const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
-    //     viper_id,
-    //     eventId
-    // )
+    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
+        viper_id,
+        eventId
+    )
 
-    const [viperOnList, viperRequest] = await Promise.all([
+    const [viperOnList, viperRequest, checkoutStatus] = await Promise.all([
         viperOnListData,
         viperRequestData,
-        // checkoutFulfillmentData,
+        checkoutFulfillmentData,
     ])
 
     {
@@ -56,31 +56,30 @@ export async function EventInfo({
             headers: {
                 "content-type": "application/json; charset=utf-8",
             },
-            cache: "no-cache",
+            cache: "no-store",
 
-            next: { revalidate: 15 },
+            next: { revalidate: 10 },
         }
     )
     const productInventory: InventoryItem = await productInventoryData.json()
+    // const checkoutFulfillmentStatus = await fetch(
+    //     `http://localhost:3000/api/viper/events/checkout`,
 
-    const checkoutFulfillmentStatus = await fetch(
-        `http://localhost:3000/api/viper/events/checkout`,
+    //     {
+    //         method: "POST",
+    //         headers: {
+    //             "content-type": "application/json; charset=utf-8",
+    //         },
+    //         body: JSON.stringify({
+    //             eventId: eventId,
+    //             viperId: currentViper.user._id,
+    //         }),
+    //         cache: "no-cache",
 
-        {
-            method: "POST",
-            headers: {
-                "content-type": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify({
-                eventId: eventId,
-                viperId: currentViper.user._id,
-            }),
-            cache: "no-cache",
-
-            next: { revalidate: 20 },
-        }
-    )
-    const checkoutStatus = await checkoutFulfillmentStatus.json()
+    //         next: { revalidate: 10 },
+    //     }
+    // )
+    // const checkoutStatus = await checkoutFulfillmentStatus.json()
     // console.log(`-------checkoutStatus from EventInfo`)
     // console.log(checkoutStatus)
     return (
@@ -121,7 +120,7 @@ export async function EventInfo({
                     viperRequest={viperRequest}
                     isCheckoutPaid={checkoutStatus?.financialStatus}
                     eventEntries={eventEntries}
-                    totalInventory={productInventory?.totalInventory}
+                    totalInventory={productInventory.totalInventory}
                 />
             )}
         </div>

@@ -2,7 +2,7 @@ db.users.updateOne({ name: "Hueso Skywalker" }, { $set: { "address": { "phone": 
 
 db.users.updateOne({ name: "Agustin Lavezzari" }, { $set: { "address": { "phone": null, "address": "", "city": "", "province": "", "zip": null, "country": "" }, "backgroundImage": "https://lh3.googleusercontent.com/a/AGNmyxYqIu-2gZqkkUDXAM7HdlxT6fObEPu15_zPuvU=s96-c", "biography": "", "blog": { "myBlog": [], "likes": [], "commented": [], "rePosts": [] }, "location": "", "myEvents": { "_id": "", "created": [], "collection": [], "likes": [] }, "shopify": { "customerAccessToken": "", "customerId": "" }, "followers": [], "follows": [] }})
 
-// Checkout, before customer
+// Checkout, after customer
 db.users.updateOne({ name: "Hueso Skywalker" }, { $set: {  "myEvents": { "_id": "", "created": [], "collection": [], "likes": [] },  }})
 
 // shopify { undefined }

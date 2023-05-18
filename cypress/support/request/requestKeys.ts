@@ -30,7 +30,6 @@ export const requestCreateEventKeys: (keyof CreateEvent)[] = [
     "image",
     "product",
 ]
-// : (keyof EditEventRequest)[]
 export const requestEditEventKeys: string[] = [
     "category",
     "content",

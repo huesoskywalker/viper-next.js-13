@@ -27,8 +27,6 @@ export function Participate({
     eventEntries: number
     totalInventory: number
 }): JSX.Element {
-    console.log(`----isCheckoutPaid / Participate`)
-    console.log(isCheckoutPaid)
     const [isCheckout, setIsCheckout] = useState<string>("")
     const [isPending, startTransition] = useTransition()
     const [isFetching, setIsFetching] = useState<boolean>(false)

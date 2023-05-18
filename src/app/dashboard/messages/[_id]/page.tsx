@@ -18,8 +18,8 @@ export default async function chatIdPage({ params }: PageProps) {
         body: JSON.stringify({
             viper: { _id: viper._id },
         }),
-        cache: "no-cache",
-        next: { revalidate: 10 },
+        cache: "no-store",
+        next: { revalidate: 30 },
     })
     const messenger: Promise<Chats | null> = messengerData.json()
 

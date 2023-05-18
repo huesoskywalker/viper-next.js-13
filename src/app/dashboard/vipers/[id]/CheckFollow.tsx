@@ -7,11 +7,7 @@ export async function CheckFollow({ viperId }: { viperId: string }) {
     return (
         <>
             <div className="flex justify-start">
-                <AddFollow
-                    id={viperId}
-                    isFollowed={isViperFollowed}
-                    event={true}
-                />
+                <AddFollow id={viperId} isFollowed={isViperFollowed} event={true} />
             </div>
         </>
     )

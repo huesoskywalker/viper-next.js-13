@@ -1,12 +1,12 @@
-import { getViperById } from "@/lib/vipers"
+import { getViperBasicProps, getViperById } from "@/lib/vipers"
 import Image from "next/image"
 import Link from "next/link"
 import { firstLogin } from "@/lib/utils"
-import { Viper } from "@/types/viper"
+import { Viper, ViperBasicProps } from "@/types/viper"
 
 export default async function Contacts({ id }: { id: string }) {
     const viperId: string = id.replace(/['"]+/g, "")
-    const viper: Viper | null = await getViperById(viperId)
+    const viper: ViperBasicProps | null = await getViperBasicProps(viperId)
     if (!viper) throw new Error("No viper bro")
 
     return (
