@@ -67,7 +67,7 @@ export type BodyType = {
     [key: string]: any
 }
 
-function isPathInTarget(object: object | string, path: string | undefined) {
+function isPathInTarget(object: object | string, path: string | undefined): string | undefined {
     if (!path) return undefined
     const cleanPath = path.replace(/(?:\.\w+|\[\d+\])$/, "")
     return _.has(object, cleanPath) ? cleanPath : undefined
@@ -107,50 +107,56 @@ Cypress.Commands.add("inputSelect", (selector: string, value: string) => {
     return cy.getByData(selector).select(value).should("have.value", value)
 })
 
-Cypress.Commands.add("signInWithCredential", (username: string, password: string) => {
-    cy.session(
-        username,
-        () => {
-            cy.log(`Viper App`)
-            cy.visit("/")
-            cy.clickButton("signIn", "Sign in")
-            cy.url().should("include", "/api/auth/signin")
-            cy.get("#input-username-for-1-test-provider").type(username)
-            cy.get("#input-password-for-1-test-provider").type(password)
-            cy.get(":nth-child(4) > form > button").click()
-            cy.url().should("include", "/")
-            cy.apiRequestAndResponse(
-                {
-                    url: "/api/auth/session",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    method: "GET",
-                },
-                {
-                    status: 200,
-
-                    expectResponse: {
-                        keys: sessionKeys,
-                        object: {
-                            name: username,
+Cypress.Commands.add(
+    "signInWithCredential",
+    (username: string, password: string, sessionAlias: string, viperAlias: string) => {
+        cy.session(
+            username,
+            () => {
+                cy.log(`Viper App`)
+                cy.visit("/")
+                cy.clickButton("signIn", "Sign in")
+                cy.url().should("include", "/api/auth/signin")
+                cy.get("#input-username-for-1-test-provider").type(username)
+                cy.get("#input-password-for-1-test-provider").type(password)
+                cy.get(":nth-child(4) > form > button").click()
+                cy.url().should("include", "/")
+                cy.apiRequestAndResponse(
+                    {
+                        url: "/api/auth/session",
+                        headers: {
+                            "content-type": "application/json",
                         },
-                        path: "user",
+                        method: "GET",
                     },
-                    build: {
-                        object: rawSession,
-                        alias: "session",
-                    },
-                }
-            )
+                    {
+                        status: 200,
 
-            cy.getCookie("next-auth.session-token").should("exist")
-            cy.getByData("nav-item").contains(username)
-            cy.log("Cypress login successful")
-        },
-        { cacheAcrossSpecs: true }
-    )
-})
+                        expectResponse: {
+                            keys: sessionKeys,
+                            object: {
+                                name: username,
+                            },
+                            path: "user",
+                        },
+                        build: {
+                            object: rawSession,
+                            alias: sessionAlias,
+                        },
+                    }
+                )
+                cy.get<Session>(`@${sessionAlias}`).then((session: Session) => {
+                    cy.buildFullViper(session as Session, viperAlias)
+                })
+
+                cy.getCookie("next-auth.session-token").should("exist")
+                cy.getByData("nav-item").contains(username)
+                cy.log("Cypress login successful")
+            },
+            { cacheAcrossSpecs: true }
+        )
+    }
+)
 
 Cypress.Commands.add(
     "apiRequestAndResponse",
@@ -1250,7 +1256,6 @@ Cypress.Commands.add(
         const viperAlias = typeof viper === "string" ? viper.replace(/@/g, "") : `${viper}`
         cy.isAliasObject(event).then((event: EventInterface) => {
             cy.isAliasObject(viper).then((viper: Viper) => {
-                const [firstName, lastName] = viper.name.split(" ")
                 cy.url().should("contain", `${event._id}`)
                 cy.buildObjectProperties(
                     event,
@@ -1388,7 +1393,6 @@ Cypress.Commands.add(
                         }
                     )
                 })
-                cy.wait(1000)
                 cy.get<ID>("@responseCheckoutWebUrl").then((checkout: ID) => {
                     cy.clickButton("participate-payment", "VIPER GO", checkout.webUrl)
                     cy.pause()

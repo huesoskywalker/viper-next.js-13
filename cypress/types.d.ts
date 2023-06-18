@@ -26,7 +26,12 @@ declare namespace Cypress {
 
         inputSelect(selector: string, value: string): Cypress.Chainable
 
-        signInWithCredential(username: string, password: string): Cypress.Chainable
+        signInWithCredential(
+            username: string,
+            password: string,
+            sessionAlias: string,
+            viperAlias: string
+        ): Cypress.Chainable
 
         apiRequestAndResponse(
             requestOptions: {
@@ -113,7 +118,7 @@ declare namespace Cypress {
                             }[]
                       object: object | Alias<string> | (object | Alias<string>)[]
                       objPath?: string | (string | undefined)[]
-                      alias?: string | (stringa | undefined)[]
+                      alias?: string | (string | undefined)[]
                   }
                 | ({
                       body: "response" | "request"
@@ -260,8 +265,6 @@ declare namespace Cypress {
         buildFullEvent(event: ID, alias: string)
         // =================
     }
-    // add properties the application adds to its "window" object
-    // by adding them to the interface ApplicationWindow
     interface ApplicationWindow {
         // let TS know the application's code will add
         // method window.add with the following signature

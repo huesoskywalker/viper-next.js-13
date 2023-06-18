@@ -14,14 +14,14 @@ export default async function Layout({ children, params }: PageProps) {
             <GoBackArrow />
             <div className="mx-5 lg:border-x lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 lg:py-2 lg:px-2">
                 <div className="m-5 max-h-[100%] border-b-[1px] pb-3 border-gray-700/80">
-                    <Suspense
+                    {/* <Suspense
                         fallback={
                             <div className="text-yellow-500 text-lg">Suspense from Layout...</div>
                         }
-                    >
-                        {/* @ts-expect-error Server Component */}
-                        <Event eventId={eventId} />
-                    </Suspense>
+                    > */}
+                    {/* @ts-expect-error Server Component */}
+                    <Event eventId={eventId} />
+                    {/* </Suspense> */}
                 </div>
                 {children}
             </div>

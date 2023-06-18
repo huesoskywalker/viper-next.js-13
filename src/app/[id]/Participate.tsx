@@ -37,7 +37,7 @@ export function Participate({
 
     const { data: session, status } = useSession()
     const viper = session?.user
-    // if (!viper) return <div>Loading</div>
+    if (!viper) throw new Error("No viper bro")
     const viperShopify: Shopify | undefined = viper?.shopify
     const viperAccessToken: string | undefined = viper?.shopify.customerAccessToken
 

@@ -13,37 +13,51 @@ export const Profile = async ({ viperId, profile }: { viperId: string; profile: 
     preloadViperFollowed(viperId)
 
     return (
-        <div className="grid grid-cols-4">
-            <div className="col-span-4 overflow-hidden">
+        <div className="grid lg:grid-cols-4">
+            <div className="lg:col-span-4 overflow-hidden">
                 <Image
                     data-test="background-image"
-                    src={
-                        fullViper.backgroundImage !== undefined
-                            ? `/vipers/${fullViper.backgroundImage}`
-                            : fullViper.image
-                    }
+                    // src={
+                    //     fullViper.backgroundImage !== undefined
+                    //         ? `/vipers/${fullViper.backgroundImage}`
+                    //         : fullViper.image
+                    // }
+                    src={`/vipers/${fullViper.backgroundImage}`}
                     width={580}
-                    height={100}
-                    className="-z-10 rounded-xl  group-hover:opacity-80 max-h-44 max-w-auto object-cover object-center -mb-2"
+                    height={176}
+                    className="-z-10 rounded-xl  group-hover:opacity-80 object-cover object-center -mb-2"
                     alt={fullViper.name}
                     placeholder="blur"
                     blurDataURL={fullViper.image}
+                    style={{
+                        width: "100%",
+                        height: "auto",
+                        maxWidth: "auto",
+                        maxHeight: "11rem",
+                    }}
                 ></Image>
                 <div className="z-10 relative bottom-9 left-7">
                     <Image
                         data-test="profile-image"
-                        src={`${
-                            firstLogin(fullViper.image)
-                                ? fullViper.image
-                                : `/vipers/${fullViper.image}`
-                        }`}
-                        width={100}
-                        height={100}
-                        className="  rounded-full border-solid border-2 border-yellow-600 group-hover:opacity-80 max-h-24 max-w-24 object-cover object-top"
+                        // src={`${
+                        //     firstLogin(fullViper.image)
+                        //         ? fullViper.image
+                        //         : `/vipers/${fullViper.image}`
+                        // }`}
+                        src={`/vipers/${fullViper.image}`}
+                        width={96}
+                        height={96}
+                        className="  rounded-full border-solid border-2 border-yellow-600 group-hover:opacity-80 object-cover object-top"
                         alt={fullViper.name}
                         placeholder="blur"
                         blurDataURL={fullViper.image}
                         loading="lazy"
+                        style={{
+                            width: "100%",
+                            height: "auto",
+                            maxWidth: "6rem",
+                            maxHeight: "6rem",
+                        }}
                     />
                     <div className="grid grid-cols-2">
                         <h1 data-test="viper-name" className="text-sm text-yellow-700 mt-4">

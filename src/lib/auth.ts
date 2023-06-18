@@ -59,8 +59,8 @@ export const authOptions: NextAuthOptions = {
     adapter: MongoDBAdapter(clientPromise as any),
     // Using jwt to manage cypress test, after that, get back to strategy: "database", or make both available
     session: {
-        // strategy: database? should be when we return to normal
-        strategy: "jwt",
+        strategy: "database",
+        // strategy: "jwt",
         maxAge: 30 * 24 * 60 * 60,
         updateAge: 24 * 60 * 60,
 
@@ -68,80 +68,76 @@ export const authOptions: NextAuthOptions = {
             return randomUUID?.() ?? randomBytes(32).toString("hex")
         },
     },
-    jwt: {
-        // The maximum age of the NextAuth.js issued JWT in seconds.
-        // Defaults to `session.maxAge`.
-        maxAge: 60 * 60 * 24 * 30,
+    // jwt: {
+    // The maximum age of the NextAuth.js issued JWT in seconds.
+    // Defaults to `session.maxAge`.
+    // maxAge: 60 * 60 * 24 * 30,
 
-        // You can define your own encode/decode functions for signing and encryption
-        // async encode() {},
-        // async decode() {},
-    },
+    // You can define your own encode/decode functions for signing and encryption
+    // async encode() {},
+    // async decode() {},
+    // },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
             return true // Do different verification for other providers that don't have `email_verified`
         },
 
-        async jwt({ token, user, trigger, session }) {
-            if (trigger === "update" && session.shopify) {
-                token.shopify = session.shopify
-            }
-            if (trigger === "update" && session.image) {
-                console.log(`---------jwt if trigger?`)
-                token.name = session.name
-                token.image = session.image
-                token.biography = session.biography
-                token.location = session.location
-            }
-            return { ...token, ...user }
-        },
+        // async jwt({ token, user, trigger, session }) {
+        //     if (trigger === "update" && session.shopify) {
+        //         token.shopify = session.shopify
+        //         console.log(`this should not be working with database strategy`)
+        //     }
+        //     if (trigger === "update" && session.image) {
+        //         console.log(`---------jwt if trigger?`)
+        //         token.name = session.name
+        //         token.image = session.image
+        //         token.biography = session.biography
+        //         token.location = session.location
+        //     }
+        //     return { ...token, ...user }
+        // },
 
         // ===========================================
         // The user is an object.prototype of the profile
         async session({ session, token, user, trigger, newSession }) {
-            if (token) {
-                session.user._id = token._id
-                session.user.name = token.name
-                session.user.email = token.email
-                session.user.image = token.image
-                session.user.biography = token.biography
-                session.user.location = token.location
-                session.user.address = token.address
-                session.user.shopify = token.shopify
-                if (trigger === "update" && newSession?.shopify) {
-                    session.user.shopify = newSession.shopify
-                } else if (
-                    // i think this one in here does not work because it is on jwt
-                    trigger === "update" &&
-                    newSession?.image &&
-                    newSession?.location &&
-                    newSession?.image
-                ) {
-                    console.log(`------something happening here?`)
-                    session.user.name = newSession.name
-                    session.user.location = newSession.location
-                    session.user.image = newSession.image
-                }
+            // // if (token) {
+            // //     session.user._id = token._id
+            // //     session.user.name = token.name
+            // //     session.user.email = token.email
+            // //     session.user.image = token.image
+            // //     session.user.biography = token.biography
+            // //     session.user.location = token.location
+            // //     session.user.address = token.address
+            // //     session.user.shopify = token.shopify
 
-                return session
-            } else {
-                session.user._id = user._id
-                session.user.name = user.name
-                session.user.email = user.email
-                session.user.image = user.image
-                session.user.biography = user.biography
-                session.user.location = user.location
-                session.user.address = user.address
-                session.user.shopify = user.shopify
+            // //     return session
+            // } else {
 
-                if (trigger === "update" && newSession?.shopify) {
-                    session.user.shopify = newSession.shopify
-                }
-                // session.user.emailVerified = user.emailVerified
+            session.user._id = user.id
+            session.user.name = user.name
+            session.user.email = user.email
+            session.user.image = user.image
+            session.user.biography = user.biography
+            session.user.location = user.location
+            session.user.address = user.address
+            session.user.shopify = user.shopify
 
-                return session
+            if (trigger === "update" && newSession?.shopify) {
+                session.user.shopify = newSession.shopify
+            } else if (
+                trigger === "update" &&
+                newSession?.image &&
+                newSession?.location &&
+                newSession?.image
+            ) {
+                session.user.name = newSession.name
+                session.user.location = newSession.location
+                session.user.image = newSession.image
             }
+
+            return session
+            // }
         },
         // TIP
         //Google also returns a email_verified boolean property in the OAuth profile.

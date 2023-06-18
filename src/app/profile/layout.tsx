@@ -16,9 +16,8 @@ export default async function Layout({ children }: PageProps) {
 
     // In here as well, we can filter some data, too much data without using it
     preloadViperById(viper.user._id)
-    if (!viper) throw new Error("No viper bro")
     return (
-        <div className="flex justify-center flex-wrap">
+        <div className="justify-center flex-wrap xl:px-20 lg:px-10">
             <div className=" lg:border-x  lg:border-gray-800 rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20 md:py-2 md:px-8">
                 {/* @ts-expect-error Async Server Component */}
                 <Profile viperId={viper.user._id} profile={true} />

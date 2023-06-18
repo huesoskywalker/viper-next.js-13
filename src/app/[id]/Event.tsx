@@ -20,13 +20,14 @@ export async function Event({ eventId }: { eventId: string }) {
 
     const [currentViper, selectedEvent] = await Promise.all([viperSession, event])
     if (!currentViper)
-        return <div className="text-yellow-400 text-sm"> remove this from Event</div>
+        // return <div className="text-yellow-400 text-sm"> remove this from Event</div>
+        throw new Error(`No viper bro`)
     if (!selectedEvent) return <div className="text-yellow-400 text-sm">Build up, from Event</div>
-    // const viperId: string = currentViper.user._id
+    const viperId: string = currentViper.user._id
     preloadViperBasicProps(selectedEvent.organizer._id)
-    // preloadIsViperOnTheList(eventId, viperId)
-    // preloadRequestEventParticipation(viperId, eventId)
-    // preloadIsCheckoutFulfilled(viperId, eventId)
+    preloadIsViperOnTheList(eventId, viperId)
+    preloadRequestEventParticipation(viperId, eventId)
+    preloadIsCheckoutFulfilled(viperId, eventId)
     return (
         <div className="grid grid-cols-4 gap-6">
             <div className="col-span-full lg:col-span-1">

@@ -5,7 +5,8 @@
         "turbo": "next dev --turbo",
         "build": "next build",
         "start": "next start",
-        "cypress:open": "cypress open"
+        "cypress:open": "cypress open",
+        "cypress:run": "cypress run"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.7",

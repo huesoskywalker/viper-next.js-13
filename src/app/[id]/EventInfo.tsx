@@ -27,27 +27,24 @@ export async function EventInfo({
     product: Product
     eventEntries: number
 }) {
-    // // Normally you would fetch data here
     const viper_id = currentViper.user._id
     const viperOnListData: Promise<boolean> = isViperOnTheList(eventId, viper_id)
     const viperRequestData: Promise<boolean> = requestEventParticipation(viper_id, eventId)
-    const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
-        viper_id,
-        eventId
-    )
+    // const checkoutFulfillmentData: Promise<FulfillmentOrder | undefined> = isCheckoutFulFilled(
+    //     viper_id,
+    //     eventId
+    // )
 
-    const [viperOnList, viperRequest, checkoutStatus] = await Promise.all([
+    const [
+        viperOnList,
+        viperRequest,
+        //  checkoutStatus
+    ] = await Promise.all([
         viperOnListData,
         viperRequestData,
-        checkoutFulfillmentData,
+        // checkoutFulfillmentData,
     ])
 
-    {
-        /** Probably will be good to resolve this promise with all the others , the thing is if this one
-        will resolve all Promises on revalidation*/
-    }
-    // RE-check this one, make it GET request and figure it out well.
-    // Cheers
     const productId_numbers = product._id.match(/\d+/g)
     const productInventoryData = await fetch(
         `http://localhost:3000/api/product/inventory/${productId_numbers}`,
@@ -62,38 +59,34 @@ export async function EventInfo({
         }
     )
     const productInventory: InventoryItem = await productInventoryData.json()
-    // const checkoutFulfillmentStatus = await fetch(
-    //     `http://localhost:3000/api/viper/events/checkout`,
 
-    //     {
-    //         method: "POST",
-    //         headers: {
-    //             "content-type": "application/json; charset=utf-8",
-    //         },
-    //         body: JSON.stringify({
-    //             eventId: eventId,
-    //             viperId: currentViper.user._id,
-    //         }),
-    //         cache: "no-cache",
+    const checkoutStatusData = await fetch(
+        `http://localhost:3000/api/viper/events/checkout`,
 
-    //         next: { revalidate: 10 },
-    //     }
-    // )
-    // const checkoutStatus = await checkoutFulfillmentStatus.json()
-    // console.log(`-------checkoutStatus from EventInfo`)
-    // console.log(checkoutStatus)
+        {
+            method: "POST",
+            headers: {
+                "content-type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({
+                eventId: eventId,
+                viperId: currentViper.user._id,
+            }),
+            cache: "no-cache",
+
+            next: { revalidate: 10 },
+        }
+    )
+    const checkoutStatus = await checkoutStatusData.json()
     return (
         <div className="space-y-2 rounded-lg bg-gray-900 xl:p-3 lg:p-2">
             <EventDate date={eventDate} collection={false} />
             <EventLocation location={eventLocation} />
             <EventPrice price={eventPrice} />
-            {/** We gotta fix this last button on full Vipers and as well on financial status and split
-             * the Participate Components into smaller and more maintainable ones
-             */}
             {productInventory.totalInventory <= 0 ? (
                 <button
                     disabled={true}
-                    className="flex w-full justify-center space-x-2 rounded-lg  px-3 py-1 text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-red-500"
+                    className="flex lg:w-full lg:justify-center lg:space-x-2 rounded-lg  px-3 py-1 text-sm font-medium  bg-black  hover:animate-pulse hover:cursor-grabbing disabled:text-red-500"
                 >
                     <div className="flex justify-start items-center text-[16px]">
                         <svg
