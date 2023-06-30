@@ -1,12 +1,11 @@
 import Link from "next/link"
 import Image from "next/image"
-import { getViperBasicProps, getViperFollowById, preloadViperById } from "@/lib/vipers"
+import { getViperFollowById, preloadViperById } from "@/lib/vipers"
 import { firstLogin } from "@/lib/utils"
-import { Follow, Viper, ViperBasicProps } from "@/types/viper"
+import { Follow, ViperBasicProps } from "@/types/viper"
 import ShowFollows from "../profile/ShowFollows"
 import ViperInfo from "../profile/ViperInfo"
 import { AddFollow } from "../profile/AddFollow"
-import { useRouter } from "next/navigation"
 
 export default async function OrganizerInfo({
     organizerId,
@@ -34,6 +33,7 @@ export default async function OrganizerInfo({
         resolveOrganizerData,
         isOrganizerFollowedData,
     ])
+
     if (!organizer) throw new Error("No viper from OrganizerInfo")
     preloadViperById(organizer._id)
     return (
@@ -62,9 +62,7 @@ export default async function OrganizerInfo({
                         href={`/dashboard/vipers/${organizer_id}`}
                         className="hover:underline text-yellow-600 hover:text-gray-200"
                     >
-                        {/* <span className="hover:underline text-yellow-600 hover:text-gray-200"> */}
                         {organizer.name}
-                        {/* </span> */}
                     </Link>
                 </div>
                 <p data-test="display-organizer-location" className="text-gray-200">
@@ -75,11 +73,11 @@ export default async function OrganizerInfo({
                 </p>
                 <div className="mt-5 space-x-8 text-gray-300 text-xs">
                     <ShowFollows
-                        follows={organizer.follows.length}
+                        follows={organizer.follows?.length}
                         followers={false}
                         profile={false}
                     >
-                        {organizer.follows.map((follows: Follow) => {
+                        {organizer.follows?.map((follows: Follow) => {
                             return (
                                 /* @ts-expect-error Async Server Component */
                                 <ViperInfo

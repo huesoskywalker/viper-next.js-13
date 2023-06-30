@@ -1,53 +1,28 @@
 "use client"
 
-// COMPONENT
-
-// import { useSearchParams } from 'next/navigation';
-
-// export default function SearchBar() {
-//   const searchParams = useSearchParams();
-
-//   const search = searchParams.get('search');
-
-//   // This will not be logged on the server when using static rendering
-//   console.log(search)
-
-//   return (
-//     <>Search: {search}</>
-//   );
-// }
-
-// PAGE
-
-// import { Suspense } from 'react'
-// import SearchBar from './search-bar'
-
-// // This component passed as fallback to the Suspense boundary
-// // will be rendered in place of the search bar in the initial HTML.
-// // When the value is available during React hydration the fallback
-// // will be replaced with the `<SearchBar>` component.
-// function SearchBarFallback() {
-//   return <>placeholder</>
-// }
-
-// export default function Page() {
-//   return <>
-//     <nav>
-//       <Suspense fallback={<SearchBarFallback />}>
-//         <SearchBar />
-//       </Suspense>
-//     </nav>
-//     <h1>Dashboard</h1>
-//   </>
-// }
-
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useCallback } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 export default function ViperSearchBar() {
     const [searchViper, setSearchViper] = useState<string>("")
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const params = new URLSearchParams(searchParams?.toString())
+            params.set(name, value)
+
+            return params
+        },
+        [searchParams]
+    )
 
     const findViper = (e: FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
+
+        router.push(pathname + "?" + createQueryString("search", searchViper))
 
         setSearchViper("")
     }

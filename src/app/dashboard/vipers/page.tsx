@@ -1,12 +1,20 @@
-import { getVipers } from "@/lib/vipers"
+import { getViperByUsername, getVipers } from "@/lib/vipers"
 import { Suspense } from "react"
 import Loading from "./loading"
 import ViperSearchBar from "./ViperSearchBar"
 import { Viper } from "@/types/viper"
 import { DisplayVipers } from "./DisplayVipers"
 
-export default async function VipersPage() {
-    const vipers: Viper[] = await getVipers()
+export default async function VipersPage({
+    params,
+    searchParams,
+}: {
+    params: { slug: string }
+    searchParams: { [key: string]: string }
+}) {
+    const vipers: Promise<Viper[] | null> = searchParams.search
+        ? getViperByUsername(searchParams.search)
+        : getVipers()
     if (!vipers) throw new Error("No vipers bro")
 
     return (

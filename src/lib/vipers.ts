@@ -26,11 +26,37 @@ const eventCollection = db.collection<EventInterface>("events")
      * Using this to Test with Cypress, sign in Credentials
      */
 }
-export const getViperByUsername = cache(async (username: string, password: string) => {
+// export const getViperByUsername = cache(async (username: string, password: string) => {
+//     try {
+//         const viper = await viperCollection.findOne<Viper>({
+//             name: username,
+//         })
+//         return viper
+//     } catch (error) {
+//         throw new Error(`${error}`)
+//     }
+// })
+
+export const getViperByUsername = cache(async (username: string): Promise<Viper[] | null> => {
     try {
-        const viper = await viperCollection.findOne<Viper>({
-            name: username,
-        })
+        await viperCollection.createIndexes([
+            {
+                name: "someNewIndex",
+                key: { name: "text" },
+            },
+        ])
+
+        // await viperCollection.createIndex({
+        //     title: "text",
+        // })
+        const viper: Viper[] = await viperCollection
+            .find({
+                $text: {
+                    $search: username,
+                },
+            })
+            .toArray()
+
         return viper
     } catch (error) {
         throw new Error(`${error}`)
