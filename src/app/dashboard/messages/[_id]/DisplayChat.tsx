@@ -4,6 +4,7 @@ import Chat from "./Chat"
 export async function DisplayChat({ chatPromise }: { chatPromise: Promise<Chats> }) {
     const messenger: Chats = await chatPromise
     const messages: Message[] = messenger?.messages
+
     return (
         <>
             <div className="overflow-y-scroll  text-gray-300 text-sm w-full max-h-[20.5rem] ">

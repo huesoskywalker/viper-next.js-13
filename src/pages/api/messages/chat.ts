@@ -57,9 +57,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 }
             )
-            console.log(`----messenger from chat endpoint`)
-
-            console.log(messenger)
             return res.status(200).json(messenger)
         } catch (error) {
             return res.status(400).json(error)

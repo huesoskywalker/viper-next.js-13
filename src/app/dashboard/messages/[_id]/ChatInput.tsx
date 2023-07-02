@@ -30,8 +30,7 @@ export default function ChatInput({ contactId, viperId }: { contactId: string; v
         })
 
         const freshChat = await response.json()
-        console.log(`-----------freshChat`)
-        console.log(freshChat)
+
         setIsFetching(false)
         startTransition(() => {
             router.refresh()

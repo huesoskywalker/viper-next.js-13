@@ -1,6 +1,7 @@
-import { getViperById } from "@/lib/vipers"
-import { formatDistanceToNow } from "date-fns"
-import { Viper } from "@/types/viper"
+import { getViperBasicProps } from "@/lib/vipers"
+import { differenceInHours, formatDistance, formatRelative } from "date-fns"
+import { ViperBasicProps } from "@/types/viper"
+import { getCurrentViper } from "@/lib/session"
 
 export default async function Chat({
     messageId,
@@ -15,19 +16,35 @@ export default async function Chat({
 }) {
     const senderId: string = sender.replace(/['"]+/g, "")
 
-    const viper: Viper | null = await getViperById(senderId)
+    const viper: ViperBasicProps | null = await getViperBasicProps(senderId)
+    const currentViper = await getCurrentViper()
     if (!viper) throw new Error("No Viper bro")
+    const isCurrentViper = currentViper?.user.name === viper?.name
     return (
-        <div key={messageId} className="mr-20 my-2">
-            <h1 data-test="viper-name">{viper.name}</h1>
-            <div className="bg-blue-400/75 rounded-[14px]">
-                <p data-test="viper-message" className="py-1.5 px-2 text-gray-50">
+        <div
+            key={messageId}
+            className={`flex flex-col relative space-x-1 space-y-1 px-3 py-1 ${
+                isCurrentViper ? "text-right" : "text-left"
+            }`}
+        >
+            {!isCurrentViper && <span data-test="viper-name">{viper.name}</span>}
+            <div className="">
+                <span
+                    data-test="viper-message"
+                    className={`inline-flex rounded-xl space-x-2 items-start p-2 text-white ${
+                        isCurrentViper ? "bg-blue-400/75" : "bg-gray-700"
+                    } `}
+                >
                     {message}
-                </p>
+                </span>
             </div>
-            <p data-test="chat-timestamp" className="text-[13px]">
+            <p data-test="chat-timestamp" className="text-[12px]">
                 {" "}
-                {formatDistanceToNow(new Date(timestamp))} ago
+                {differenceInHours(new Date(), new Date(timestamp)) >= 1
+                    ? formatRelative(new Date(timestamp), new Date())
+                    : formatDistance(new Date(timestamp), new Date(), {
+                          addSuffix: true,
+                      })}
             </p>
         </div>
     )

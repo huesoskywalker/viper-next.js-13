@@ -14,7 +14,7 @@ export default async function Contacts({ id }: { id: string }) {
             <Link
                 data-test="contact-name"
                 href={`/dashboard/messages/${viperId}`}
-                className="flex justify-start items-center space-x-1 text-xs text-white "
+                className="flex justify-start items-center text-xs text-white "
             >
                 <Image
                     data-test="contact-image"
@@ -24,9 +24,7 @@ export default async function Contacts({ id }: { id: string }) {
                     height={50}
                     className="h-6 w-6 rounded-full"
                 />
-                {/* <span data-test="contact-name" className=""> */}
-                {viper.name}
-                {/* </span> */}
+                <span className="px-1">{viper.name}</span>
             </Link>
         </div>
     )
